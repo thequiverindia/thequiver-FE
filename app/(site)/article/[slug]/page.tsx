@@ -39,7 +39,8 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
     openGraph: {
       title: article.title,
       description: article.excerpt,
-      images: [article.image],
+      // Branded headline card generated at /article/<slug>/og.
+      images: [{ url: `/article/${article.slug}/og`, width: 1200, height: 630 }],
     },
     alternates: article.translationOf
       ? {

@@ -2,6 +2,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { buildConfig } from 'payload';
 import { sqliteAdapter } from '@payloadcms/db-sqlite';
+import { postgresAdapter } from '@payloadcms/db-postgres';
+import { s3Storage } from '@payloadcms/storage-s3';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
 import sharp from 'sharp';
 
@@ -60,12 +62,32 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: sqliteAdapter({
-    client: {
-      // SQLite for local dev; DATABASE_URI switches to Postgres (Neon)
-      // for staging/production via the postgres adapter.
-      url: process.env.DATABASE_URI || 'file:./thequiver-dev.db',
-    },
-  }),
+  // SQLite locally (zero setup), Neon Postgres in production — chosen purely
+  // by what DATABASE_URI looks like. Same schema, same code.
+  db: (process.env.DATABASE_URI ?? '').startsWith('postgres')
+    ? postgresAdapter({
+        pool: { connectionString: process.env.DATABASE_URI },
+      })
+    : sqliteAdapter({
+        client: { url: process.env.DATABASE_URI || 'file:./thequiver-dev.db' },
+      }),
+  // Media on Cloudflare R2 (S3-compatible) when configured; local disk otherwise.
+  // Vercel's filesystem is ephemeral, so R2 is required in production.
+  plugins: process.env.S3_BUCKET
+    ? [
+        s3Storage({
+          collections: { media: true },
+          bucket: process.env.S3_BUCKET,
+          config: {
+            endpoint: process.env.S3_ENDPOINT,
+            region: process.env.S3_REGION || 'auto',
+            credentials: {
+              accessKeyId: process.env.S3_ACCESS_KEY_ID ?? '',
+              secretAccessKey: process.env.S3_SECRET_ACCESS_KEY ?? '',
+            },
+          },
+        }),
+      ]
+    : [],
   sharp,
 });

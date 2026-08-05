@@ -8,6 +8,7 @@ import {
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ThemeScript } from '@/components/layout/ThemeScript';
+import { SITE_URL } from '@/lib/site';
 import './globals.css';
 
 const inter = Inter({
@@ -40,7 +41,14 @@ const notoSerifHi = Noto_Serif_Devanagari({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://thequiverindia.in'),
+  metadataBase: new URL(SITE_URL),
+  icons: {
+    icon: [{ url: '/icon-192.png', sizes: '192x192', type: 'image/png' }],
+    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
+  },
+  alternates: {
+    types: { 'application/rss+xml': `${SITE_URL}/feed.xml` },
+  },
   title: {
     default: 'TheQuiverIndia — Politics. Power. People.',
     template: '%s · TheQuiverIndia',
@@ -83,6 +91,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <ThemeScript />
+        {/* Privacy-first analytics — active only when Umami env vars are set */}
+        {process.env.NEXT_PUBLIC_UMAMI_SRC && process.env.NEXT_PUBLIC_UMAMI_ID && (
+          <script
+            defer
+            src={process.env.NEXT_PUBLIC_UMAMI_SRC}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_ID}
+          />
+        )}
       </head>
       <body className="min-h-screen bg-bg text-ink">
         <a
