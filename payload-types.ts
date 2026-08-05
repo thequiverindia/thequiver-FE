@@ -67,6 +67,15 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    articles: Article;
+    'fact-checks': FactCheck;
+    videos: Video;
+    authors: Author;
+    categories: Category;
+    tags: Tag;
+    leaders: Leader;
+    parties: Party;
+    polls: Poll;
     users: User;
     media: Media;
     'payload-kv': PayloadKv;
@@ -76,6 +85,15 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
+    articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    'fact-checks': FactChecksSelect<false> | FactChecksSelect<true>;
+    videos: VideosSelect<false> | VideosSelect<true>;
+    authors: AuthorsSelect<false> | AuthorsSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
+    leaders: LeadersSelect<false> | LeadersSelect<true>;
+    parties: PartiesSelect<false> | PartiesSelect<true>;
+    polls: PollsSelect<false> | PollsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -87,8 +105,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    settings: Setting;
+  };
+  globalsSelect: {
+    settings: SettingsSelect<false> | SettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -119,30 +141,81 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "articles".
  */
-export interface User {
+export interface Article {
   id: number;
-  name: string;
-  role: 'admin' | 'editor' | 'author';
+  title: string;
+  /**
+   * URL path — leave empty to auto-generate
+   */
+  slug?: string | null;
+  language: 'en' | 'hi';
+  /**
+   * Small label above the headline, e.g. "Parliament"
+   */
+  kicker?: string | null;
+  /**
+   * One-paragraph summary — shown on cards and in search results
+   */
+  excerpt: string;
+  /**
+   * Main image — alt text is set on the media itself
+   */
+  heroImage?: (number | null) | Media;
+  imageCaption?: string | null;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  category: number | Category;
+  tags?: (number | Tag)[] | null;
+  author: number | Author;
+  verification?: ('verified' | 'sourced' | 'developing') | null;
+  /**
+   * How many independent sources back this story
+   */
+  sourceCount?: number | null;
+  /**
+   * Linked fact-check, if this story includes a verified claim
+   */
+  factCheck?: (number | null) | FactCheck;
+  /**
+   * Powers "In the news" on leader profiles and related-content matching
+   */
+  mentionedLeaders?: (number | Leader)[] | null;
+  mentionedParties?: (number | Party)[] | null;
+  /**
+   * Hand-picked related stories (overrides automatic matching)
+   */
+  related?: (number | Article)[] | null;
+  /**
+   * If this is a translation, link the original article
+   */
+  translationOf?: (number | null) | Article;
+  isExclusive?: boolean | null;
+  publishedAt?: string | null;
+  views?: number | null;
+  /**
+   * Computed from body length
+   */
+  readMinutes?: number | null;
+  wordCount?: number | null;
+  createdBy?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -198,6 +271,350 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  label: string;
+  /**
+   * Shown to Hindi readers — same category, bilingual label
+   */
+  labelHi?: string | null;
+  /**
+   * URL path — leave empty to auto-generate
+   */
+  slug?: string | null;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  label: string;
+  labelHi?: string | null;
+  /**
+   * URL path — leave empty to auto-generate
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "authors".
+ */
+export interface Author {
+  id: number;
+  name: string;
+  /**
+   * URL path — leave empty to auto-generate
+   */
+  slug?: string | null;
+  /**
+   * e.g. @ananya
+   */
+  handle?: string | null;
+  /**
+   * e.g. Political Editor
+   */
+  role?: string | null;
+  bio?: string | null;
+  avatar?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fact-checks".
+ */
+export interface FactCheck {
+  id: number;
+  /**
+   * The claim being checked, quoted as it circulated
+   */
+  claim: string;
+  /**
+   * URL path — leave empty to auto-generate
+   */
+  slug?: string | null;
+  language: 'en' | 'hi';
+  /**
+   * Who made the claim
+   */
+  claimant: string;
+  rating: 'true' | 'mostly-true' | 'misleading' | 'false' | 'satire';
+  /**
+   * Plain-language verdict paragraph
+   */
+  verdict: string;
+  evidence?:
+    | {
+        point: string;
+        id?: string | null;
+      }[]
+    | null;
+  sources?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * The viral image/screenshot under review
+   */
+  image?: (number | null) | Media;
+  author: number | Author;
+  publishedAt?: string | null;
+  views?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leaders".
+ */
+export interface Leader {
+  id: number;
+  name: string;
+  /**
+   * URL path — leave empty to auto-generate
+   */
+  slug?: string | null;
+  party: number | Party;
+  /**
+   * e.g. Member of Parliament
+   */
+  position?: string | null;
+  constituency?: string | null;
+  state?:
+    | (
+        | 'Maharashtra'
+        | 'Uttar Pradesh'
+        | 'Tamil Nadu'
+        | 'Karnataka'
+        | 'West Bengal'
+        | 'Gujarat'
+        | 'Bihar'
+        | 'Madhya Pradesh'
+        | 'Rajasthan'
+        | 'Telangana'
+        | 'Delhi'
+        | 'Kerala'
+        | 'Punjab'
+        | 'Haryana'
+        | 'Odisha'
+        | 'Andhra Pradesh'
+        | 'Assam'
+        | 'Jharkhand'
+        | 'Chhattisgarh'
+        | 'Uttarakhand'
+      )
+    | null;
+  age?: number | null;
+  photo?: (number | null) | Media;
+  bio?: string | null;
+  rating?: number | null;
+  followers?: number | null;
+  /**
+   * % in house
+   */
+  attendance?: number | null;
+  questionsAsked?: number | null;
+  /**
+   * e.g. ₹12.4 Cr (from affidavit)
+   */
+  netWorth?: string | null;
+  criminalCases?: number | null;
+  education?: string | null;
+  socials?: {
+    /**
+     * handle only, no @
+     */
+    twitter?: string | null;
+    instagram?: string | null;
+    facebook?: string | null;
+    web?: string | null;
+  };
+  promises?:
+    | {
+        text: string;
+        status: 'kept' | 'in-progress' | 'broken' | 'unverifiable';
+        madeOn?: string | null;
+        context?: string | null;
+        /**
+         * Link to the record backing this status — accountability needs receipts
+         */
+        sourceUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  timeline?:
+    | {
+        date: string;
+        kind: 'milestone' | 'election' | 'controversy' | 'statement';
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "parties".
+ */
+export interface Party {
+  id: number;
+  name: string;
+  /**
+   * Abbreviation, e.g. BJVP
+   */
+  short: string;
+  /**
+   * URL path — leave empty to auto-generate
+   */
+  slug?: string | null;
+  /**
+   * Party brand color (hex). Used only for dots/bars, never as text color.
+   */
+  color: string;
+  founded?: number | null;
+  ideology?: string[] | null;
+  leader?: string | null;
+  /**
+   * Current Lok Sabha seats
+   */
+  seats?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name: string;
+  role: 'admin' | 'editor' | 'author';
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos".
+ */
+export interface Video {
+  id: number;
+  title: string;
+  /**
+   * URL path — leave empty to auto-generate
+   */
+  slug?: string | null;
+  /**
+   * The 11-character YouTube video ID (from the URL)
+   */
+  youtubeId: string;
+  description?: string | null;
+  /**
+   * Auto-filled from YouTube; override if needed
+   */
+  thumbnailUrl?: string | null;
+  /**
+   * e.g. 12:45
+   */
+  duration?: string | null;
+  series?: string | null;
+  host?: string | null;
+  /**
+   * "Watch the video report" cross-link
+   */
+  relatedArticle?: (number | null) | Article;
+  source?: ('manual' | 'youtube') | null;
+  featured?: boolean | null;
+  publishedAt?: string | null;
+  views?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "polls".
+ */
+export interface Poll {
+  id: number;
+  question: string;
+  /**
+   * URL path — leave empty to auto-generate
+   */
+  slug?: string | null;
+  description?: string | null;
+  category: 'politics' | 'elections' | 'opinion' | 'trending';
+  /**
+   * Optional — for state-specific polls
+   */
+  state?:
+    | (
+        | 'Maharashtra'
+        | 'Uttar Pradesh'
+        | 'Tamil Nadu'
+        | 'Karnataka'
+        | 'West Bengal'
+        | 'Gujarat'
+        | 'Bihar'
+        | 'Madhya Pradesh'
+        | 'Rajasthan'
+        | 'Telangana'
+        | 'Delhi'
+        | 'Kerala'
+        | 'Punjab'
+        | 'Haryana'
+        | 'Odisha'
+        | 'Andhra Pradesh'
+        | 'Assam'
+        | 'Jharkhand'
+        | 'Chhattisgarh'
+        | 'Uttarakhand'
+      )
+    | null;
+  options: {
+    label: string;
+    votes?: number | null;
+    /**
+     * Optional hex; defaults to brand color
+     */
+    color?: string | null;
+    id?: string | null;
+  }[];
+  totalVotes?: number | null;
+  endsAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -220,6 +637,42 @@ export interface PayloadKv {
 export interface PayloadLockedDocument {
   id: number;
   document?:
+    | ({
+        relationTo: 'articles';
+        value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'fact-checks';
+        value: number | FactCheck;
+      } | null)
+    | ({
+        relationTo: 'videos';
+        value: number | Video;
+      } | null)
+    | ({
+        relationTo: 'authors';
+        value: number | Author;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
+        relationTo: 'leaders';
+        value: number | Leader;
+      } | null)
+    | ({
+        relationTo: 'parties';
+        value: number | Party;
+      } | null)
+    | ({
+        relationTo: 'polls';
+        value: number | Poll;
+      } | null)
     | ({
         relationTo: 'users';
         value: number | User;
@@ -269,6 +722,219 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles_select".
+ */
+export interface ArticlesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  language?: T;
+  kicker?: T;
+  excerpt?: T;
+  heroImage?: T;
+  imageCaption?: T;
+  body?: T;
+  category?: T;
+  tags?: T;
+  author?: T;
+  verification?: T;
+  sourceCount?: T;
+  factCheck?: T;
+  mentionedLeaders?: T;
+  mentionedParties?: T;
+  related?: T;
+  translationOf?: T;
+  isExclusive?: T;
+  publishedAt?: T;
+  views?: T;
+  readMinutes?: T;
+  wordCount?: T;
+  createdBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fact-checks_select".
+ */
+export interface FactChecksSelect<T extends boolean = true> {
+  claim?: T;
+  slug?: T;
+  language?: T;
+  claimant?: T;
+  rating?: T;
+  verdict?: T;
+  evidence?:
+    | T
+    | {
+        point?: T;
+        id?: T;
+      };
+  sources?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  image?: T;
+  author?: T;
+  publishedAt?: T;
+  views?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos_select".
+ */
+export interface VideosSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  youtubeId?: T;
+  description?: T;
+  thumbnailUrl?: T;
+  duration?: T;
+  series?: T;
+  host?: T;
+  relatedArticle?: T;
+  source?: T;
+  featured?: T;
+  publishedAt?: T;
+  views?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "authors_select".
+ */
+export interface AuthorsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  handle?: T;
+  role?: T;
+  bio?: T;
+  avatar?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  label?: T;
+  labelHi?: T;
+  slug?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  label?: T;
+  labelHi?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "leaders_select".
+ */
+export interface LeadersSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  party?: T;
+  position?: T;
+  constituency?: T;
+  state?: T;
+  age?: T;
+  photo?: T;
+  bio?: T;
+  rating?: T;
+  followers?: T;
+  attendance?: T;
+  questionsAsked?: T;
+  netWorth?: T;
+  criminalCases?: T;
+  education?: T;
+  socials?:
+    | T
+    | {
+        twitter?: T;
+        instagram?: T;
+        facebook?: T;
+        web?: T;
+      };
+  promises?:
+    | T
+    | {
+        text?: T;
+        status?: T;
+        madeOn?: T;
+        context?: T;
+        sourceUrl?: T;
+        id?: T;
+      };
+  timeline?:
+    | T
+    | {
+        date?: T;
+        kind?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "parties_select".
+ */
+export interface PartiesSelect<T extends boolean = true> {
+  name?: T;
+  short?: T;
+  slug?: T;
+  color?: T;
+  founded?: T;
+  ideology?: T;
+  leader?: T;
+  seats?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "polls_select".
+ */
+export interface PollsSelect<T extends boolean = true> {
+  question?: T;
+  slug?: T;
+  description?: T;
+  category?: T;
+  state?: T;
+  options?:
+    | T
+    | {
+        label?: T;
+        votes?: T;
+        color?: T;
+        id?: T;
+      };
+  totalVotes?: T;
+  endsAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -386,6 +1052,58 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: number;
+  siteName?: string | null;
+  tagline?: string | null;
+  /**
+   * Real handles — these feed the footer and share links
+   */
+  socials?: {
+    /**
+     * handle only, no @
+     */
+    instagram?: string | null;
+    /**
+     * channel handle, e.g. @thequiverindia
+     */
+    youtube?: string | null;
+    /**
+     * UC… id — needed for the video auto-sync feed
+     */
+    youtubeChannelId?: string | null;
+    x?: string | null;
+    facebook?: string | null;
+    linkedin?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  siteName?: T;
+  tagline?: T;
+  socials?:
+    | T
+    | {
+        instagram?: T;
+        youtube?: T;
+        youtubeChannelId?: T;
+        x?: T;
+        facebook?: T;
+        linkedin?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

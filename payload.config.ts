@@ -7,6 +7,16 @@ import sharp from 'sharp';
 
 import { Users } from './collections/Users';
 import { Media } from './collections/Media';
+import { Articles } from './collections/Articles';
+import { Authors } from './collections/Authors';
+import { Categories } from './collections/Categories';
+import { Tags } from './collections/Tags';
+import { FactChecks } from './collections/FactChecks';
+import { Leaders } from './collections/Leaders';
+import { Parties } from './collections/Parties';
+import { Polls } from './collections/Polls';
+import { Videos } from './collections/Videos';
+import { Settings } from './globals/Settings';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -21,7 +31,20 @@ export default buildConfig({
       titleSuffix: ' · TheQuiverIndia Admin',
     },
   },
-  collections: [Users, Media],
+  collections: [
+    Articles,
+    FactChecks,
+    Videos,
+    Authors,
+    Categories,
+    Tags,
+    Leaders,
+    Parties,
+    Polls,
+    Users,
+    Media,
+  ],
+  globals: [Settings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || 'dev-only-secret-change-in-production',
   typescript: {

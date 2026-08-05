@@ -88,5 +88,5 @@ export const STATES = [
   'Jharkhand',
   'Chhattisgarh',
   'Uttarakhand',
-];
+] as const;
 
