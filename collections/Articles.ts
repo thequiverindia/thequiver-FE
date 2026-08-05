@@ -139,14 +139,15 @@ export const Articles: CollectionConfig = {
       type: 'relationship',
       relationTo: 'articles',
       hasMany: true,
-      filterOptions: ({ id }) => ({ id: { not_equals: id } }),
+      // On create there is no id yet — allow everything in that case.
+      filterOptions: ({ id }) => (id ? { id: { not_equals: id } } : true),
       admin: { description: 'Hand-picked related stories (overrides automatic matching)' },
     },
     {
       name: 'translationOf',
       type: 'relationship',
       relationTo: 'articles',
-      filterOptions: ({ id }) => ({ id: { not_equals: id } }),
+      filterOptions: ({ id }) => (id ? { id: { not_equals: id } } : true),
       admin: {
         position: 'sidebar',
         description: 'If this is a translation, link the original article',

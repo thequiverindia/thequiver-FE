@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Lora } from 'next/font/google';
+import {
+  Inter,
+  Lora,
+  Noto_Sans_Devanagari,
+  Noto_Serif_Devanagari,
+} from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ThemeScript } from '@/components/layout/ThemeScript';
@@ -15,6 +20,22 @@ const lora = Lora({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-serif',
+  display: 'swap',
+});
+
+// Devanagari fonts so Hindi content renders first-class, not in fallbacks.
+// Latin glyphs come from Inter/Lora; Devanagari falls through to Noto.
+const notoSansHi = Noto_Sans_Devanagari({
+  subsets: ['devanagari'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-sans-hi',
+  display: 'swap',
+});
+
+const notoSerifHi = Noto_Serif_Devanagari({
+  subsets: ['devanagari'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-serif-hi',
   display: 'swap',
 });
 
@@ -55,7 +76,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${lora.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} ${lora.variable} ${notoSansHi.variable} ${notoSerifHi.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <ThemeScript />
       </head>

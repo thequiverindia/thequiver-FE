@@ -1,11 +1,14 @@
 import type { Field, FieldHook } from 'payload';
 
-/** Unicode-aware slugify — keeps Devanagari so Hindi titles get real slugs. */
+/**
+ * Unicode-aware slugify — keeps Devanagari letters AND combining marks
+ * (vowel signs like ा ि ी are \p{M}, not \p{L}) so Hindi slugs stay readable.
+ */
 export const slugify = (val: string): string =>
   val
     .toLowerCase()
     .trim()
-    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .replace(/[^\p{L}\p{M}\p{N}\s-]/gu, '')
     .replace(/[\s_]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');

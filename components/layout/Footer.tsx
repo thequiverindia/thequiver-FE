@@ -10,8 +10,39 @@ import {
 import { Logo } from './Logo';
 import { MockForm } from '@/components/ui/MockForm';
 import { FOOTER_LINKS } from '@/lib/constants';
+import { getSettings } from '@/lib/data';
 
-export function Footer() {
+function socialUrl(base: string, value: string): string {
+  return value.startsWith('http') ? value : `${base}${value}`;
+}
+
+export async function Footer() {
+  const settings = await getSettings().catch(() => null);
+  const s = settings?.socials;
+  const socials = [
+    s?.x && { Icon: XIcon, label: 'X (Twitter)', href: socialUrl('https://x.com/', s.x) },
+    s?.instagram && {
+      Icon: InstagramIcon,
+      label: 'Instagram',
+      href: socialUrl('https://instagram.com/', s.instagram),
+    },
+    s?.youtube && {
+      Icon: YoutubeIcon,
+      label: 'YouTube',
+      href: socialUrl('https://youtube.com/', s.youtube),
+    },
+    s?.facebook && {
+      Icon: FacebookIcon,
+      label: 'Facebook',
+      href: socialUrl('https://facebook.com/', s.facebook),
+    },
+    s?.linkedin && {
+      Icon: LinkedinIcon,
+      label: 'LinkedIn',
+      href: socialUrl('https://linkedin.com/company/', s.linkedin),
+    },
+  ].filter((x): x is { Icon: typeof XIcon; label: string; href: string } => Boolean(x));
+
   return (
     <footer className="mt-24 border-t border-line bg-bg-subtle">
       <div className="container-page py-12 md:py-16">
@@ -40,13 +71,7 @@ export function Footer() {
               </button>
             </MockForm>
             <div className="mt-6 flex items-center gap-2">
-              {[
-                { Icon: XIcon, label: 'X (Twitter)', href: 'https://twitter.com/thequiverindia' },
-                { Icon: InstagramIcon, label: 'Instagram', href: 'https://instagram.com/thequiverindia' },
-                { Icon: YoutubeIcon, label: 'YouTube', href: 'https://youtube.com/@thequiverindia' },
-                { Icon: FacebookIcon, label: 'Facebook', href: 'https://facebook.com/thequiverindia' },
-                { Icon: LinkedinIcon, label: 'LinkedIn', href: 'https://linkedin.com/company/thequiverindia' },
-              ].map(({ Icon, label, href }) => (
+              {socials.map(({ Icon, label, href }) => (
                 <a
                   key={label}
                   href={href}

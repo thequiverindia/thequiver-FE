@@ -17,14 +17,14 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const fc = await getFactCheckBySlug(params.slug);
+  const fc = await getFactCheckBySlug(decodeURIComponent(params.slug));
   if (!fc) return { title: 'Fact check not found' };
   return { title: `Fact Check: ${fc.claim.slice(0, 60)}…`, description: fc.verdict };
 }
 
 export default async function FactCheckDetail(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const fc = await getFactCheckBySlug(params.slug);
+  const fc = await getFactCheckBySlug(decodeURIComponent(params.slug));
   if (!fc) notFound();
   const others = (await getFactChecks({ limit: 4 })).filter((f) => f.id !== fc.id).slice(0, 3);
   const meta = ratingMeta[fc.rating];

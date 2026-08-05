@@ -30,7 +30,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const article = await getArticleBySlug(params.slug);
+  const article = await getArticleBySlug(decodeURIComponent(params.slug));
   if (!article) return { title: 'Article not found' };
   return {
     title: article.title,
@@ -40,12 +40,21 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
       description: article.excerpt,
       images: [article.image],
     },
+    alternates: article.translationOf
+      ? {
+          languages: {
+            [article.translationOf.language === 'hi' ? 'hi-IN' : 'en-IN']:
+              `/article/${article.translationOf.slug}`,
+            [article.language === 'hi' ? 'hi-IN' : 'en-IN']: `/article/${article.slug}`,
+          },
+        }
+      : undefined,
   };
 }
 
 export default async function ArticlePage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const article = await getArticleBySlug(params.slug);
+  const article = await getArticleBySlug(decodeURIComponent(params.slug));
   if (!article) notFound();
   const related = (await getRelatedArticles(article, 3)) ?? [];
   const mostRead = await getMostReadArticles(5);
@@ -92,16 +101,33 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
           />
           <div className="mt-5 flex flex-wrap items-center gap-2">
             {article.isExclusive && <Badge tone="saffron">Exclusive</Badge>}
+            {article.translationOf && (
+              <Link
+                href={`/article/${article.translationOf.slug}`}
+                lang={article.translationOf.language === 'hi' ? 'hi' : 'en'}
+                className="inline-flex items-center rounded-full border border-brand/30 bg-brand/5 px-3 py-1 text-xs font-medium text-brand transition hover:bg-brand/10 focus-ring"
+              >
+                {article.translationOf.language === 'hi'
+                  ? 'यह लेख हिन्दी में पढ़ें →'
+                  : 'Read this story in English →'}
+              </Link>
+            )}
             {article.kicker && (
               <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-saffron">
                 {article.kicker}
               </span>
             )}
           </div>
-          <h1 className="mt-3 max-w-4xl text-balance font-serif text-[28px] font-semibold leading-[1.15] text-ink sm:text-4xl md:text-5xl">
+          <h1
+            lang={article.language === 'hi' ? 'hi' : undefined}
+            className="mt-3 max-w-4xl text-balance font-serif text-[28px] font-semibold leading-[1.15] text-ink sm:text-4xl md:text-5xl"
+          >
             {article.title}
           </h1>
-          <p className="mt-4 max-w-3xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg md:text-xl">
+          <p
+            lang={article.language === 'hi' ? 'hi' : undefined}
+            className="mt-4 max-w-3xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg md:text-xl"
+          >
             {article.excerpt}
           </p>
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
@@ -151,7 +177,10 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
               <ShareBar orientation="vertical" />
             </div>
           </div>
-          <div className="mx-auto w-full min-w-0 max-w-prose lg:col-span-8">
+          <div
+            lang={article.language === 'hi' ? 'hi' : undefined}
+            className="mx-auto w-full min-w-0 max-w-prose lg:col-span-8"
+          >
             <ArticleBody body={article.body} />
 
             {article.factCheckSlug && (

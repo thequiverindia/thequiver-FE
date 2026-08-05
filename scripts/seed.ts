@@ -189,7 +189,13 @@ async function seed() {
     data: {
       siteName: 'TheQuiverIndia',
       tagline: 'Politics. Power. People.',
-      socials: { instagram: 'thequiverindia', youtube: '@thequiverindia' },
+      socials: {
+        instagram: 'the_quiver_hindi',
+        youtube: '@thequiverhindi',
+        youtubeChannelId: 'UCBoUqEttVTZFi1ceEx4tiHw',
+        x: 'TheQuiverhindi',
+        facebook: 'https://www.facebook.com/share/1DjWWNVWKr/',
+      },
     },
     context: ctx,
   });

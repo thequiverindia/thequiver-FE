@@ -30,7 +30,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const p = await getLeaderBySlug(params.slug);
+  const p = await getLeaderBySlug(decodeURIComponent(params.slug));
   if (!p) return { title: 'Leader not found' };
   return {
     title: `${p.name} — ${p.position}`,
@@ -40,7 +40,7 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function LeaderPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const p = await getLeaderBySlug(params.slug);
+  const p = await getLeaderBySlug(decodeURIComponent(params.slug));
   if (!p) notFound();
   const [allLeaders, { docs: latest }] = await Promise.all([
     getLeaders({}),

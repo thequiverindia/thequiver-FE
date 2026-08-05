@@ -15,14 +15,14 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const p = await getPollBySlug(params.slug);
+  const p = await getPollBySlug(decodeURIComponent(params.slug));
   if (!p) return { title: 'Poll not found' };
   return { title: `Poll: ${p.question}`, description: p.description };
 }
 
 export default async function PollDetailPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const p = await getPollBySlug(params.slug);
+  const p = await getPollBySlug(decodeURIComponent(params.slug));
   if (!p) notFound();
   const others = (await getPolls()).filter((x) => x.id !== p.id).slice(0, 3);
   const top = [...p.options].sort((a, b) => b.votes - a.votes)[0];
@@ -40,7 +40,7 @@ export default async function PollDetailPage(props: { params: Promise<{ slug: st
       <div className="mt-8 grid gap-10 lg:grid-cols-12">
         <article className="lg:col-span-8">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge tone="saffron">Live poll</Badge>
+            <Badge tone="saffron">Reader poll</Badge>
             <Badge tone="neutral">{p.category}</Badge>
             {p.state && <Badge tone="neutral">{p.state}</Badge>}
           </div>

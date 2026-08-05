@@ -16,14 +16,14 @@ export async function generateStaticParams() {
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const v = await getVideoBySlug(params.slug);
+  const v = await getVideoBySlug(decodeURIComponent(params.slug));
   if (!v) return { title: 'Video not found' };
   return { title: v.title, description: v.description };
 }
 
 export default async function VideoPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const v = await getVideoBySlug(params.slug);
+  const v = await getVideoBySlug(decodeURIComponent(params.slug));
   if (!v) notFound();
   const [allVideos, authors] = await Promise.all([getVideos({}), getAuthors()]);
   const others = allVideos.filter((x) => x.id !== v.id);

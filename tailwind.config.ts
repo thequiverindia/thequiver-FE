@@ -35,8 +35,8 @@ const config: Config = {
         control: '0.625rem',
       },
       fontFamily: {
-        serif: ['var(--font-serif)', 'Georgia', 'serif'],
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'var(--font-serif-hi)', 'Georgia', 'serif'],
+        sans: ['var(--font-sans)', 'var(--font-sans-hi)', 'system-ui', 'sans-serif'],
       },
       maxWidth: {
         container: '1280px',

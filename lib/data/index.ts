@@ -94,6 +94,13 @@ function mapArticle(doc: PArticle, withBody = false): Article {
     language: (doc.language ?? 'en') as Article['language'],
     body: withBody ? doc.body : undefined,
     related,
+    translationOf:
+      typeof doc.translationOf === 'object' && doc.translationOf?.slug
+        ? {
+            slug: doc.translationOf.slug,
+            language: (doc.translationOf.language ?? 'en') as Article['language'],
+          }
+        : null,
   };
 }
 
@@ -259,7 +266,26 @@ export const getArticleBySlug = unstable_cache(
       depth: 2,
     });
     const doc = res.docs[0];
-    return doc ? mapArticle(doc, true) : null;
+    if (!doc) return null;
+    const article = mapArticle(doc, true);
+    // The translation link is one-directional in the CMS; resolve the
+    // reverse direction too so both language versions cross-link.
+    if (!article.translationOf) {
+      const reverse = await payload.find({
+        collection: 'articles',
+        where: { and: [PUBLISHED, { translationOf: { equals: doc.id } }] },
+        limit: 1,
+        depth: 0,
+      });
+      const r = reverse.docs[0];
+      if (r?.slug) {
+        article.translationOf = {
+          slug: r.slug,
+          language: (r.language ?? 'en') as Article['language'],
+        };
+      }
+    }
+    return article;
   },
   ['article-by-slug'],
   { tags: ['articles'] },

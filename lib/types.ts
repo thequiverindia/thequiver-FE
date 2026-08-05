@@ -57,6 +57,8 @@ export interface Article {
   body?: unknown;
   /** Editor-picked related stories (populated on detail fetches). */
   related?: Article[];
+  /** The same story in the other language, if a translation is linked. */
+  translationOf?: { slug: string; language: Language } | null;
 }
 
 export type PromiseStatus = 'kept' | 'broken' | 'in-progress' | 'unverifiable';

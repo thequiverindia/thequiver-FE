@@ -173,7 +173,7 @@
   body {
     background: rgb(var(--bg));
     color: rgb(var(--ink));
-    font-family: var(--font-sans), system-ui, sans-serif;
+    font-family: var(--font-sans), var(--font-sans-hi), system-ui, sans-serif;
     font-feature-settings: 'ss01', 'cv11';
   }
 
@@ -183,7 +183,7 @@
   }
 
   h1, h2, h3, h4 {
-    font-family: var(--font-serif), Georgia, serif;
+    font-family: var(--font-serif), var(--font-serif-hi), Georgia, serif;
     letter-spacing: -0.015em;
   }
 
@@ -249,7 +249,7 @@
 
   .prose-article blockquote {
     @apply my-10 border-l-2 border-accent pl-6 text-xl italic text-ink md:text-2xl;
-    font-family: var(--font-serif), Georgia, serif;
+    font-family: var(--font-serif), var(--font-serif-hi), Georgia, serif;
     line-height: 1.4;
   }
 
