@@ -3,6 +3,8 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Tabs } from '@/components/ui/Tabs';
 import { PollCard } from '@/components/cards/PollCard';
 import { getPolls } from '@/lib/data';
+import { getReaderPollVotes } from '@/lib/data/reader';
+import { getReaderId } from '@/auth';
 import { formatNumber } from '@/lib/utils';
 
 export const metadata = {
@@ -23,9 +25,13 @@ export default async function PollsPage(
 ) {
   const searchParams = await props.searchParams;
   const cat = searchParams?.cat;
-  const [polls, allPolls] = await Promise.all([
+  const readerId = await getReaderId();
+  const [polls, allPolls, votes] = await Promise.all([
     getPolls({ category: cat }),
     getPolls(),
+    readerId
+      ? getReaderPollVotes(readerId)
+      : Promise.resolve<Record<string, string>>({}),
   ]);
   const totalVotes = allPolls.reduce((a, p) => a + p.totalVotes, 0);
   return (
@@ -87,7 +93,12 @@ export default async function PollsPage(
         ) : (
           <div className="grid gap-6 md:grid-cols-2">
             {polls.map((p) => (
-              <PollCard key={p.id} poll={p} showResults />
+              <PollCard
+                key={p.id}
+                poll={p}
+                signedIn={Boolean(readerId)}
+                votedOptionId={votes[p.id] ?? null}
+              />
             ))}
           </div>
         )}

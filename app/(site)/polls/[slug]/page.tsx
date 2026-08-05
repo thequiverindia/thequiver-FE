@@ -1,11 +1,13 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { CheckCircle2, Clock } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Badge } from '@/components/ui/Badge';
 import { PollCard } from '@/components/cards/PollCard';
+import { PollVoting } from '@/components/engagement/PollVoting';
 import { getPollBySlug, getPolls, listSlugs } from '@/lib/data';
+import { getReaderPollVotes } from '@/lib/data/reader';
+import { getReaderId } from '@/auth';
 import { formatDateTime, formatNumber } from '@/lib/utils';
 
 export async function generateStaticParams() {
@@ -25,7 +27,8 @@ export default async function PollDetailPage(props: { params: Promise<{ slug: st
   const p = await getPollBySlug(decodeURIComponent(params.slug));
   if (!p) notFound();
   const others = (await getPolls()).filter((x) => x.id !== p.id).slice(0, 3);
-  const top = [...p.options].sort((a, b) => b.votes - a.votes)[0];
+  const readerId = await getReaderId();
+  const votes = readerId ? await getReaderPollVotes(readerId) : {};
 
   return (
     <Container as="section" className="py-8 lg:py-12">
@@ -61,43 +64,11 @@ export default async function PollDetailPage(props: { params: Promise<{ slug: st
                 Ends {formatDateTime(p.endsAt)}
               </span>
             </div>
-            <div className="space-y-4">
-              {p.options
-                .slice()
-                .sort((a, b) => b.votes - a.votes)
-                .map((opt) => {
-                  const pct = ((opt.votes / p.totalVotes) * 100).toFixed(1);
-                  const isTop = opt.id === top.id;
-                  return (
-                    <div key={opt.id}>
-                      <div className="mb-1.5 flex items-center justify-between text-sm">
-                        <span className="inline-flex items-center gap-2 font-medium text-ink">
-                          {isTop && <CheckCircle2 className="h-4 w-4 text-verified" />}
-                          {opt.label}
-                        </span>
-                        <span className="text-ink-muted">
-                          {pct}% · {formatNumber(opt.votes)} votes
-                        </span>
-                      </div>
-                      <div className="h-3 w-full overflow-hidden rounded-full bg-bg-muted">
-                        <div
-                          className="h-full rounded-full transition-all"
-                          style={{
-                            width: `${pct}%`,
-                            background: opt.color ?? 'rgb(var(--brand))',
-                          }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-            <div className="mt-8 rounded-xl border border-dashed border-line bg-bg-subtle p-4 text-center text-sm text-ink-muted">
-              You haven't voted yet.{' '}
-              <Link href="/login" className="font-medium text-ink underline">
-                Sign in to vote
-              </Link>
-            </div>
+            <PollVoting
+              poll={p}
+              votedOptionId={votes[p.id] ?? null}
+              signedIn={Boolean(readerId)}
+            />
           </div>
 
           <section className="mt-12 rounded-2xl border border-line bg-bg-subtle p-6">

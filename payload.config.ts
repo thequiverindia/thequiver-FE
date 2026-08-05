@@ -16,6 +16,11 @@ import { Leaders } from './collections/Leaders';
 import { Parties } from './collections/Parties';
 import { Polls } from './collections/Polls';
 import { Videos } from './collections/Videos';
+import { Readers } from './collections/Readers';
+import { Comments } from './collections/Comments';
+import { Bookmarks } from './collections/Bookmarks';
+import { PollVotes } from './collections/PollVotes';
+import { Waitlist } from './collections/Waitlist';
 import { Settings } from './globals/Settings';
 
 const filename = fileURLToPath(import.meta.url);
@@ -41,6 +46,11 @@ export default buildConfig({
     Leaders,
     Parties,
     Polls,
+    Comments,
+    Readers,
+    Bookmarks,
+    PollVotes,
+    Waitlist,
     Users,
     Media,
   ],

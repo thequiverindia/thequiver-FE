@@ -1,6 +1,6 @@
 import { Mail } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
-import { MockForm } from '@/components/ui/MockForm';
+import { WaitlistForm } from '@/components/engagement/WaitlistForm';
 
 export function NewsletterCTA() {
   return (
@@ -17,22 +17,7 @@ export function NewsletterCTA() {
             One email. Five stories. Everything you need to know about Indian politics
             before your day starts. 4,12,000+ subscribers and counting.
           </p>
-          <MockForm
-            className="mx-auto mt-7 flex max-w-md gap-2"
-          >
-            <input
-              type="email"
-              placeholder="you@example.com"
-              className="min-w-0 flex-1 rounded-full border border-line bg-bg px-4 py-3 text-sm text-ink placeholder:text-ink-subtle focus-ring"
-              aria-label="Email address"
-            />
-            <button
-              type="submit"
-              className="shrink-0 rounded-full bg-ink px-6 text-sm font-medium text-bg transition hover:bg-ink/90 active:bg-ink/80 focus-ring"
-            >
-              Subscribe
-            </button>
-          </MockForm>
+          <WaitlistForm source="cta" variant="split" className="mx-auto mt-7 max-w-md" />
           <p className="mt-3 text-xs text-ink-subtle">
             Free. Unsubscribe any time. We never share your data.
           </p>

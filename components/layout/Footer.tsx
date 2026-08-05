@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Send } from 'lucide-react';
 import {
   XIcon,
   InstagramIcon,
@@ -8,7 +7,7 @@ import {
   LinkedinIcon,
 } from '@/components/ui/BrandIcons';
 import { Logo } from './Logo';
-import { MockForm } from '@/components/ui/MockForm';
+import { WaitlistForm } from '@/components/engagement/WaitlistForm';
 import { FOOTER_LINKS } from '@/lib/constants';
 import { getSettings } from '@/lib/data';
 
@@ -53,23 +52,7 @@ export async function Footer() {
               TheQuiverIndia is an editorial-first political news platform. Verified journalism,
               leader transparency, and citizen voice — built for India.
             </p>
-            <MockForm
-              className="mt-6 flex max-w-sm items-center gap-2 rounded-full border border-line bg-bg p-1 pl-4 transition focus-within:border-line-strong"
-            >
-              <input
-                type="email"
-                placeholder="Your email for the daily brief"
-                className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-ink-subtle focus-visible:outline-none"
-                aria-label="Email address for newsletter"
-              />
-              <button
-                type="submit"
-                className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-ink px-4 text-xs font-medium text-bg transition hover:bg-ink/90 active:bg-ink/80 focus-ring"
-              >
-                <Send className="h-3.5 w-3.5" aria-hidden />
-                Subscribe
-              </button>
-            </MockForm>
+            <WaitlistForm source="footer" className="mt-6 max-w-sm" />
             <div className="mt-6 flex items-center gap-2">
               {socials.map(({ Icon, label, href }) => (
                 <a

@@ -204,7 +204,7 @@ export default async function HomePage() {
               href="/polls"
               hrefLabel="All polls"
             />
-            {polls[0] && <PollCard poll={polls[0]} showResults />}
+            {polls[0] && <PollCard poll={polls[0]} />}
           </div>
         </div>
       </Container>

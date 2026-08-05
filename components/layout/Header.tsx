@@ -5,6 +5,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { ThemeMenu } from './ThemeMenu';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { MobileMenu } from './MobileMenu';
+import { HeaderUser } from './HeaderUser';
 import { PRIMARY_NAV } from '@/lib/constants';
 
 export function Header() {
@@ -39,12 +40,7 @@ export function Header() {
           <LanguageSwitcher className="hidden lg:block" />
           <ThemeToggle />
           <ThemeMenu />
-          <Link
-            href="/login"
-            className="ml-1 hidden items-center rounded-full border border-line-strong px-4 py-2 text-sm font-medium text-ink transition hover:bg-bg-muted active:bg-bg-muted focus-ring lg:inline-flex"
-          >
-            Sign in
-          </Link>
+          <HeaderUser />
           <MobileMenu />
         </div>
       </div>

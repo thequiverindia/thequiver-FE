@@ -76,6 +76,11 @@ export interface Config {
     leaders: Leader;
     parties: Party;
     polls: Poll;
+    comments: Comment;
+    readers: Reader;
+    bookmarks: Bookmark;
+    'poll-votes': PollVote;
+    waitlist: Waitlist;
     users: User;
     media: Media;
     'payload-kv': PayloadKv;
@@ -94,6 +99,11 @@ export interface Config {
     leaders: LeadersSelect<false> | LeadersSelect<true>;
     parties: PartiesSelect<false> | PartiesSelect<true>;
     polls: PollsSelect<false> | PollsSelect<true>;
+    comments: CommentsSelect<false> | CommentsSelect<true>;
+    readers: ReadersSelect<false> | ReadersSelect<true>;
+    bookmarks: BookmarksSelect<false> | BookmarksSelect<true>;
+    'poll-votes': PollVotesSelect<false> | PollVotesSelect<true>;
+    waitlist: WaitlistSelect<false> | WaitlistSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -614,6 +624,74 @@ export interface Poll {
   createdAt: string;
 }
 /**
+ * Moderation queue — approve or reject pending comments.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments".
+ */
+export interface Comment {
+  id: number;
+  body: string;
+  article: number | Article;
+  reader: number | Reader;
+  status: 'pending' | 'approved' | 'rejected';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Created automatically when someone signs in with Google.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "readers".
+ */
+export interface Reader {
+  id: number;
+  email: string;
+  name?: string | null;
+  avatarUrl?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookmarks".
+ */
+export interface Bookmark {
+  id: number;
+  reader: number | Reader;
+  article: number | Article;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "poll-votes".
+ */
+export interface PollVote {
+  id: number;
+  poll: number | Poll;
+  reader: number | Reader;
+  optionId: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Newsletter interest list. Nothing is sent to these addresses yet.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "waitlist".
+ */
+export interface Waitlist {
+  id: number;
+  email: string;
+  /**
+   * Which form captured it (footer, cta, newsletter page)
+   */
+  source?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -672,6 +750,26 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'polls';
         value: number | Poll;
+      } | null)
+    | ({
+        relationTo: 'comments';
+        value: number | Comment;
+      } | null)
+    | ({
+        relationTo: 'readers';
+        value: number | Reader;
+      } | null)
+    | ({
+        relationTo: 'bookmarks';
+        value: number | Bookmark;
+      } | null)
+    | ({
+        relationTo: 'poll-votes';
+        value: number | PollVote;
+      } | null)
+    | ({
+        relationTo: 'waitlist';
+        value: number | Waitlist;
       } | null)
     | ({
         relationTo: 'users';
@@ -933,6 +1031,60 @@ export interface PollsSelect<T extends boolean = true> {
       };
   totalVotes?: T;
   endsAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments_select".
+ */
+export interface CommentsSelect<T extends boolean = true> {
+  body?: T;
+  article?: T;
+  reader?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "readers_select".
+ */
+export interface ReadersSelect<T extends boolean = true> {
+  email?: T;
+  name?: T;
+  avatarUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookmarks_select".
+ */
+export interface BookmarksSelect<T extends boolean = true> {
+  reader?: T;
+  article?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "poll-votes_select".
+ */
+export interface PollVotesSelect<T extends boolean = true> {
+  poll?: T;
+  reader?: T;
+  optionId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "waitlist_select".
+ */
+export interface WaitlistSelect<T extends boolean = true> {
+  email?: T;
+  source?: T;
   updatedAt?: T;
   createdAt?: T;
 }

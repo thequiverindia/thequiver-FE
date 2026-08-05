@@ -1,100 +1,85 @@
-import { MessageSquare, ThumbsUp } from 'lucide-react';
-import { Avatar } from '@/components/ui/Avatar';
-import { MockForm } from '@/components/ui/MockForm';
+import { MessageSquare } from 'lucide-react';
+import { unstable_cache } from 'next/cache';
+import { getPayload } from 'payload';
+import config from '@payload-config';
+import { CommentForm } from '@/components/engagement/CommentForm';
+import { timeAgo } from '@/lib/utils';
 
-const MOCK_COMMENTS = [
-  {
-    id: 'c1',
-    user: 'Anjali Subramaniam',
-    role: 'Reader · Bengaluru',
-    when: '2h ago',
-    likes: 47,
-    text:
-      'The point on the electoral trust loophole is exactly what was missing from yesterday\'s coverage elsewhere. Thank you for catching it.',
+const getApprovedComments = unstable_cache(
+  async (articleId: string) => {
+    const payload = await getPayload({ config });
+    const res = await payload.find({
+      collection: 'comments',
+      where: {
+        and: [
+          { article: { equals: Number(articleId) } },
+          { status: { equals: 'approved' } },
+        ],
+      },
+      sort: '-createdAt',
+      limit: 50,
+      depth: 1,
+    });
+    return res.docs.map((c) => ({
+      id: String(c.id),
+      body: c.body,
+      createdAt: c.createdAt,
+      name:
+        typeof c.reader === 'object' && c.reader ? c.reader.name ?? 'Reader' : 'Reader',
+      avatarUrl:
+        typeof c.reader === 'object' && c.reader ? c.reader.avatarUrl ?? null : null,
+    }));
   },
-  {
-    id: 'c2',
-    user: 'Mukesh Pandey',
-    role: 'Reader · Lucknow',
-    when: '4h ago',
-    likes: 31,
-    text:
-      'I disagree with the framing. The 14-day window IS a real change — saying "the most important thing is what stays the same" feels uncharitable.',
-  },
-  {
-    id: 'c3',
-    user: 'Reema Thomas',
-    role: 'Member · Kochi',
-    when: '6h ago',
-    likes: 22,
-    text:
-      'Would be great to see a follow-up comparing this with the German party financing framework. The principles are similar.',
-  },
-];
+  ['approved-comments'],
+  { tags: ['comments'] },
+);
 
-export function CommentSection({ articleId }: { articleId: string }) {
+/** Real reader comments: approved list + moderated submission form. */
+export async function CommentSection({ articleId }: { articleId: string }) {
+  const comments = await getApprovedComments(articleId);
+
   return (
-    <section id="comments" className="mt-16 border-t border-line pt-12">
-      <div className="flex items-center justify-between">
-        <h2 className="font-serif text-2xl font-semibold text-ink">
-          Reader response
-        </h2>
-        <span className="inline-flex items-center gap-1.5 text-xs text-ink-muted">
-          <MessageSquare className="h-3.5 w-3.5" />
-          {MOCK_COMMENTS.length} comments
-        </span>
-      </div>
-      <MockForm
-        className="mt-6 rounded-xl border border-line bg-bg-subtle p-5"
-      >
-        <p className="text-sm font-medium text-ink">Add your perspective</p>
-        <p className="mt-1 text-xs text-ink-muted">
-          Comments are moderated. Be specific. Disagreement welcome — name-calling isn't.
+    <section id="comments" className="mt-16 border-t border-line pt-10">
+      <h2 className="flex items-center gap-2 font-serif text-xl font-semibold text-ink">
+        <MessageSquare className="h-5 w-5 text-ink-muted" aria-hidden />
+        {comments.length === 0
+          ? 'Join the discussion'
+          : `${comments.length} comment${comments.length === 1 ? '' : 's'}`}
+      </h2>
+
+      <CommentForm articleId={articleId} />
+
+      {comments.length === 0 ? (
+        <p className="mt-8 rounded-xl border border-dashed border-line bg-bg-subtle p-6 text-center text-sm text-ink-muted">
+          No comments yet — be the first to weigh in.
         </p>
-        <textarea
-          rows={3}
-          placeholder="What does this article get right, or get wrong?"
-          className="mt-4 w-full rounded-lg border border-line bg-bg p-3 text-sm text-ink placeholder:text-ink-subtle focus-ring"
-        />
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-xs text-ink-muted">
-            Comments are limited to verified readers.{' '}
-            <a href="/login" className="text-ink underline">
-              Sign in
-            </a>
-          </span>
-          <button
-            type="submit"
-            className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-bg hover:bg-ink/90"
-          >
-            Post comment
-          </button>
-        </div>
-      </MockForm>
-      <ul className="mt-10 divide-y divide-line">
-        {MOCK_COMMENTS.map((c) => (
-          <li key={c.id} className="flex gap-4 py-6">
-            <Avatar name={c.user} size="md" />
-            <div className="min-w-0 flex-1">
-              <p className="font-medium text-ink">
-                {c.user}{' '}
-                <span className="ml-1 text-xs font-normal text-ink-muted">
-                  {c.role} · {c.when}
-                </span>
-              </p>
-              <p className="mt-1 text-sm leading-relaxed text-ink-muted">{c.text}</p>
-              <div className="mt-3 flex items-center gap-4 text-xs text-ink-muted">
-                <button className="inline-flex items-center gap-1 hover:text-ink">
-                  <ThumbsUp className="h-3 w-3" />
-                  {c.likes}
-                </button>
-                <button className="hover:text-ink">Reply</button>
-                <button className="hover:text-ink">Report</button>
+      ) : (
+        <ul className="mt-8 space-y-6">
+          {comments.map((c) => (
+            <li key={c.id} className="flex gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-bg-muted text-xs font-medium text-ink-muted ring-1 ring-line">
+                {c.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={c.avatarUrl} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  (c.name ?? 'R').slice(0, 1).toUpperCase()
+                )}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm">
+                  <span className="font-medium text-ink">{c.name}</span>{' '}
+                  <span className="text-xs text-ink-subtle">
+                    · <time dateTime={c.createdAt}>{timeAgo(c.createdAt)}</time>
+                  </span>
+                </p>
+                <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-ink-muted">
+                  {c.body}
+                </p>
               </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }

@@ -5,7 +5,6 @@ import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Avatar } from '@/components/ui/Avatar';
 import { VideoCard } from '@/components/cards/VideoCard';
-import { CommentSection } from '@/components/article/CommentSection';
 import { getAuthors, getVideoBySlug, getVideos, listSlugs } from '@/lib/data';
 import { formatNumber, timeAgo } from '@/lib/utils';
 
@@ -105,8 +104,6 @@ export default async function VideoPage(props: { params: Promise<{ slug: string 
           </div>
 
           <p className="prose-article mt-6">{v.description}</p>
-
-          <CommentSection articleId={v.id} />
         </div>
 
         <aside className="lg:col-span-4">

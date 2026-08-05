@@ -9,6 +9,7 @@ import { VerificationBadge } from '@/components/ui/Verification';
 import { MetaBar } from '@/components/ui/MetaBar';
 import { ArticleBody } from '@/components/article/ArticleBody';
 import { ShareBar } from '@/components/article/ShareBar';
+import { BookmarkButton } from '@/components/engagement/BookmarkButton';
 import { AuthorByline, AuthorCard } from '@/components/article/AuthorByline';
 import { ReadingProgress } from '@/components/article/ReadingProgress';
 import { BackToTop } from '@/components/article/BackToTop';
@@ -142,6 +143,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <VerificationBadge level={article.verification} sources={article.sourceCount} />
+              <BookmarkButton articleId={article.id} />
               <ShareBar />
             </div>
           </div>

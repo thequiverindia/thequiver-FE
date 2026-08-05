@@ -60,7 +60,7 @@ function mapAuthor(a: PAuthor | number | null | undefined): Author {
   };
 }
 
-function mapArticle(doc: PArticle, withBody = false): Article {
+export function mapArticle(doc: PArticle, withBody = false): Article {
   const category = typeof doc.category === 'object' && doc.category ? doc.category : null;
   const related =
     withBody && Array.isArray(doc.related)

@@ -26,6 +26,30 @@ npm run build               # production build (site + admin)
 | `PAYLOAD_SECRET` | any string | long random string — generate with `openssl rand -hex 32` |
 | `DATABASE_URI` | `file:./thequiver-dev.db` | Neon Postgres connection string |
 
+## Enable Google sign-in (free, ~10 minutes, needed for reader accounts)
+
+Reader features (bookmarks, comments, poll voting) need Google OAuth keys:
+
+1. Go to **console.cloud.google.com** → create a project (e.g. "TheQuiverIndia").
+2. **APIs & Services → OAuth consent screen** → External → fill app name
+   "TheQuiverIndia", your email → save (stay in "Testing" mode for now and add
+   your own Gmail as a test user).
+3. **APIs & Services → Credentials → Create credentials → OAuth client ID** →
+   Application type **Web application**:
+   - Authorized JavaScript origins: `http://localhost:3000` (add the real
+     domain later)
+   - Authorized redirect URIs: `http://localhost:3000/api/auth/callback/google`
+     (later also `https://your-domain/api/auth/callback/google`)
+4. Copy the **Client ID** and **Client secret** into `.env`:
+
+   ```
+   AUTH_GOOGLE_ID=xxxxx.apps.googleusercontent.com
+   AUTH_GOOGLE_SECRET=xxxxx
+   ```
+
+5. Restart `npm run dev` → the "Continue with Google" button on `/login` works.
+   Until then the login page shows a friendly "not configured yet" notice.
+
 ## Accounts you (the owner) need to create — all free tiers
 
 These are needed when we deploy staging/production, not for local work:
