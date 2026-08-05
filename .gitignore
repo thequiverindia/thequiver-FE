@@ -10,3 +10,8 @@ next-env.d.ts
 .vercel
 *.log
 
+
+# Payload / database
+*.db
+*.db-journal
+/media

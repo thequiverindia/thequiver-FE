@@ -8,14 +8,23 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generate:types": "payload generate:types",
+    "generate:importmap": "payload generate:importmap",
+    "payload": "payload"
   },
   "dependencies": {
+    "@payloadcms/db-sqlite": "^3.87.0",
+    "@payloadcms/next": "^3.87.0",
+    "@payloadcms/richtext-lexical": "^3.87.0",
     "clsx": "2.1.1",
+    "graphql": "^16.14.2",
     "lucide-react": "^1.28.0",
-    "next": "^15.5.22",
+    "next": ">=15.4.11 <15.5.0",
+    "payload": "^3.87.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "sharp": "^0.35.3",
     "tailwind-merge": "2.5.4"
   },
   "devDependencies": {
@@ -24,9 +33,10 @@
     "@types/react-dom": "^19.2.4",
     "autoprefixer": "10.4.20",
     "eslint": "8.57.0",
-    "eslint-config-next": "^15.5.22",
+    "eslint-config-next": ">=15.4.11 <15.5.0",
     "postcss": "8.4.47",
     "tailwindcss": "3.4.13",
     "typescript": "5.5.3"
-  }
+  },
+  "type": "module"
 }
