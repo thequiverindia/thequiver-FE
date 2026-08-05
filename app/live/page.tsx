@@ -27,11 +27,12 @@ const TAG_LABELS: Record<string, string> = {
   statement: 'Statements',
 };
 
-export default function LivePage({
-  searchParams,
-}: {
-  searchParams?: { tag?: string };
-}) {
+export default async function LivePage(
+  props: {
+    searchParams?: Promise<{ tag?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const tag = searchParams?.tag;
   const filtered = tag ? LIVE_UPDATES.filter((u) => u.tag === tag) : LIVE_UPDATES;
   const groups = groupByDay(filtered);

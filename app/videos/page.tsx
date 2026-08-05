@@ -12,11 +12,12 @@ export const metadata = {
 
 const SERIES = [...new Set(VIDEOS.map((v) => v.series).filter(Boolean))] as string[];
 
-export default function VideosPage({
-  searchParams,
-}: {
-  searchParams?: { series?: string };
-}) {
+export default async function VideosPage(
+  props: {
+    searchParams?: Promise<{ series?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const series = searchParams?.series;
   const filtered = series ? VIDEOS.filter((v) => v.series === series) : VIDEOS;
   const featured = filtered[0] ?? VIDEOS[0];

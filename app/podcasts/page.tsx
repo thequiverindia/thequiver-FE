@@ -13,11 +13,12 @@ export const metadata = {
 
 const SERIES = [...new Set(PODCASTS.map((p) => p.series))];
 
-export default function PodcastsPage({
-  searchParams,
-}: {
-  searchParams?: { series?: string };
-}) {
+export default async function PodcastsPage(
+  props: {
+    searchParams?: Promise<{ series?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const series = searchParams?.series;
   const filtered = series ? PODCASTS.filter((p) => p.series === series) : PODCASTS;
   const featured = filtered[0] ?? PODCASTS[0];

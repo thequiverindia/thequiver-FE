@@ -6,11 +6,12 @@ export const metadata = {
   title: 'Explainers — The story behind the headlines',
 };
 
-export default function ExplainersPage({
-  searchParams,
-}: {
-  searchParams: { page?: string };
-}) {
+export default async function ExplainersPage(
+  props: {
+    searchParams: Promise<{ page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const page = Number(searchParams.page ?? 1);
   const articles = ARTICLES.filter((a) => a.category === 'explainers');
   return (

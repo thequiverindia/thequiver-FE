@@ -7,7 +7,7 @@ export function Container({
 }: {
   className?: string;
   children: React.ReactNode;
-  as?: keyof JSX.IntrinsicElements;
+  as?: React.ElementType;
 }) {
   return <Tag className={cn('container-page', className)}>{children}</Tag>;
 }

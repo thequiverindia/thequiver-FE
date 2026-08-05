@@ -16,11 +16,12 @@ const CAT_TAB_LABELS: Record<string, string> = {
   trending: 'Trending',
 };
 
-export default function PollsPage({
-  searchParams,
-}: {
-  searchParams?: { cat?: string };
-}) {
+export default async function PollsPage(
+  props: {
+    searchParams?: Promise<{ cat?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const cat = searchParams?.cat;
   const polls = cat
     ? POLLS.filter((p) => p.category.toLowerCase() === cat)

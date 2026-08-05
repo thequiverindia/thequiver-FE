@@ -1,14 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Share2,
-  Twitter,
-  Facebook,
-  MessageCircle,
-  Link as LinkIcon,
-  Check,
-} from 'lucide-react';
+import { Share2, Link as LinkIcon, Check } from 'lucide-react';
+import { XIcon, FacebookIcon, WhatsappIcon } from '@/components/ui/BrandIcons';
 import { cn } from '@/lib/utils';
 
 /**
@@ -60,7 +54,7 @@ export function ShareBar({
           )
         }
       >
-        <MessageCircle className="h-4 w-4" />
+        <WhatsappIcon className="h-4 w-4" />
       </button>
       <button
         type="button"
@@ -73,7 +67,7 @@ export function ShareBar({
           )
         }
       >
-        <Twitter className="h-4 w-4" />
+        <XIcon className="h-4 w-4" />
       </button>
       <button
         type="button"
@@ -86,7 +80,7 @@ export function ShareBar({
           )
         }
       >
-        <Facebook className="h-4 w-4" />
+        <FacebookIcon className="h-4 w-4" />
       </button>
       <button
         type="button"

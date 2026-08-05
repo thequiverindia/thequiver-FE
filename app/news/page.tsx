@@ -9,11 +9,12 @@ export const metadata = {
   description: 'Everything we are reporting today. Sorted by recency.',
 };
 
-export default function NewsPage({
-  searchParams,
-}: {
-  searchParams: { page?: string };
-}) {
+export default async function NewsPage(
+  props: {
+    searchParams: Promise<{ page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const page = Number(searchParams.page ?? 1);
   const sorted = [...ARTICLES].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),

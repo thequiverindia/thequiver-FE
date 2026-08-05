@@ -14,13 +14,15 @@ export async function generateStaticParams() {
   return FACT_CHECKS.map((f) => ({ slug: f.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const fc = findFactCheck(params.slug);
   if (!fc) return { title: 'Fact check not found' };
   return { title: `Fact Check: ${fc.claim.slice(0, 60)}…`, description: fc.verdict };
 }
 
-export default function FactCheckDetail({ params }: { params: { slug: string } }) {
+export default async function FactCheckDetail(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const fc = findFactCheck(params.slug);
   if (!fc) notFound();
   const others = FACT_CHECKS.filter((f) => f.id !== fc.id).slice(0, 3);

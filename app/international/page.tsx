@@ -6,11 +6,12 @@ export const metadata = {
   title: 'International — India in the world',
 };
 
-export default function InternationalPage({
-  searchParams,
-}: {
-  searchParams: { page?: string };
-}) {
+export default async function InternationalPage(
+  props: {
+    searchParams: Promise<{ page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const page = Number(searchParams.page ?? 1);
   const articles = ARTICLES.filter((a) => a.category === 'international');
   const hero = articles[0] ?? ARTICLES[0];

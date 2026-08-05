@@ -1,9 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Twitter,
-  Instagram,
-  Facebook,
   Globe,
   Star,
   Users,
@@ -14,6 +11,7 @@ import {
   Gavel,
   CalendarCheck,
 } from 'lucide-react';
+import { XIcon, InstagramIcon, FacebookIcon } from '@/components/ui/BrandIcons';
 import { Container } from '@/components/ui/Container';
 import { Avatar } from '@/components/ui/Avatar';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
@@ -29,7 +27,8 @@ export async function generateStaticParams() {
   return POLITICIANS.map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const p = findPolitician(params.slug);
   if (!p) return { title: 'Leader not found' };
   return {
@@ -38,7 +37,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function LeaderPage({ params }: { params: { slug: string } }) {
+export default async function LeaderPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const p = findPolitician(params.slug);
   if (!p) notFound();
   const others = POLITICIANS.filter((x) => x.id !== p.id).slice(0, 4);
@@ -115,21 +115,21 @@ export default function LeaderPage({ params }: { params: { slug: string } }) {
                 {p.socials.twitter && (
                   <SocialButton
                     href={`https://twitter.com/${p.socials.twitter}`}
-                    Icon={Twitter}
+                    Icon={XIcon}
                     label={`${p.name} on X`}
                   />
                 )}
                 {p.socials.instagram && (
                   <SocialButton
                     href={`https://instagram.com/${p.socials.instagram}`}
-                    Icon={Instagram}
+                    Icon={InstagramIcon}
                     label={`${p.name} on Instagram`}
                   />
                 )}
                 {p.socials.facebook && (
                   <SocialButton
                     href={`https://facebook.com/${p.socials.facebook}`}
-                    Icon={Facebook}
+                    Icon={FacebookIcon}
                     label={`${p.name} on Facebook`}
                   />
                 )}

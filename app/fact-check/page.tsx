@@ -27,11 +27,12 @@ const RATING_TAB_LABELS: Record<string, string> = {
   'mostly-true': 'Mostly True',
 };
 
-export default function FactCheckPage({
-  searchParams,
-}: {
-  searchParams?: { rating?: string; q?: string };
-}) {
+export default async function FactCheckPage(
+  props: {
+    searchParams?: Promise<{ rating?: string; q?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const rating = searchParams?.rating;
   const q = searchParams?.q?.trim().toLowerCase();
   const filtered = FACT_CHECKS.filter((fc) => {

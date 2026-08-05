@@ -12,13 +12,15 @@ export async function generateStaticParams() {
   return POLLS.map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const p = findPoll(params.slug);
   if (!p) return { title: 'Poll not found' };
   return { title: `Poll: ${p.question}`, description: p.description };
 }
 
-export default function PollDetailPage({ params }: { params: { slug: string } }) {
+export default async function PollDetailPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const p = findPoll(params.slug);
   if (!p) notFound();
   const others = POLLS.filter((x) => x.id !== p.id).slice(0, 3);

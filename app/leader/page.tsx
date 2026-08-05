@@ -22,11 +22,12 @@ function buildHref(params: Record<string, string | undefined>) {
   return s ? `/leader?${s}` : '/leader';
 }
 
-export default function LeadersPage({
-  searchParams,
-}: {
-  searchParams?: { q?: string; party?: string; sort?: string; state?: string };
-}) {
+export default async function LeadersPage(
+  props: {
+    searchParams?: Promise<{ q?: string; party?: string; sort?: string; state?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const q = searchParams?.q?.trim().toLowerCase();
   const party = searchParams?.party;
   const state = searchParams?.state;

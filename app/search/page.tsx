@@ -16,11 +16,12 @@ const TYPE_TAB_LABELS: Record<string, string> = {
   facts: 'Fact-checks',
 };
 
-export default function SearchPage({
-  searchParams,
-}: {
-  searchParams: { q?: string; type?: string };
-}) {
+export default async function SearchPage(
+  props: {
+    searchParams: Promise<{ q?: string; type?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const rawQ = (searchParams.q ?? '').trim();
   const q = rawQ.toLowerCase();
   const enc = encodeURIComponent(rawQ);

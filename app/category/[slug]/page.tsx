@@ -9,13 +9,14 @@ export async function generateStaticParams() {
   return CATEGORIES.map((c) => ({ slug: c.slug }));
 }
 
-export default function CategoryPage({
-  params,
-  searchParams,
-}: {
-  params: { slug: string };
-  searchParams: { page?: string };
-}) {
+export default async function CategoryPage(
+  props: {
+    params: Promise<{ slug: string }>;
+    searchParams: Promise<{ page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const cat = CATEGORIES.find((c) => c.slug === params.slug);
   if (!cat) notFound();
   const page = Number(searchParams.page ?? 1);

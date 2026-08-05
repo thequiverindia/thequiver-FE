@@ -10,11 +10,12 @@ export const metadata = {
   title: 'State News — Stories from every corner of India',
 };
 
-export default function StateNewsPage({
-  searchParams,
-}: {
-  searchParams?: { state?: string };
-}) {
+export default async function StateNewsPage(
+  props: {
+    searchParams?: Promise<{ state?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const activeState = searchParams?.state;
   const articles = ARTICLES.filter((a) => a.category === 'state-news');
   const all = articles.length > 0 ? articles : ARTICLES.slice(0, 8);

@@ -11,7 +11,8 @@ export async function generateStaticParams() {
   return PODCASTS.map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const p = findPodcast(params.slug);
   if (!p) return { title: 'Episode not found' };
   return {
@@ -20,7 +21,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default function PodcastEpisodePage({ params }: { params: { slug: string } }) {
+export default async function PodcastEpisodePage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const p = findPodcast(params.slug);
   if (!p) notFound();
   const others = PODCASTS.filter((x) => x.id !== p.id);

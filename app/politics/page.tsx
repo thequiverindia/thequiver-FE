@@ -6,11 +6,12 @@ export const metadata = {
   title: 'Politics — Power, policy and the politics of nation-building',
 };
 
-export default function PoliticsPage({
-  searchParams,
-}: {
-  searchParams: { page?: string };
-}) {
+export default async function PoliticsPage(
+  props: {
+    searchParams: Promise<{ page?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const page = Number(searchParams.page ?? 1);
   const articles = ARTICLES.filter((a) => a.category === 'politics');
   return (

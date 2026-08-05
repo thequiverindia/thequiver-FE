@@ -13,13 +13,15 @@ export async function generateStaticParams() {
   return VIDEOS.map((v) => ({ slug: v.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const v = findVideo(params.slug);
   if (!v) return { title: 'Video not found' };
   return { title: v.title, description: v.description };
 }
 
-export default function VideoPage({ params }: { params: { slug: string } }) {
+export default async function VideoPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
   const v = findVideo(params.slug);
   if (!v) notFound();
   const others = VIDEOS.filter((x) => x.id !== v.id);

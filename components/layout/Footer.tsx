@@ -1,5 +1,12 @@
 import Link from 'next/link';
-import { Twitter, Instagram, Youtube, Facebook, Linkedin, Send } from 'lucide-react';
+import { Send } from 'lucide-react';
+import {
+  XIcon,
+  InstagramIcon,
+  YoutubeIcon,
+  FacebookIcon,
+  LinkedinIcon,
+} from '@/components/ui/BrandIcons';
 import { Logo } from './Logo';
 import { MockForm } from '@/components/ui/MockForm';
 import { FOOTER_LINKS } from '@/lib/constants';
@@ -34,11 +41,11 @@ export function Footer() {
             </MockForm>
             <div className="mt-6 flex items-center gap-2">
               {[
-                { Icon: Twitter, label: 'X (Twitter)', href: 'https://twitter.com/thequiverindia' },
-                { Icon: Instagram, label: 'Instagram', href: 'https://instagram.com/thequiverindia' },
-                { Icon: Youtube, label: 'YouTube', href: 'https://youtube.com/@thequiverindia' },
-                { Icon: Facebook, label: 'Facebook', href: 'https://facebook.com/thequiverindia' },
-                { Icon: Linkedin, label: 'LinkedIn', href: 'https://linkedin.com/company/thequiverindia' },
+                { Icon: XIcon, label: 'X (Twitter)', href: 'https://twitter.com/thequiverindia' },
+                { Icon: InstagramIcon, label: 'Instagram', href: 'https://instagram.com/thequiverindia' },
+                { Icon: YoutubeIcon, label: 'YouTube', href: 'https://youtube.com/@thequiverindia' },
+                { Icon: FacebookIcon, label: 'Facebook', href: 'https://facebook.com/thequiverindia' },
+                { Icon: LinkedinIcon, label: 'LinkedIn', href: 'https://linkedin.com/company/thequiverindia' },
               ].map(({ Icon, label, href }) => (
                 <a
                   key={label}

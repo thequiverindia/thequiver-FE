@@ -12,7 +12,8 @@ import {
 } from '@/lib/mock-data';
 import { slugify, formatNumber } from '@/lib/utils';
 
-export async function generateMetadata({ params }: { params: { state: string } }) {
+export async function generateMetadata(props: { params: Promise<{ state: string }> }) {
+  const params = await props.params;
   const result = ELECTION_RESULTS_2024.find(
     (r) => slugify(r.state) === params.state.toLowerCase(),
   );
@@ -27,7 +28,8 @@ export async function generateStaticParams() {
   return ELECTION_RESULTS_2024.map((r) => ({ state: slugify(r.state) }));
 }
 
-export default function StatePage({ params }: { params: { state: string } }) {
+export default async function StatePage(props: { params: Promise<{ state: string }> }) {
+  const params = await props.params;
   const result = ELECTION_RESULTS_2024.find(
     (r) => slugify(r.state) === params.state.toLowerCase(),
   );
