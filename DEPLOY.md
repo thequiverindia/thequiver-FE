@@ -140,3 +140,39 @@ Vercel builds and deploys. Then verify, in order:
 - Cold starts: a rarely-visited page may take ~1–2s on first hit. The CDN
   cache hides this for all popular pages.
 - Neon free tier sleeps after inactivity (first query wakes it, ~500ms).
+
+---
+
+## Maintenance gotchas (learned the hard way)
+
+**After adding/removing any Payload plugin or rich-text feature, regenerate the
+import map — with the same env the server will have:**
+
+```powershell
+$env:S3_BUCKET = "placeholder"   # makes the storage plugin register its component
+npm run generate:importmap
+Remove-Item Env:S3_BUCKET
+```
+
+The admin panel resolves its components through
+`app/(payload)/admin/importMap.js`. In dev Payload resolves them dynamically, so
+a stale map only breaks **production** — the symptom is a blank `/admin` screen
+(the server log says *"You may need to run the payload generate:importmap
+command"*). Commit the regenerated file.
+
+**If images 404 on the live site**, the DB references files the bucket never
+received. Repair, don't re-seed:
+
+```powershell
+npx tsx scripts/sync-media-to-r2.ts          # dry run
+npx tsx scripts/sync-media-to-r2.ts --apply  # upload the missing ones
+```
+
+**`vercel-env.txt`** is a gitignored reference copy of the production values for
+pasting into Vercel. It is deliberately *not* named `.env.production.local`,
+because Next.js auto-loads that filename during `next build` — which would make
+local production builds talk to the live database.
+
+**Image hosts** must be whitelisted in `next.config.mjs` `remotePatterns`, or
+`next/image` returns 400. YouTube uses `i.ytimg.com` *and* `i1`–`i4.ytimg.com`,
+hence the `*.ytimg.com` wildcard.

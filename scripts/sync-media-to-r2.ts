@@ -11,7 +11,7 @@
  * expected filename to the copy in ./media and uploading it. Idempotent —
  * it skips anything already present.
  *
- * Reads credentials from .env.production.local (or the environment).
+ * Reads credentials from vercel-env.txt (or the environment).
  */
 import fs from 'fs';
 import path from 'path';
@@ -32,8 +32,8 @@ const MIME: Record<string, string> = {
 
 function loadEnv(): Record<string, string> {
   const env: Record<string, string> = { ...(process.env as Record<string, string>) };
-  const file = '.env.production.local';
-  if (fs.existsSync(file)) {
+  const file = ['vercel-env.txt', '.env.production.local'].find((f) => fs.existsSync(f));
+  if (file) {
     for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
       const m = /^([A-Z0-9_]+)=(.*)$/.exec(line.trim());
       if (m && !line.trim().startsWith('#')) env[m[1]] ??= m[2];
@@ -66,7 +66,7 @@ async function main() {
   const siteUrl = (env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
 
   for (const key of ['S3_BUCKET', 'S3_ENDPOINT', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY']) {
-    if (!env[key]) throw new Error(`Missing ${key} (set it in .env.production.local or the environment)`);
+    if (!env[key]) throw new Error(`Missing ${key} (set it in vercel-env.txt or the environment)`);
   }
 
   const client = new S3Client({

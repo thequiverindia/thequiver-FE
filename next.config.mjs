@@ -8,7 +8,10 @@ const nextConfig = {
       { protocol: 'https', hostname: 'picsum.photos' },
       { protocol: 'https', hostname: 'avatar.vercel.sh' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
-      { protocol: 'https', hostname: 'i.ytimg.com' },
+      // YouTube serves thumbnails from i.ytimg.com AND the numbered
+      // mirrors i1–i4.ytimg.com, so the whole subdomain set must be allowed.
+      { protocol: 'https', hostname: '*.ytimg.com' },
+      { protocol: 'https', hostname: 'ytimg.com' },
     ],
   },
 };

@@ -15,3 +15,6 @@ next-env.d.ts
 *.db
 *.db-journal
 /media
+
+# Reference copy of production env values (paste target for Vercel)
+vercel-env.txt
