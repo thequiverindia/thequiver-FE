@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Container } from '@/components/ui/Container';
 import { Badge } from '@/components/ui/Badge';
 import { Tag } from '@/components/ui/Tag';
@@ -37,9 +38,31 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default function ArticlePage({ params }: { params: { slug: string } }) {
   const article = findArticle(params.slug);
   if (!article) notFound();
-  const related = relatedArticles(article);
+  const related = relatedArticles(article).slice(0, 3);
+  // "Read next" must not repeat the sidebar's related list.
+  const readNext = ARTICLES.filter(
+    (a) => a.id !== article.id && !related.some((r) => r.id === a.id),
+  ).slice(0, 3);
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: article.title,
+    description: article.excerpt,
+    image: [article.image],
+    datePublished: article.publishedAt,
+    dateModified: article.updatedAt ?? article.publishedAt,
+    author: { '@type': 'Person', name: article.author.name },
+    publisher: { '@type': 'NewsMediaOrganization', name: 'TheQuiverIndia' },
+    wordCount: article.wordCount,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ReadingProgress />
       <BackToTop />
 
@@ -90,24 +113,31 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
       </header>
 
       {/* Image */}
-      <div className="bg-ink">
+      <figure className="border-b border-line bg-bg-subtle">
         <div className="mx-auto max-w-5xl">
-          <div className="aspect-[16/9] w-full overflow-hidden bg-bg-muted">
-            <img src={article.image} alt="" className="h-full w-full object-cover" />
+          <div className="relative aspect-[16/9] w-full overflow-hidden bg-bg-muted">
+            <Image
+              src={article.image}
+              alt={article.imageCaption ?? article.title}
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 1024px"
+              className="object-cover"
+            />
           </div>
           {article.imageCaption && (
-            <p className="mx-auto max-w-prose px-4 py-3 text-xs text-bg/70">
+            <figcaption className="mx-auto max-w-prose px-4 py-3 text-xs text-ink-muted">
               {article.imageCaption}
-            </p>
+            </figcaption>
           )}
         </div>
-      </div>
+      </figure>
 
       {/* Body */}
       <Container as="article" className="py-10 lg:py-16">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-12 lg:gap-14">
           <div className="hidden lg:col-span-1 lg:block">
-            <div className="sticky top-28">
+            <div className="sticky top-24">
               <ShareBar orientation="vertical" />
             </div>
           </div>
@@ -153,6 +183,7 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
 
           {/* Sidebar */}
           <aside className="space-y-8 lg:col-span-3">
+            {related.length > 0 && (
             <div className="rounded-xl border border-line bg-bg p-5">
               <p className="kicker mb-3">More on this story</p>
               <ul className="space-y-3 divide-y divide-line">
@@ -173,6 +204,7 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
                 ))}
               </ul>
             </div>
+            )}
             <div className="rounded-xl border border-line bg-bg p-5">
               <p className="kicker mb-3">Most read</p>
               <ul className="space-y-3">
@@ -197,19 +229,21 @@ export default function ArticlePage({ params }: { params: { slug: string } }) {
         </div>
       </Container>
 
-      {/* Related */}
-      <section className="border-t border-line bg-bg-subtle">
-        <Container className="py-16">
-          <h2 className="mb-8 font-serif text-2xl font-semibold text-ink md:text-3xl">
-            Read next
-          </h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {related.map((a) => (
-              <ArticleCard key={a.id} article={a} variant="standard" />
-            ))}
-          </div>
-        </Container>
-      </section>
+      {/* Read next — distinct from the sidebar's related list */}
+      {readNext.length > 0 && (
+        <section className="border-t border-line bg-bg-subtle">
+          <Container className="py-16">
+            <h2 className="mb-8 font-serif text-2xl font-semibold text-ink md:text-3xl">
+              Read next
+            </h2>
+            <div className="grid gap-6 md:grid-cols-3">
+              {readNext.map((a) => (
+                <ArticleCard key={a.id} article={a} variant="standard" />
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
     </>
   );
 }

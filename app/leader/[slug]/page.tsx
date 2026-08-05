@@ -42,7 +42,12 @@ export default function LeaderPage({ params }: { params: { slug: string } }) {
   const p = findPolitician(params.slug);
   if (!p) notFound();
   const others = POLITICIANS.filter((x) => x.id !== p.id).slice(0, 4);
-  const mentions = ARTICLES.slice(0, 4);
+  // Only stories that actually mention this leader (name, party, or constituency).
+  const nameParts = [p.name.toLowerCase(), p.partyShort.toLowerCase(), p.constituency.toLowerCase()];
+  const mentions = ARTICLES.filter((a) => {
+    const haystack = `${a.title} ${a.excerpt} ${a.tags.join(' ')}`.toLowerCase();
+    return nameParts.some((n) => haystack.includes(n));
+  }).slice(0, 4);
 
   return (
     <>
@@ -66,10 +71,12 @@ export default function LeaderPage({ params }: { params: { slug: string } }) {
                 className="h-24 w-24 md:h-28 md:w-28"
               />
               <div className="min-w-0">
-                <p
-                  className="text-[10px] font-semibold uppercase tracking-[0.16em]"
-                  style={{ color: p.partyColor }}
-                >
+                <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-muted">
+                  <span
+                    aria-hidden
+                    className="inline-block h-2 w-2 shrink-0 rounded-full"
+                    style={{ background: p.partyColor }}
+                  />
                   {p.party} ({p.partyShort})
                 </p>
                 <h1 className="mt-1 text-balance font-serif text-3xl font-semibold leading-tight text-ink sm:text-4xl md:text-5xl">
@@ -90,12 +97,18 @@ export default function LeaderPage({ params }: { params: { slug: string } }) {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <button className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-bg hover:bg-ink/90 sm:flex-initial">
-                <Users className="h-3.5 w-3.5" />
+              <button
+                type="button"
+                className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-bg transition hover:bg-ink/90 active:bg-ink/80 focus-ring sm:flex-initial"
+              >
+                <Users className="h-3.5 w-3.5" aria-hidden />
                 Follow
               </button>
-              <button className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-full border border-line-strong bg-bg px-5 text-sm font-medium text-ink hover:bg-bg-muted sm:flex-initial">
-                <Star className="h-3.5 w-3.5" />
+              <button
+                type="button"
+                className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-line-strong bg-bg px-5 text-sm font-medium text-ink transition hover:bg-bg-muted active:bg-bg-muted focus-ring sm:flex-initial"
+              >
+                <Star className="h-3.5 w-3.5" aria-hidden />
                 Rate
               </button>
               <div className="flex items-center gap-1">
@@ -103,22 +116,29 @@ export default function LeaderPage({ params }: { params: { slug: string } }) {
                   <SocialButton
                     href={`https://twitter.com/${p.socials.twitter}`}
                     Icon={Twitter}
+                    label={`${p.name} on X`}
                   />
                 )}
                 {p.socials.instagram && (
                   <SocialButton
                     href={`https://instagram.com/${p.socials.instagram}`}
                     Icon={Instagram}
+                    label={`${p.name} on Instagram`}
                   />
                 )}
                 {p.socials.facebook && (
                   <SocialButton
                     href={`https://facebook.com/${p.socials.facebook}`}
                     Icon={Facebook}
+                    label={`${p.name} on Facebook`}
                   />
                 )}
                 {p.socials.web && (
-                  <SocialButton href={`https://${p.socials.web}`} Icon={Globe} />
+                  <SocialButton
+                    href={`https://${p.socials.web}`}
+                    Icon={Globe}
+                    label={`${p.name}'s website`}
+                  />
                 )}
               </div>
             </div>
@@ -128,7 +148,7 @@ export default function LeaderPage({ params }: { params: { slug: string } }) {
             {p.bio}
           </p>
 
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:mt-8 md:grid-cols-6">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:mt-8 lg:grid-cols-6">
             <Stat label="Rating" value={`${p.rating}/10`} Icon={Star} />
             <Stat label="Followers" value={formatNumber(p.followers)} Icon={Users} />
             <Stat
@@ -172,7 +192,7 @@ export default function LeaderPage({ params }: { params: { slug: string } }) {
           </div>
 
           <aside className="lg:col-span-4">
-            <div className="sticky top-32 space-y-6">
+            <div className="space-y-6 lg:sticky lg:top-24">
               <div className="rounded-xl border border-line bg-bg p-5">
                 <p className="kicker mb-3">Profile</p>
                 <dl className="space-y-3 text-sm">
@@ -217,20 +237,22 @@ export default function LeaderPage({ params }: { params: { slug: string } }) {
         </Container>
       </section>
 
-      {/* Mentions */}
-      <Container as="section" className="py-16">
-        <div className="mb-8">
-          <p className="kicker">In the news</p>
-          <h2 className="mt-2 font-serif text-2xl font-semibold text-ink md:text-3xl">
-            Recent coverage mentioning {p.name.split(' ')[0]}
-          </h2>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {mentions.map((a) => (
-            <ArticleCard key={a.id} article={a} variant="compact" />
-          ))}
-        </div>
-      </Container>
+      {/* Mentions — only rendered when real coverage exists */}
+      {mentions.length > 0 && (
+        <Container as="section" className="py-16">
+          <div className="mb-8">
+            <p className="kicker">In the news</p>
+            <h2 className="mt-2 font-serif text-2xl font-semibold text-ink md:text-3xl">
+              Recent coverage mentioning {p.name.split(' ')[0]}
+            </h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {mentions.map((a) => (
+              <ArticleCard key={a.id} article={a} variant="compact" />
+            ))}
+          </div>
+        </Container>
+      )}
 
       {/* Other leaders */}
       <section className="border-t border-line bg-bg-subtle">
@@ -252,18 +274,21 @@ export default function LeaderPage({ params }: { params: { slug: string } }) {
 function SocialButton({
   href,
   Icon,
+  label,
 }: {
   href: string;
   Icon: React.ComponentType<{ className?: string }>;
+  label: string;
 }) {
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line bg-bg text-ink-muted transition hover:border-line-strong hover:text-ink"
+      aria-label={label}
+      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-bg text-ink-muted transition hover:border-line-strong hover:text-ink active:bg-bg-muted focus-ring"
     >
-      <Icon className="h-4 w-4" />
+      <Icon className="h-4 w-4" aria-hidden />
     </a>
   );
 }

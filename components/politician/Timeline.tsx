@@ -1,12 +1,12 @@
 import { Award, AlertOctagon, Vote, MessageCircle } from 'lucide-react';
 import type { PoliticianEvent } from '@/lib/types';
-import { formatDate } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 
 const kindMeta = {
-  milestone: { label: 'Milestone', Icon: Award, color: '#1E1B4B' },
-  controversy: { label: 'Controversy', Icon: AlertOctagon, color: '#DC2626' },
-  election: { label: 'Election', Icon: Vote, color: '#15803D' },
-  statement: { label: 'Statement', Icon: MessageCircle, color: '#EA580C' },
+  milestone: { label: 'Milestone', Icon: Award, text: 'text-brand', chip: 'bg-brand/10 text-brand' },
+  controversy: { label: 'Controversy', Icon: AlertOctagon, text: 'text-danger', chip: 'bg-danger/10 text-danger' },
+  election: { label: 'Election', Icon: Vote, text: 'text-success', chip: 'bg-success/10 text-success' },
+  statement: { label: 'Statement', Icon: MessageCircle, text: 'text-warn', chip: 'bg-warn/10 text-warn' },
 } as const;
 
 export function Timeline({ events }: { events: PoliticianEvent[] }) {
@@ -20,14 +20,18 @@ export function Timeline({ events }: { events: PoliticianEvent[] }) {
         return (
           <li key={i} className="relative pl-8 pb-8 last:pb-0">
             <span
-              className="absolute -left-[15px] top-0 inline-flex h-7 w-7 items-center justify-center rounded-full ring-4 ring-bg"
-              style={{ background: meta.color + '20', color: meta.color }}
+              className={cn(
+                'absolute -left-[15px] top-0 inline-flex h-7 w-7 items-center justify-center rounded-full ring-4 ring-bg',
+                meta.chip,
+              )}
             >
               <meta.Icon className="h-3.5 w-3.5" />
             </span>
             <p
-              className="text-[10px] font-semibold uppercase tracking-wider"
-              style={{ color: meta.color }}
+              className={cn(
+                'text-[10px] font-semibold uppercase tracking-wider',
+                meta.text,
+              )}
             >
               {meta.label} · {formatDate(e.date)}
             </p>

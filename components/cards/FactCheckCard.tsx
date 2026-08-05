@@ -1,40 +1,50 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { FactCheck } from '@/lib/types';
 import { cn, formatNumber, timeAgo } from '@/lib/utils';
 
+/**
+ * Rating → token classes. Everything flows through the theme's status ramp
+ * so verdicts stay legible in every theme and mode.
+ */
 const ratingMeta: Record<
   FactCheck['rating'],
-  { label: string; color: string; bg: string; border: string }
+  { label: string; text: string; chip: string; panel: string; dot: string }
 > = {
   true: {
     label: 'True',
-    color: '#15803D',
-    bg: 'rgba(21,128,61,0.08)',
-    border: 'rgba(21,128,61,0.2)',
+    text: 'text-success',
+    chip: 'text-success bg-success/10 border-success/25',
+    panel: 'bg-success/5 border-success/30',
+    dot: 'bg-success',
   },
   'mostly-true': {
     label: 'Mostly True',
-    color: '#16A34A',
-    bg: 'rgba(22,163,74,0.08)',
-    border: 'rgba(22,163,74,0.2)',
+    text: 'text-success',
+    chip: 'text-success bg-success/10 border-success/25',
+    panel: 'bg-success/5 border-success/30',
+    dot: 'bg-success/70',
   },
   misleading: {
     label: 'Misleading',
-    color: '#EA580C',
-    bg: 'rgba(234,88,12,0.08)',
-    border: 'rgba(234,88,12,0.2)',
+    text: 'text-warn',
+    chip: 'text-warn bg-warn/10 border-warn/25',
+    panel: 'bg-warn/5 border-warn/30',
+    dot: 'bg-warn',
   },
   false: {
     label: 'False',
-    color: '#DC2626',
-    bg: 'rgba(220,38,38,0.08)',
-    border: 'rgba(220,38,38,0.2)',
+    text: 'text-danger',
+    chip: 'text-danger bg-danger/10 border-danger/25',
+    panel: 'bg-danger/5 border-danger/30',
+    dot: 'bg-danger',
   },
   satire: {
     label: 'Satire',
-    color: '#737373',
-    bg: 'rgba(115,115,115,0.08)',
-    border: 'rgba(115,115,115,0.2)',
+    text: 'text-ink-muted',
+    chip: 'text-ink-muted bg-bg-muted border-line-strong',
+    panel: 'bg-bg-muted/50 border-line-strong',
+    dot: 'bg-ink-subtle',
   },
 };
 
@@ -54,18 +64,20 @@ export function FactCheckCard({
       <Link
         href={`/fact-check/${fc.slug}`}
         className={cn(
-          'group block rounded-lg border border-line bg-bg p-4 transition hover:border-line-strong',
+          'group block rounded-lg border border-line bg-bg p-4 transition hover:border-line-strong focus-ring',
           className,
         )}
       >
         <span
-          className="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
-          style={{ color: meta.color, background: meta.bg, borderColor: meta.border }}
+          className={cn(
+            'inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
+            meta.chip,
+          )}
         >
           {meta.label}
         </span>
         <p className="mt-3 line-clamp-3 text-balance font-serif text-base font-semibold leading-snug text-ink transition group-hover:text-brand">
-          "{fc.claim}"
+          &ldquo;{fc.claim}&rdquo;
         </p>
         <p className="mt-3 text-xs text-ink-muted">
           {fc.claimant} · {timeAgo(fc.publishedAt)}
@@ -81,26 +93,30 @@ export function FactCheckCard({
         className,
       )}
     >
-      <Link href={`/fact-check/${fc.slug}`} className="block">
+      <Link href={`/fact-check/${fc.slug}`} className="block focus-ring">
         <div className="relative aspect-[16/9] w-full overflow-hidden bg-bg-muted">
-          <img
+          <Image
             src={fc.image}
             alt=""
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition duration-500 group-hover:scale-[1.03]"
           />
           <span
-            className="absolute left-3 top-3 inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-wider"
-            style={{ color: meta.color, background: meta.bg, borderColor: meta.border, backdropFilter: 'blur(8px)' }}
+            className={cn(
+              'stamp absolute left-3 top-3 border-2 bg-bg/90 px-2 py-0.5 text-xs backdrop-blur',
+              meta.text,
+            )}
           >
             {meta.label}
           </span>
         </div>
         <div className="p-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-saffron">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
             Fact Check
           </p>
           <h3 className="mt-2 line-clamp-3 text-balance font-serif text-base font-semibold leading-snug text-ink transition group-hover:text-brand md:text-lg">
-            "{fc.claim}"
+            &ldquo;{fc.claim}&rdquo;
           </h3>
           <p className="mt-3 text-xs text-ink-muted">
             Claim by {fc.claimant} · {timeAgo(fc.publishedAt)} · {formatNumber(fc.views)} views

@@ -13,6 +13,7 @@ export default function InternationalPage({
 }) {
   const page = Number(searchParams.page ?? 1);
   const articles = ARTICLES.filter((a) => a.category === 'international');
+  const hero = articles[0] ?? ARTICLES[0];
   return (
     <>
       <CategoryHero
@@ -20,9 +21,13 @@ export default function InternationalPage({
         title="India in the world. The world in India."
         description="Diplomacy, foreign policy, and the global stories with consequences at home."
         breadcrumb={[{ label: 'Home', href: '/' }, { label: 'International' }]}
-        hero={articles[0] ?? ARTICLES[0]}
+        hero={hero}
       />
-      <CategoryGrid articles={articles} page={page} basePath="/international" />
+      <CategoryGrid
+        articles={articles.filter((a) => a.id !== hero.id)}
+        page={page}
+        basePath="/international"
+      />
     </>
   );
 }

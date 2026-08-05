@@ -25,12 +25,22 @@ export function Avatar({
         sizes[size],
         className,
       )}
-      aria-label={name}
     >
       {src ? (
-        <img src={src} alt={name} className="h-full w-full object-cover" />
+        // Remote SVG avatars can't go through next/image optimization;
+        // they're tiny, so a lazy <img> with intrinsic size is the right call.
+        <img
+          src={src}
+          alt={name}
+          loading="lazy"
+          width={80}
+          height={80}
+          className="h-full w-full object-cover"
+        />
       ) : (
-        <span>{initials(name)}</span>
+        <span aria-label={name} role="img">
+          {initials(name)}
+        </span>
       )}
     </div>
   );

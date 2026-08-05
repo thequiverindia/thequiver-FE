@@ -1,33 +1,37 @@
 import { CheckCircle2, XCircle, Clock, HelpCircle } from 'lucide-react';
 import type { PoliticianPromise, PromiseStatus } from '@/lib/types';
-import { formatDate } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 
 const statusMeta: Record<
   PromiseStatus,
-  { label: string; color: string; bg: string; Icon: typeof CheckCircle2 }
+  { label: string; text: string; chip: string; border: string; Icon: typeof CheckCircle2 }
 > = {
   kept: {
     label: 'Kept',
-    color: '#15803D',
-    bg: 'rgba(21,128,61,0.1)',
+    text: 'text-success',
+    chip: 'bg-success/10 text-success',
+    border: 'border-success/30',
     Icon: CheckCircle2,
   },
   broken: {
     label: 'Broken',
-    color: '#DC2626',
-    bg: 'rgba(220,38,38,0.1)',
+    text: 'text-danger',
+    chip: 'bg-danger/10 text-danger',
+    border: 'border-danger/30',
     Icon: XCircle,
   },
   'in-progress': {
     label: 'In Progress',
-    color: '#EA580C',
-    bg: 'rgba(234,88,12,0.1)',
+    text: 'text-warn',
+    chip: 'bg-warn/10 text-warn',
+    border: 'border-warn/30',
     Icon: Clock,
   },
   unverifiable: {
     label: 'Unverifiable',
-    color: '#737373',
-    bg: 'rgba(115,115,115,0.1)',
+    text: 'text-ink-muted',
+    chip: 'bg-bg-muted text-ink-muted',
+    border: 'border-line-strong',
     Icon: HelpCircle,
   },
 };
@@ -48,13 +52,17 @@ export function PromiseTracker({ promises }: { promises: PoliticianPromise[] }) 
           return (
             <div
               key={s}
-              className="rounded-xl border border-line bg-bg p-4"
-              style={{ borderColor: counts[s] > 0 ? meta.color + '30' : undefined }}
+              className={cn(
+                'rounded-xl border bg-bg p-4',
+                counts[s] > 0 ? meta.border : 'border-line',
+              )}
             >
               <div className="flex items-center gap-2">
                 <span
-                  className="inline-flex h-7 w-7 items-center justify-center rounded-full"
-                  style={{ background: meta.bg, color: meta.color }}
+                  className={cn(
+                    'inline-flex h-7 w-7 items-center justify-center rounded-full',
+                    meta.chip,
+                  )}
                 >
                   <meta.Icon className="h-3.5 w-3.5" />
                 </span>
@@ -79,18 +87,17 @@ export function PromiseTracker({ promises }: { promises: PoliticianPromise[] }) 
               className="flex items-start gap-4 rounded-xl border border-line bg-bg p-4"
             >
               <span
-                className="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                style={{ background: meta.bg, color: meta.color }}
+                className={cn(
+                  'mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full',
+                  meta.chip,
+                )}
               >
                 <meta.Icon className="h-4 w-4" />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium leading-snug text-ink">{p.text}</p>
                 <p className="mt-1 text-xs text-ink-muted">
-                  <span
-                    className="font-semibold uppercase tracking-wider"
-                    style={{ color: meta.color }}
-                  >
+                  <span className={cn('font-semibold uppercase tracking-wider', meta.text)}>
                     {meta.label}
                   </span>{' '}
                   · Promised {formatDate(p.madeOn)}

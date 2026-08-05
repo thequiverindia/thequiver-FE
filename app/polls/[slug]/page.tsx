@@ -12,6 +12,12 @@ export async function generateStaticParams() {
   return POLLS.map((p) => ({ slug: p.slug }));
 }
 
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const p = findPoll(params.slug);
+  if (!p) return { title: 'Poll not found' };
+  return { title: `Poll: ${p.question}`, description: p.description };
+}
+
 export default function PollDetailPage({ params }: { params: { slug: string } }) {
   const p = findPoll(params.slug);
   if (!p) notFound();
@@ -75,7 +81,7 @@ export default function PollDetailPage({ params }: { params: { slug: string } })
                           className="h-full rounded-full transition-all"
                           style={{
                             width: `${pct}%`,
-                            background: opt.color ?? '#1E1B4B',
+                            background: opt.color ?? 'rgb(var(--brand))',
                           }}
                         />
                       </div>

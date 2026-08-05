@@ -62,15 +62,19 @@ export default function NewsletterPage() {
                 </p>
                 <p className="mt-3 text-sm text-ink-muted">{l.copy}</p>
                 <MockForm
-                  className="mt-5 flex items-center gap-2 rounded-full border border-line p-1 pl-4"
+                  className="mt-5 flex items-center gap-2 rounded-full border border-line p-1 pl-4 transition focus-within:border-line-strong"
                 >
-                  <Mail className="h-4 w-4 text-ink-muted" />
+                  <Mail className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
                   <input
                     type="email"
+                    aria-label={`Email address for ${l.name}`}
                     placeholder="you@example.com"
-                    className="flex-1 bg-transparent py-2 text-sm focus:outline-none"
+                    className="min-w-0 flex-1 bg-transparent py-2 text-sm focus-visible:outline-none"
                   />
-                  <button className="rounded-full bg-ink px-4 py-1.5 text-xs font-medium text-bg">
+                  <button
+                    type="submit"
+                    className="shrink-0 rounded-full bg-ink px-4 py-2 text-xs font-medium text-bg transition hover:bg-ink/90 active:bg-ink/80 focus-ring"
+                  >
                     Subscribe
                   </button>
                 </MockForm>

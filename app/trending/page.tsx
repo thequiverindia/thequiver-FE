@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { CategoryHero } from '@/components/sections/CategoryHero';
 import { TrendingTags } from '@/components/sections/TrendingTags';
@@ -25,36 +26,40 @@ export default function TrendingPage() {
       </Container>
       <Container as="section" className="py-12">
         <div className="grid gap-10 lg:grid-cols-12">
+          {/* Hero above is #01, so the ranked river starts at #02 */}
           <ol className="lg:col-span-7 space-y-6">
-            {sortedByViews.slice(0, 8).map((a, i) => (
+            {sortedByViews.slice(1, 9).map((a, i) => (
               <li
                 key={a.id}
-                className="flex items-start gap-5 border-b border-line pb-6 last:border-0"
+                className="flex items-start gap-3 border-b border-line pb-6 last:border-0 sm:gap-5"
               >
-                <span className="shrink-0 font-serif text-5xl font-semibold leading-none text-ink-subtle md:text-6xl">
-                  {String(i + 1).padStart(2, '0')}
+                <span
+                  aria-hidden
+                  className="shrink-0 font-serif text-3xl font-semibold leading-none text-ink-subtle sm:text-5xl md:text-6xl"
+                >
+                  {String(i + 2).padStart(2, '0')}
                 </span>
-                <ArticleCard article={a} variant="list" className="flex-1" />
+                <ArticleCard article={a} variant="list" className="min-w-0 flex-1 py-0" />
               </li>
             ))}
           </ol>
           <aside className="lg:col-span-5">
-            <div className="sticky top-32 rounded-2xl border border-line bg-bg p-6">
+            <div className="rounded-2xl border border-line bg-bg p-6 lg:sticky lg:top-24">
               <p className="kicker mb-4">Most read this week</p>
               <ol className="space-y-4">
                 {MOST_READ.map((a, i) => (
                   <li key={a.id} className="flex gap-3 border-b border-line pb-3 last:border-0">
-                    <span className="font-serif text-2xl font-semibold text-ink-subtle">
+                    <span aria-hidden className="font-serif text-2xl font-semibold text-ink-subtle">
                       {i + 1}
                     </span>
-                    <div>
-                      <p className="line-clamp-2 font-serif text-sm font-semibold text-ink">
+                    <Link href={`/article/${a.slug}`} className="group min-w-0 flex-1 focus-ring rounded-sm">
+                      <p className="line-clamp-2 font-serif text-sm font-semibold text-ink transition group-hover:text-brand">
                         {a.title}
                       </p>
                       <p className="mt-1 text-xs text-ink-muted">
                         {formatNumber(a.views)} reads
                       </p>
-                    </div>
+                    </Link>
                   </li>
                 ))}
               </ol>

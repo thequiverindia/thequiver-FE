@@ -54,7 +54,7 @@ export function CommentSection({ articleId }: { articleId: string }) {
         <textarea
           rows={3}
           placeholder="What does this article get right, or get wrong?"
-          className="mt-4 w-full rounded-lg border border-line bg-bg p-3 text-sm text-ink placeholder:text-ink-subtle focus:border-ink focus:outline-none"
+          className="mt-4 w-full rounded-lg border border-line bg-bg p-3 text-sm text-ink placeholder:text-ink-subtle focus-ring"
         />
         <div className="mt-3 flex items-center justify-between">
           <span className="text-xs text-ink-muted">

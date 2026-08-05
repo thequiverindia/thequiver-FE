@@ -13,7 +13,7 @@ export function Tabs({
   return (
     <div
       className={cn(
-        '-mx-4 flex gap-1 overflow-x-auto border-b border-line px-4 scrollbar-hide',
+        '-mx-4 flex gap-1 overflow-x-auto border-b border-line px-4 scrollbar-hide sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8',
         className,
       )}
     >
@@ -23,8 +23,9 @@ export function Tabs({
           <Link
             key={item.href}
             href={item.href}
+            aria-current={isActive ? 'page' : undefined}
             className={cn(
-              'inline-flex shrink-0 items-center gap-2 border-b-2 px-3 py-3 text-sm font-medium transition',
+              'inline-flex shrink-0 items-center gap-2 border-b-2 px-3 py-3 text-sm font-medium transition focus-ring',
               isActive
                 ? 'border-ink text-ink'
                 : 'border-transparent text-ink-muted hover:border-line-strong hover:text-ink',

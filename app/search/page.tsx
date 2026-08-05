@@ -10,12 +10,22 @@ import { ARTICLES, POLITICIANS, FACT_CHECKS } from '@/lib/mock-data';
 
 export const metadata = { title: 'Search TheQuiverIndia' };
 
+const TYPE_TAB_LABELS: Record<string, string> = {
+  articles: 'Articles',
+  leaders: 'Leaders',
+  facts: 'Fact-checks',
+};
+
 export default function SearchPage({
   searchParams,
 }: {
   searchParams: { q?: string; type?: string };
 }) {
-  const q = (searchParams.q ?? '').toLowerCase().trim();
+  const rawQ = (searchParams.q ?? '').trim();
+  const q = rawQ.toLowerCase();
+  const enc = encodeURIComponent(rawQ);
+  const type = searchParams.type;
+
   const matchedArticles = q
     ? ARTICLES.filter(
         (a) =>
@@ -43,24 +53,35 @@ export default function SearchPage({
   const total =
     matchedArticles.length + matchedLeaders.length + matchedFacts.length;
 
+  const showArticles = (!type || type === 'articles') && matchedArticles.length > 0;
+  const showLeaders = (!type || type === 'leaders') && matchedLeaders.length > 0;
+  const showFacts = (!type || type === 'facts') && matchedFacts.length > 0;
+  const visibleArticles = matchedArticles.slice(0, type === 'articles' ? 30 : 9);
+
   return (
     <>
       <header className="border-b border-line bg-bg-subtle">
         <Container className="py-10">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Search' }]} />
+          <h1 className="sr-only">Search TheQuiverIndia</h1>
           <form
             method="get"
-            className="mt-6 flex items-center gap-2 rounded-full border border-line-strong bg-bg p-1 pl-5"
+            role="search"
+            className="mt-6 flex items-center gap-2 rounded-full border border-line-strong bg-bg p-1 pl-5 transition focus-within:border-brand"
           >
-            <Search className="h-5 w-5 text-ink-muted" />
+            <Search className="h-5 w-5 shrink-0 text-ink-muted" aria-hidden />
             <input
               type="search"
               name="q"
               defaultValue={searchParams.q}
+              aria-label="Search news, leaders and fact-checks"
               placeholder="Search news, leaders, fact-checks…"
-              className="flex-1 bg-transparent py-3 text-base text-ink placeholder:text-ink-subtle focus:outline-none"
+              className="min-w-0 flex-1 bg-transparent py-3 text-base text-ink placeholder:text-ink-subtle focus-visible:outline-none"
             />
-            <button className="rounded-full bg-ink px-5 py-2 text-sm font-medium text-bg">
+            <button
+              type="submit"
+              className="shrink-0 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-bg transition hover:bg-ink/90 active:bg-ink/80 focus-ring"
+            >
               Search
             </button>
           </form>
@@ -68,7 +89,8 @@ export default function SearchPage({
             {q ? (
               <>
                 <strong className="text-ink">{total}</strong> result
-                {total !== 1 ? 's' : ''} for "<strong className="text-ink">{searchParams.q}</strong>"
+                {total !== 1 ? 's' : ''} for &ldquo;
+                <strong className="text-ink">{rawQ}</strong>&rdquo;
               </>
             ) : (
               <>
@@ -93,17 +115,17 @@ export default function SearchPage({
 
       <Container>
         <Tabs
-          active="All"
+          active={type ? TYPE_TAB_LABELS[type] ?? 'All' : 'All'}
           items={[
-            { label: 'All', href: `/search?q=${q}`, count: total },
-            { label: 'Articles', href: `/search?q=${q}&type=articles`, count: matchedArticles.length },
-            { label: 'Leaders', href: `/search?q=${q}&type=leaders`, count: matchedLeaders.length },
-            { label: 'Fact-checks', href: `/search?q=${q}&type=facts`, count: matchedFacts.length },
+            { label: 'All', href: `/search?q=${enc}`, count: total },
+            { label: 'Articles', href: `/search?q=${enc}&type=articles`, count: matchedArticles.length },
+            { label: 'Leaders', href: `/search?q=${enc}&type=leaders`, count: matchedLeaders.length },
+            { label: 'Fact-checks', href: `/search?q=${enc}&type=facts`, count: matchedFacts.length },
           ]}
         />
       </Container>
 
-      {total === 0 ? (
+      {!showArticles && !showLeaders && !showFacts ? (
         <Container className="py-16">
           <EmptyState
             icon={<Search className="h-5 w-5" />}
@@ -113,19 +135,24 @@ export default function SearchPage({
         </Container>
       ) : (
         <Container as="section" className="space-y-16 py-12">
-          {matchedArticles.length > 0 && (
+          {showArticles && (
             <div>
               <h2 className="mb-6 font-serif text-2xl font-semibold text-ink">
-                Articles ({matchedArticles.length})
+                Articles{' '}
+                <span className="text-ink-muted">
+                  ({visibleArticles.length < matchedArticles.length
+                    ? `showing ${visibleArticles.length} of ${matchedArticles.length}`
+                    : matchedArticles.length})
+                </span>
               </h2>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {matchedArticles.slice(0, 9).map((a) => (
+                {visibleArticles.map((a) => (
                   <ArticleCard key={a.id} article={a} variant="standard" />
                 ))}
               </div>
             </div>
           )}
-          {matchedLeaders.length > 0 && (
+          {showLeaders && (
             <div>
               <h2 className="mb-6 font-serif text-2xl font-semibold text-ink">
                 Leaders ({matchedLeaders.length})
@@ -137,7 +164,7 @@ export default function SearchPage({
               </div>
             </div>
           )}
-          {matchedFacts.length > 0 && (
+          {showFacts && (
             <div>
               <h2 className="mb-6 font-serif text-2xl font-semibold text-ink">
                 Fact-checks ({matchedFacts.length})

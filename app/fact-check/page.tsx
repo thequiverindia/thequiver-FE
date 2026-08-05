@@ -21,7 +21,30 @@ const COUNTS = {
   mostlyTrue: FACT_CHECKS.filter((f) => f.rating === 'mostly-true').length,
 };
 
-export default function FactCheckPage() {
+const RATING_TAB_LABELS: Record<string, string> = {
+  false: 'False',
+  misleading: 'Misleading',
+  'mostly-true': 'Mostly True',
+};
+
+export default function FactCheckPage({
+  searchParams,
+}: {
+  searchParams?: { rating?: string; q?: string };
+}) {
+  const rating = searchParams?.rating;
+  const q = searchParams?.q?.trim().toLowerCase();
+  const filtered = FACT_CHECKS.filter((fc) => {
+    if (rating && fc.rating !== rating) return false;
+    if (
+      q &&
+      !fc.claim.toLowerCase().includes(q) &&
+      !fc.claimant.toLowerCase().includes(q)
+    )
+      return false;
+    return true;
+  });
+
   return (
     <>
       <header className="border-b border-line bg-bg-subtle">
@@ -30,10 +53,10 @@ export default function FactCheckPage() {
           <div className="mt-6 grid gap-8 lg:grid-cols-12">
             <div className="lg:col-span-7">
               <p className="kicker">TheQuiverIndia · Fact Check</p>
-              <h1 className="mt-3 font-serif text-4xl font-semibold text-ink md:text-5xl">
+              <h1 className="mt-3 font-serif text-3xl font-semibold text-ink sm:text-4xl md:text-5xl">
                 Verified claims, sourced evidence, plain verdicts.
               </h1>
-              <p className="mt-4 max-w-2xl text-lg text-ink-muted">
+              <p className="mt-4 max-w-2xl text-base text-ink-muted sm:text-lg">
                 We rate every claim against the evidence we can publicly show. Read the
                 methodology, then submit your own claim for verification.
               </p>
@@ -65,17 +88,26 @@ export default function FactCheckPage() {
       </header>
 
       <Container className="pt-8">
-        <div className="flex items-center gap-2 rounded-full border border-line bg-bg p-1 pl-4">
-          <Search className="h-4 w-4 text-ink-muted" />
+        <form action="/fact-check" role="search" className="flex items-center gap-2 rounded-full border border-line bg-bg p-1 pl-4 focus-within:border-line-strong">
+          <Search className="h-4 w-4 shrink-0 text-ink-muted" aria-hidden />
           <input
             type="search"
+            name="q"
+            defaultValue={searchParams?.q ?? ''}
+            aria-label="Search claims and claimants"
             placeholder="Search claims, sources, claimants…"
-            className="flex-1 bg-transparent py-2.5 text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
+            className="min-w-0 flex-1 bg-transparent py-2.5 text-sm text-ink placeholder:text-ink-subtle focus-visible:outline-none"
           />
-        </div>
+          <button
+            type="submit"
+            className="shrink-0 rounded-full bg-ink px-4 py-2 text-sm font-medium text-bg transition hover:bg-ink/90 active:bg-ink/80 focus-ring"
+          >
+            Search
+          </button>
+        </form>
         <Tabs
           className="mt-6"
-          active="All"
+          active={rating ? RATING_TAB_LABELS[rating] ?? 'All' : 'All'}
           items={[
             { label: 'All', href: '/fact-check', count: COUNTS.total },
             { label: 'False', href: '/fact-check?rating=false', count: COUNTS.false },
@@ -86,11 +118,20 @@ export default function FactCheckPage() {
       </Container>
 
       <Container as="section" className="py-12">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {FACT_CHECKS.map((fc) => (
-            <FactCheckCard key={fc.id} fc={fc} />
-          ))}
-        </div>
+        {filtered.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-line bg-bg-subtle p-8 text-center text-sm text-ink-muted">
+            No fact-checks match{q ? ` “${searchParams?.q}”` : ' this filter'}.{' '}
+            <Link href="/fact-check" className="font-medium text-ink underline">
+              Clear filters
+            </Link>
+          </p>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((fc) => (
+              <FactCheckCard key={fc.id} fc={fc} />
+            ))}
+          </div>
+        )}
       </Container>
 
       {/* Submit */}
@@ -110,21 +151,21 @@ export default function FactCheckPage() {
                 <textarea
                   rows={3}
                   placeholder="Paste the text, or describe the claim in your own words"
-                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus:border-ink focus:outline-none"
+                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
                 />
               </Field>
               <Field label="Where did you see it?">
                 <input
                   type="url"
                   placeholder="https://…"
-                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus:border-ink focus:outline-none"
+                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
                 />
               </Field>
               <Field label="Your email (so we can update you)">
                 <input
                   type="email"
                   placeholder="you@example.com"
-                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus:border-ink focus:outline-none"
+                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
                 />
               </Field>
               <button
@@ -152,9 +193,9 @@ function StatBox({
   tone?: 'false' | 'warn' | 'ok';
 }) {
   const colors = {
-    false: 'text-breaking',
-    warn: 'text-saffron',
-    ok: 'text-verified',
+    false: 'text-danger',
+    warn: 'text-warn',
+    ok: 'text-success',
   };
   return (
     <div className="rounded-xl border border-line bg-bg p-5">

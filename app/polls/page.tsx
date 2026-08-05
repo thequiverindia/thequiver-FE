@@ -9,7 +9,22 @@ export const metadata = {
   title: 'Polls — What India thinks',
 };
 
-export default function PollsPage() {
+const CAT_TAB_LABELS: Record<string, string> = {
+  politics: 'Politics',
+  elections: 'Elections',
+  opinion: 'Opinion',
+  trending: 'Trending',
+};
+
+export default function PollsPage({
+  searchParams,
+}: {
+  searchParams?: { cat?: string };
+}) {
+  const cat = searchParams?.cat;
+  const polls = cat
+    ? POLLS.filter((p) => p.category.toLowerCase() === cat)
+    : POLLS;
   const totalVotes = POLLS.reduce((a, p) => a + p.totalVotes, 0);
   return (
     <>
@@ -19,10 +34,10 @@ export default function PollsPage() {
           <div className="mt-6 grid gap-8 lg:grid-cols-12">
             <div className="lg:col-span-8">
               <p className="kicker">Polls & Surveys</p>
-              <h1 className="mt-3 font-serif text-4xl font-semibold text-ink md:text-5xl">
+              <h1 className="mt-3 font-serif text-3xl font-semibold text-ink sm:text-4xl md:text-5xl">
                 What India thinks, in numbers
               </h1>
-              <p className="mt-4 max-w-2xl text-lg text-ink-muted">
+              <p className="mt-4 max-w-2xl text-base text-ink-muted sm:text-lg">
                 Daily opinion polls on the issues that matter. Vote in seconds, see results
                 live. Polls are open to verified readers only.
               </p>
@@ -51,7 +66,7 @@ export default function PollsPage() {
 
       <Container>
         <Tabs
-          active="All"
+          active={cat ? CAT_TAB_LABELS[cat] ?? 'All' : 'All'}
           items={[
             { label: 'All', href: '/polls', count: POLLS.length },
             { label: 'Politics', href: '/polls?cat=politics' },
@@ -63,11 +78,17 @@ export default function PollsPage() {
       </Container>
 
       <Container as="section" className="py-12">
-        <div className="grid gap-6 md:grid-cols-2">
-          {POLLS.map((p) => (
-            <PollCard key={p.id} poll={p} showResults />
-          ))}
-        </div>
+        {polls.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-line bg-bg-subtle p-8 text-center text-sm text-ink-muted">
+            No polls in this category yet — check the other tabs.
+          </p>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2">
+            {polls.map((p) => (
+              <PollCard key={p.id} poll={p} showResults />
+            ))}
+          </div>
+        )}
       </Container>
     </>
   );

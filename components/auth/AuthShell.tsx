@@ -107,7 +107,7 @@ export function AuthField({
       <input
         type={type}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-line bg-bg px-4 py-3 text-sm text-ink placeholder:text-ink-subtle focus:border-ink focus:outline-none"
+        className="w-full rounded-lg border border-line bg-bg px-4 py-3 text-sm text-ink placeholder:text-ink-subtle focus-ring"
       />
       {hint && <span className="mt-1 block text-xs text-ink-subtle">{hint}</span>}
     </label>

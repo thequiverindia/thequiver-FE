@@ -6,8 +6,9 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { AuthorByline } from '@/components/article/AuthorByline';
 import { FactCheckCard, ratingMeta } from '@/components/cards/FactCheckCard';
 import { ShareBar } from '@/components/article/ShareBar';
+import { ShareVerdict } from '@/components/fact-check/ShareVerdict';
 import { FACT_CHECKS, findFactCheck } from '@/lib/mock-data';
-import { formatDateTime } from '@/lib/utils';
+import { cn, formatDateTime } from '@/lib/utils';
 
 export async function generateStaticParams() {
   return FACT_CHECKS.map((f) => ({ slug: f.slug }));
@@ -37,8 +38,8 @@ export default function FactCheckDetail({ params }: { params: { slug: string } }
             ]}
           />
           <p className="kicker mt-6">TheQuiverIndia · Fact Check</p>
-          <h1 className="mt-3 max-w-4xl text-balance font-serif text-3xl font-semibold leading-tight text-ink md:text-5xl">
-            "{fc.claim}"
+          <h1 className="mt-3 max-w-4xl text-balance font-serif text-[26px] font-semibold leading-tight text-ink sm:text-3xl md:text-5xl">
+            &ldquo;{fc.claim}&rdquo;
           </h1>
           <p className="mt-3 text-sm text-ink-muted">
             Claim by <strong className="text-ink">{fc.claimant}</strong>
@@ -50,34 +51,38 @@ export default function FactCheckDetail({ params }: { params: { slug: string } }
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-8">
             {/* Verdict */}
-            <div
-              className="rounded-2xl border-2 p-6 md:p-8"
-              style={{
-                background: meta.bg,
-                borderColor: meta.border,
-              }}
-            >
+            <div className={cn('rounded-2xl border-2 p-6 md:p-8', meta.panel)}>
               <p
-                className="text-[11px] font-semibold uppercase tracking-[0.16em]"
-                style={{ color: meta.color }}
+                className={cn(
+                  'text-[11px] font-semibold uppercase tracking-[0.16em]',
+                  meta.text,
+                )}
               >
                 Our verdict
               </p>
-              <p
-                className="mt-2 font-serif text-4xl font-semibold md:text-6xl"
-                style={{ color: meta.color }}
-              >
+              <p className={cn('stamp mt-4 text-2xl sm:text-3xl md:text-4xl', meta.text)}>
                 {meta.label}
               </p>
-              <p className="mt-4 text-pretty text-lg leading-relaxed text-ink">
+              <p className="mt-6 text-pretty text-lg leading-relaxed text-ink">
                 {fc.verdict}
               </p>
+              <ShareVerdict claim={fc.claim} verdict={meta.label} />
             </div>
 
-            {/* Image */}
-            <div className="mt-8 overflow-hidden rounded-2xl bg-bg-muted">
-              <img src={fc.image} alt="" className="w-full" />
-            </div>
+            {/* The image being fact-checked — it is the evidence, so describe it */}
+            <figure className="mt-8 overflow-hidden rounded-2xl bg-bg-muted">
+              <div className="aspect-[16/9] w-full">
+                <img
+                  src={fc.image}
+                  alt={`Viral image under review: ${fc.claim}`}
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <figcaption className="px-4 py-3 text-xs text-ink-muted">
+                The claim as it circulated. Verdict: {meta.label}.
+              </figcaption>
+            </figure>
 
             {/* Evidence */}
             <h2 className="mt-12 font-serif text-2xl font-semibold text-ink md:text-3xl">
@@ -110,7 +115,9 @@ export default function FactCheckDetail({ params }: { params: { slug: string } }
                 <li key={i}>
                   <a
                     href={s.url}
-                    className="inline-flex items-center gap-2 rounded-md border border-line bg-bg px-4 py-3 text-sm font-medium text-ink transition hover:border-line-strong hover:bg-bg-muted"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-md border border-line bg-bg px-4 py-3 text-sm font-medium text-ink transition hover:border-line-strong hover:bg-bg-muted focus-ring"
                   >
                     <ExternalLink className="h-3.5 w-3.5 text-ink-muted" />
                     {s.label}
@@ -140,10 +147,7 @@ export default function FactCheckDetail({ params }: { params: { slug: string } }
                 {Object.entries(ratingMeta).map(([k, m]) => (
                   <li key={k} className="flex items-center justify-between gap-3">
                     <span className="flex items-center gap-2">
-                      <span
-                        className="h-2 w-2 rounded-full"
-                        style={{ background: m.color }}
-                      />
+                      <span aria-hidden className={cn('h-2 w-2 rounded-full', m.dot)} />
                       <span className="text-ink">{m.label}</span>
                     </span>
                   </li>

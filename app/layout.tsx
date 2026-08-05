@@ -48,11 +48,11 @@ export const metadata: Metadata = {
   },
 };
 
+// theme-color is set at runtime by ThemeScript / lib/theme.ts so it always
+// matches the user's chosen theme + mode, not just the OS preference.
 export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0c0a09' },
-  ],
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -70,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <LiveTicker />
         <Header />
-        <main id="main" className="min-h-[60vh]">
+        <main id="main" tabIndex={-1} className="min-h-[60vh] outline-none">
           {children}
         </main>
         <Footer />

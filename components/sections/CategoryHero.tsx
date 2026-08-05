@@ -23,10 +23,10 @@ export function CategoryHero({
         <div className="mt-6 grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
             <p className="kicker">{kicker}</p>
-            <h1 className="mt-3 text-balance font-serif text-4xl font-semibold leading-tight text-ink md:text-5xl">
+            <h1 className="mt-3 text-balance font-serif text-3xl font-semibold leading-tight text-ink sm:text-4xl md:text-5xl">
               {title}
             </h1>
-            <p className="mt-4 max-w-xl text-lg text-ink-muted">{description}</p>
+            <p className="mt-4 max-w-xl text-base text-ink-muted sm:text-lg">{description}</p>
           </div>
           {hero && (
             <div className="lg:col-span-6">

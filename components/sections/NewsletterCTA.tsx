@@ -23,12 +23,12 @@ export function NewsletterCTA() {
             <input
               type="email"
               placeholder="you@example.com"
-              className="flex-1 rounded-full border border-line bg-bg px-4 py-3 text-sm text-ink placeholder:text-ink-subtle focus:border-ink focus:outline-none"
+              className="min-w-0 flex-1 rounded-full border border-line bg-bg px-4 py-3 text-sm text-ink placeholder:text-ink-subtle focus-ring"
               aria-label="Email address"
             />
             <button
               type="submit"
-              className="rounded-full bg-ink px-6 text-sm font-medium text-bg transition hover:bg-ink/90"
+              className="shrink-0 rounded-full bg-ink px-6 text-sm font-medium text-bg transition hover:bg-ink/90 active:bg-ink/80 focus-ring"
             >
               Subscribe
             </button>

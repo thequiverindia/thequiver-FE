@@ -51,7 +51,12 @@ function Block({ block }: { block: ArticleBlock }) {
       return (
         <figure className="my-10">
           <div className="overflow-hidden rounded-lg bg-bg-muted">
-            <img src={block.src} alt={block.caption ?? ''} className="w-full" />
+            <img
+              src={block.src}
+              alt={block.caption ?? ''}
+              loading="lazy"
+              className="w-full"
+            />
           </div>
           {(block.caption || block.credit) && (
             <figcaption className="mt-2 text-xs text-ink-muted">

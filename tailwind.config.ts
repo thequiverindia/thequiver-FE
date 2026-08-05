@@ -16,9 +16,23 @@ const config: Config = {
         'line-strong': 'rgb(var(--line-strong) / <alpha-value>)',
         brand: 'rgb(var(--brand) / <alpha-value>)',
         'brand-soft': 'rgb(var(--brand-soft) / <alpha-value>)',
-        saffron: 'rgb(var(--saffron) / <alpha-value>)',
+        accent: 'rgb(var(--accent) / <alpha-value>)',
+        // Legacy alias — same var as `accent`; prefer `accent` in new code.
+        saffron: 'rgb(var(--accent) / <alpha-value>)',
         breaking: 'rgb(var(--breaking) / <alpha-value>)',
         verified: 'rgb(var(--verified) / <alpha-value>)',
+        success: 'rgb(var(--success) / <alpha-value>)',
+        warn: 'rgb(var(--warn) / <alpha-value>)',
+        danger: 'rgb(var(--danger) / <alpha-value>)',
+        info: 'rgb(var(--info) / <alpha-value>)',
+        'on-media': 'rgb(var(--on-media) / <alpha-value>)',
+      },
+      borderColor: {
+        DEFAULT: 'rgb(var(--line) / <alpha-value>)',
+      },
+      borderRadius: {
+        card: '1rem',
+        control: '0.625rem',
       },
       fontFamily: {
         serif: ['var(--font-serif)', 'Georgia', 'serif'],

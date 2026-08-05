@@ -35,9 +35,13 @@ export function PoliticianCard({
           <p className="truncate font-serif text-sm font-semibold text-ink">
             {politician.name}
           </p>
-          <p className="truncate text-xs text-ink-muted">
-            <span style={{ color: politician.partyColor }}>●</span> {politician.partyShort} ·{' '}
-            {politician.constituency}
+          <p className="flex items-center gap-1.5 truncate text-xs text-ink-muted">
+            <span
+              aria-hidden
+              className="inline-block h-2 w-2 shrink-0 rounded-full"
+              style={{ background: politician.partyColor }}
+            />
+            {politician.partyShort} · {politician.constituency}
           </p>
         </div>
         <div className="text-right">
@@ -65,10 +69,12 @@ export function PoliticianCard({
         <div className="flex gap-5 p-5">
           <Avatar src={politician.image} name={politician.name} size="xl" />
           <div className="min-w-0 flex-1">
-            <p
-              className="text-[10px] font-semibold uppercase tracking-[0.16em]"
-              style={{ color: politician.partyColor }}
-            >
+            <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-muted">
+              <span
+                aria-hidden
+                className="inline-block h-2 w-2 shrink-0 rounded-full"
+                style={{ background: politician.partyColor }}
+              />
               {politician.partyShort}
             </p>
             <h3 className="mt-1 font-serif text-lg font-semibold text-ink transition group-hover:text-brand">
@@ -79,7 +85,7 @@ export function PoliticianCard({
             </p>
             <div className="mt-4 flex items-center gap-5 text-xs text-ink-muted">
               <span className="inline-flex items-center gap-1.5">
-                <Star className="h-3 w-3 text-saffron" />
+                <Star className="h-3 w-3 text-accent" />
                 <strong className="text-ink">{politician.rating}</strong> /10
               </span>
               <span className="inline-flex items-center gap-1.5">
@@ -113,10 +119,12 @@ export function PoliticianCard({
         <div className="flex items-start gap-4">
           <Avatar src={politician.image} name={politician.name} size="lg" />
           <div className="min-w-0 flex-1">
-            <p
-              className="text-[10px] font-semibold uppercase tracking-[0.16em]"
-              style={{ color: politician.partyColor }}
-            >
+            <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-muted">
+              <span
+                aria-hidden
+                className="inline-block h-2 w-2 shrink-0 rounded-full"
+                style={{ background: politician.partyColor }}
+              />
               {politician.partyShort}
             </p>
             <h3 className="mt-1 truncate font-serif text-lg font-semibold text-ink transition group-hover:text-brand">
@@ -167,10 +175,14 @@ function PromiseBar({
   const p = (stats.progress / total) * 100;
   const b = (stats.broken / total) * 100;
   return (
-    <div className="flex h-1.5 w-full overflow-hidden rounded-full bg-bg-muted">
-      <span style={{ width: `${k}%` }} className="bg-verified" />
-      <span style={{ width: `${p}%` }} className="bg-saffron" />
-      <span style={{ width: `${b}%` }} className="bg-breaking" />
+    <div
+      role="img"
+      aria-label={`Promises: ${stats.kept} kept, ${stats.progress} in progress, ${stats.broken} broken, of ${total}`}
+      className="flex h-1.5 w-full overflow-hidden rounded-full bg-bg-muted"
+    >
+      <span style={{ width: `${k}%` }} className="bg-success" />
+      <span style={{ width: `${p}%` }} className="bg-warn" />
+      <span style={{ width: `${b}%` }} className="bg-danger" />
     </div>
   );
 }

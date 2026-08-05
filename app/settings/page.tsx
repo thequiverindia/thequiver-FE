@@ -87,9 +87,7 @@ export default function SettingsPage() {
           ))}
 
           <section className="rounded-2xl border border-breaking/30 bg-breaking/5 p-6">
-            <p className="kicker mb-2" style={{ color: 'rgb(var(--breaking))' }}>
-              Danger zone
-            </p>
+            <p className="kicker mb-2 !text-breaking">Danger zone</p>
             <p className="font-serif text-lg text-ink">Delete your account</p>
             <p className="mt-1 text-sm text-ink-muted">
               This will permanently remove your account, your bookmarks, your comments and
@@ -105,18 +103,21 @@ export default function SettingsPage() {
   );
 }
 
-function Toggle({ on = false }: { on?: boolean }) {
+function Toggle({ on = false, label }: { on?: boolean; label?: string }) {
   return (
-    <span
-      className={`inline-flex h-6 w-11 cursor-pointer items-center rounded-full p-0.5 transition ${
-        on ? 'bg-verified' : 'bg-bg-muted'
-      }`}
+    <button
+      type="button"
       role="switch"
       aria-checked={on}
+      aria-label={label ?? 'Toggle setting'}
+      className={`inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full p-0.5 transition focus-ring ${
+        on ? 'bg-verified' : 'bg-bg-muted'
+      }`}
     >
       <span
+        aria-hidden
         className={`h-5 w-5 rounded-full bg-bg shadow transition ${on ? 'translate-x-5' : 'translate-x-0'}`}
       />
-    </span>
+    </button>
   );
 }

@@ -16,43 +16,45 @@ export function Footer() {
               leader transparency, and citizen voice — built for India.
             </p>
             <MockForm
-              className="mt-6 flex max-w-sm items-center gap-2 rounded-full border border-line bg-bg p-1 pl-4"
+              className="mt-6 flex max-w-sm items-center gap-2 rounded-full border border-line bg-bg p-1 pl-4 transition focus-within:border-line-strong"
             >
               <input
                 type="email"
                 placeholder="Your email for the daily brief"
-                className="flex-1 bg-transparent text-sm text-ink placeholder:text-ink-subtle focus:outline-none"
+                className="min-w-0 flex-1 bg-transparent text-sm text-ink placeholder:text-ink-subtle focus-visible:outline-none"
                 aria-label="Email address for newsletter"
               />
               <button
                 type="submit"
-                className="inline-flex h-9 items-center gap-1.5 rounded-full bg-ink px-4 text-xs font-medium text-bg hover:bg-ink/90"
+                className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-ink px-4 text-xs font-medium text-bg transition hover:bg-ink/90 active:bg-ink/80 focus-ring"
               >
-                <Send className="h-3.5 w-3.5" />
+                <Send className="h-3.5 w-3.5" aria-hidden />
                 Subscribe
               </button>
             </MockForm>
             <div className="mt-6 flex items-center gap-2">
               {[
-                { Icon: Twitter, label: 'Twitter' },
-                { Icon: Instagram, label: 'Instagram' },
-                { Icon: Youtube, label: 'YouTube' },
-                { Icon: Facebook, label: 'Facebook' },
-                { Icon: Linkedin, label: 'LinkedIn' },
-              ].map(({ Icon, label }) => (
+                { Icon: Twitter, label: 'X (Twitter)', href: 'https://twitter.com/thequiverindia' },
+                { Icon: Instagram, label: 'Instagram', href: 'https://instagram.com/thequiverindia' },
+                { Icon: Youtube, label: 'YouTube', href: 'https://youtube.com/@thequiverindia' },
+                { Icon: Facebook, label: 'Facebook', href: 'https://facebook.com/thequiverindia' },
+                { Icon: Linkedin, label: 'LinkedIn', href: 'https://linkedin.com/company/thequiverindia' },
+              ].map(({ Icon, label, href }) => (
                 <a
                   key={label}
-                  href="#"
-                  aria-label={label}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink-muted transition hover:border-line-strong hover:bg-bg hover:text-ink"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`TheQuiverIndia on ${label}`}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink-muted transition hover:border-line-strong hover:bg-bg hover:text-ink active:bg-bg focus-ring"
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className="h-4 w-4" aria-hidden />
                 </a>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:col-span-8 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:col-span-8">
             {FOOTER_LINKS.map((group) => (
               <div key={group.title}>
                 <h3 className="kicker mb-4 text-ink">{group.title}</h3>
@@ -73,7 +75,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-line pt-6 text-xs text-ink-muted md:mt-16 md:flex-row md:items-center md:justify-between">
+        <div className="mt-12 flex flex-col gap-4 border-t border-line pb-[env(safe-area-inset-bottom)] pt-6 text-xs text-ink-muted md:mt-16 md:flex-row md:items-center md:justify-between">
           <p>
             © {new Date().getFullYear()} TheQuiverIndia Media Pvt Ltd. All rights reserved.
           </p>

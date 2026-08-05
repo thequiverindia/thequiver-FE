@@ -39,7 +39,7 @@ export function VerificationBadge({
     >
       <meta.Icon className="h-3 w-3" />
       {meta.label}
-      {sources !== undefined && <span className="text-current/70">· {sources} sources</span>}
+      {sources !== undefined && <span className="opacity-70">· {sources} sources</span>}
     </span>
   );
 }

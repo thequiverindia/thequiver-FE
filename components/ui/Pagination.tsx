@@ -15,15 +15,18 @@ export function Pagination({
   const prev = page > 1 ? `${basePath}?page=${page - 1}` : null;
   const next = page < totalPages ? `${basePath}?page=${page + 1}` : null;
   return (
-    <nav className="mt-12 flex items-center justify-between border-t border-line pt-6 text-sm">
-      <PaginationLink href={prev} disabled={!prev}>
-        <ChevronLeft className="h-4 w-4" /> Previous
+    <nav
+      aria-label="Pagination"
+      className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-6 text-sm"
+    >
+      <PaginationLink href={prev} rel="prev">
+        <ChevronLeft className="h-4 w-4" aria-hidden /> Previous
       </PaginationLink>
       <span className="text-ink-muted">
         Page <strong className="text-ink">{page}</strong> of {totalPages}
       </span>
-      <PaginationLink href={next} disabled={!next}>
-        Next <ChevronRight className="h-4 w-4" />
+      <PaginationLink href={next} rel="next">
+        Next <ChevronRight className="h-4 w-4" aria-hidden />
       </PaginationLink>
     </nav>
   );
@@ -31,24 +34,28 @@ export function Pagination({
 
 function PaginationLink({
   href,
-  disabled,
+  rel,
   children,
 }: {
   href: string | null;
-  disabled: boolean;
+  rel: 'prev' | 'next';
   children: React.ReactNode;
 }) {
   const cls = cn(
-    'inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-2 transition',
-    disabled
-      ? 'pointer-events-none opacity-40'
-      : 'hover:border-line-strong hover:bg-bg-muted',
+    'inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-2.5 transition',
+    !href
+      ? 'cursor-not-allowed opacity-40'
+      : 'hover:border-line-strong hover:bg-bg-muted active:bg-bg-muted focus-ring',
   );
-  if (disabled || !href) {
-    return <span className={cls}>{children}</span>;
+  if (!href) {
+    return (
+      <span aria-disabled="true" className={cls}>
+        {children}
+      </span>
+    );
   }
   return (
-    <Link href={href} className={cls}>
+    <Link href={href} rel={rel} className={cls}>
       {children}
     </Link>
   );

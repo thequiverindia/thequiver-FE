@@ -25,7 +25,7 @@ export function PollCard({
           className,
         )}
       >
-        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-saffron">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
           Daily Poll
         </p>
         <h4 className="mt-2 text-balance font-serif text-base font-semibold leading-snug text-ink">
@@ -46,7 +46,7 @@ export function PollCard({
       )}
     >
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-saffron">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
           Live Poll · {poll.category}
         </span>
         <span className="text-xs text-ink-muted">
@@ -84,7 +84,7 @@ export function PollCard({
                       className="h-full rounded-full"
                       style={{
                         width: `${pct}%`,
-                        background: opt.color ?? '#1E1B4B',
+                        background: opt.color ?? 'rgb(var(--brand))',
                       }}
                     />
                   </div>

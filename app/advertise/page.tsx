@@ -93,17 +93,17 @@ export default function AdvertisePage() {
           <MockForm className="space-y-3">
             <input
               placeholder="Company"
-              className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus:border-ink focus:outline-none"
+              className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
             />
             <input
               placeholder="Email"
               type="email"
-              className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus:border-ink focus:outline-none"
+              className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
             />
             <textarea
               rows={3}
               placeholder="Tell us about your brief"
-              className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus:border-ink focus:outline-none"
+              className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
             />
             <button className="rounded-full border border-line bg-bg-muted px-4 py-2.5 text-sm font-medium text-ink hover:bg-line">
               Request media kit

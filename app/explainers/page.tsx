@@ -22,7 +22,7 @@ export default function ExplainersPage({
         breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Explainers' }]}
         hero={articles[0]}
       />
-      <CategoryGrid articles={articles} page={page} basePath="/explainers" />
+      <CategoryGrid articles={articles.slice(1)} page={page} basePath="/explainers" />
     </>
   );
 }

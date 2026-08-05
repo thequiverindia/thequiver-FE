@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { Share2 } from 'lucide-react';
+import Image from 'next/image';
 import type { Article } from '@/lib/types';
-import { cn, formatNumber, timeAgo } from '@/lib/utils';
+import { cn, timeAgo, formatNumber } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
 
@@ -11,11 +11,14 @@ export function ArticleCard({
   article,
   variant = 'standard',
   showAuthor = true,
+  priority = false,
   className,
 }: {
   article: Article;
   variant?: Variant;
   showAuthor?: boolean;
+  /** Set on the LCP image (e.g. the homepage hero) so it loads eagerly. */
+  priority?: boolean;
   className?: string;
 }) {
   const href = `/article/${article.slug}`;
@@ -23,35 +26,39 @@ export function ArticleCard({
   if (variant === 'hero') {
     return (
       <article className={cn('group relative overflow-hidden rounded-2xl', className)}>
-        <Link href={href} className="block">
+        <Link href={href} className="block focus-ring">
           <div className="relative aspect-[4/3] w-full overflow-hidden bg-bg-muted sm:aspect-[16/10] lg:aspect-[16/9]">
-            <img
+            <Image
               src={article.image}
               alt=""
-              className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+              fill
+              priority={priority}
+              sizes="(max-width: 1024px) 100vw, 66vw"
+              className="object-cover transition duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/55 to-transparent" />
+            {/* Scrim stays dark in every theme — it sits on a photo, not a surface */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
           </div>
           <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 md:p-10">
             <div className="mb-3 flex flex-wrap items-center gap-2">
               {article.isBreaking && <Badge tone="breaking" withDot>Breaking</Badge>}
               {article.isExclusive && <Badge tone="saffron">Exclusive</Badge>}
               {article.kicker && (
-                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/80 sm:text-[11px]">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-on-media/80 sm:text-[11px]">
                   {article.kicker}
                 </span>
               )}
             </div>
-            <h2 className="text-balance font-serif text-[22px] font-semibold leading-[1.15] text-white sm:text-3xl md:text-4xl lg:text-5xl">
+            <h2 className="text-balance font-serif text-[22px] font-semibold leading-[1.15] text-on-media transition group-hover:underline group-hover:decoration-on-media/40 group-hover:underline-offset-4 sm:text-3xl md:text-4xl lg:text-5xl">
               {article.title}
             </h2>
-            <p className="mt-3 line-clamp-3 max-w-2xl text-pretty text-sm leading-relaxed text-white/85 sm:line-clamp-none sm:mt-4 md:text-base">
+            <p className="mt-3 line-clamp-3 max-w-2xl text-pretty text-sm leading-relaxed text-on-media/85 sm:mt-4 sm:line-clamp-none md:text-base">
               {article.excerpt}
             </p>
-            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/75 sm:mt-5">
+            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-on-media/75 sm:mt-5">
               <span>By {article.author.name}</span>
               <span aria-hidden>·</span>
-              <span>{timeAgo(article.publishedAt)}</span>
+              <time dateTime={article.publishedAt}>{timeAgo(article.publishedAt)}</time>
               <span aria-hidden>·</span>
               <span>{article.readMinutes} min read</span>
             </div>
@@ -64,12 +71,14 @@ export function ArticleCard({
   if (variant === 'feature') {
     return (
       <article className={cn('group flex flex-col gap-4', className)}>
-        <Link href={href} className="block overflow-hidden rounded-xl">
+        <Link href={href} tabIndex={-1} aria-hidden className="block overflow-hidden rounded-xl">
           <div className="relative aspect-[16/10] w-full overflow-hidden bg-bg-muted">
-            <img
+            <Image
               src={article.image}
               alt=""
-              className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover transition duration-500 group-hover:scale-[1.03]"
             />
             {article.isBreaking && (
               <Badge tone="breaking" withDot className="absolute left-3 top-3">
@@ -80,11 +89,11 @@ export function ArticleCard({
         </Link>
         <div className="space-y-2">
           {article.kicker && (
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-saffron">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
               {article.kicker}
             </p>
           )}
-          <Link href={href}>
+          <Link href={href} className="focus-ring block rounded-sm">
             <h3 className="text-balance font-serif text-xl font-semibold leading-snug text-ink transition group-hover:text-brand md:text-2xl">
               {article.title}
             </h3>
@@ -95,7 +104,7 @@ export function ArticleCard({
           <div className="flex items-center gap-3 pt-1 text-xs text-ink-muted">
             <span>{article.author.name}</span>
             <span aria-hidden>·</span>
-            <span>{timeAgo(article.publishedAt)}</span>
+            <time dateTime={article.publishedAt}>{timeAgo(article.publishedAt)}</time>
             <span aria-hidden>·</span>
             <span>{article.readMinutes} min</span>
           </div>
@@ -107,16 +116,18 @@ export function ArticleCard({
   if (variant === 'compact') {
     return (
       <article className={cn('group', className)}>
-        <Link href={href} className="block">
+        <Link href={href} className="focus-ring block rounded-lg">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-bg-muted">
-            <img
+            <Image
               src={article.image}
               alt=""
-              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              fill
+              sizes="(max-width: 640px) 100vw, 25vw"
+              className="object-cover transition duration-500 group-hover:scale-105"
             />
           </div>
           {article.kicker && (
-            <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-saffron">
+            <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
               {article.kicker}
             </p>
           )}
@@ -134,22 +145,24 @@ export function ArticleCard({
   if (variant === 'list') {
     return (
       <article className={cn('group flex gap-4 py-5', className)}>
-        <Link href={href} className="shrink-0">
-          <div className="relative aspect-[4/3] w-32 overflow-hidden rounded-lg bg-bg-muted sm:w-40">
-            <img
+        <Link href={href} tabIndex={-1} aria-hidden className="shrink-0">
+          <div className="relative aspect-[4/3] w-28 overflow-hidden rounded-lg bg-bg-muted sm:w-40">
+            <Image
               src={article.image}
               alt=""
-              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              fill
+              sizes="160px"
+              className="object-cover transition duration-500 group-hover:scale-105"
             />
           </div>
         </Link>
         <div className="min-w-0 flex-1 space-y-1.5">
           {article.kicker && (
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-saffron">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
               {article.kicker}
             </p>
           )}
-          <Link href={href}>
+          <Link href={href} className="focus-ring block rounded-sm">
             <h3 className="text-balance font-serif text-base font-semibold leading-snug text-ink transition group-hover:text-brand md:text-lg">
               {article.title}
             </h3>
@@ -158,7 +171,7 @@ export function ArticleCard({
           <div className="flex items-center gap-3 pt-1 text-xs text-ink-muted">
             <span>{article.author.name}</span>
             <span aria-hidden>·</span>
-            <span>{timeAgo(article.publishedAt)}</span>
+            <time dateTime={article.publishedAt}>{timeAgo(article.publishedAt)}</time>
             <span aria-hidden>·</span>
             <span>{article.readMinutes} min</span>
           </div>
@@ -170,13 +183,19 @@ export function ArticleCard({
   if (variant === 'inline') {
     return (
       <article className={cn('group flex gap-3 py-3', className)}>
-        <Link href={href} className="shrink-0">
+        <Link href={href} tabIndex={-1} aria-hidden className="shrink-0">
           <div className="relative h-16 w-16 overflow-hidden rounded-md bg-bg-muted">
-            <img src={article.image} alt="" className="h-full w-full object-cover" />
+            <Image
+              src={article.image}
+              alt=""
+              fill
+              sizes="64px"
+              className="object-cover"
+            />
           </div>
         </Link>
         <div className="min-w-0 flex-1">
-          <Link href={href}>
+          <Link href={href} className="focus-ring block rounded-sm">
             <h4 className="line-clamp-2 text-balance font-serif text-sm font-semibold leading-snug text-ink transition group-hover:text-brand">
               {article.title}
             </h4>
@@ -197,12 +216,14 @@ export function ArticleCard({
         className,
       )}
     >
-      <Link href={href} className="block">
+      <Link href={href} tabIndex={-1} aria-hidden className="block">
         <div className="relative aspect-[16/10] w-full overflow-hidden bg-bg-muted">
-          <img
+          <Image
             src={article.image}
             alt=""
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition duration-500 group-hover:scale-[1.03]"
           />
           {article.isBreaking && (
             <Badge tone="breaking" withDot className="absolute left-3 top-3">
@@ -210,7 +231,7 @@ export function ArticleCard({
             </Badge>
           )}
           {article.format === 'video' && (
-            <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-ink/80 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-white backdrop-blur">
+            <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-on-media backdrop-blur">
               Video
             </span>
           )}
@@ -218,32 +239,22 @@ export function ArticleCard({
       </Link>
       <div className="space-y-2 p-5">
         {article.kicker && (
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-saffron">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
             {article.kicker}
           </p>
         )}
-        <Link href={href}>
+        <Link href={href} className="focus-ring block rounded-sm">
           <h3 className="line-clamp-2 text-balance font-serif text-lg font-semibold leading-snug text-ink transition group-hover:text-brand">
             {article.title}
           </h3>
         </Link>
         <p className="line-clamp-2 text-sm text-ink-muted">{article.excerpt}</p>
         {showAuthor && (
-          <div className="flex items-center justify-between pt-2">
-            <div className="flex items-center gap-2">
-              <Avatar src={article.author.avatar} name={article.author.name} size="xs" />
-              <span className="text-xs text-ink-muted">
-                {article.author.name} · {timeAgo(article.publishedAt)}
-              </span>
-            </div>
-            <div className="flex items-center gap-1 text-ink-subtle">
-              <button
-                aria-label="Share"
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full hover:bg-bg-muted hover:text-ink"
-              >
-                <Share2 className="h-3.5 w-3.5" />
-              </button>
-            </div>
+          <div className="flex items-center gap-2 pt-2">
+            <Avatar src={article.author.avatar} name={article.author.name} size="xs" />
+            <span className="text-xs text-ink-muted">
+              {article.author.name} · {timeAgo(article.publishedAt)}
+            </span>
           </div>
         )}
       </div>

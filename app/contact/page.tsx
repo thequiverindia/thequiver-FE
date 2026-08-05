@@ -79,14 +79,14 @@ export default function ContactPage() {
                   <input
                     type="text"
                     placeholder="Full name"
-                    className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus:border-ink focus:outline-none"
+                    className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
                   />
                 </Field>
                 <Field label="Email">
                   <input
                     type="email"
                     placeholder="you@example.com"
-                    className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus:border-ink focus:outline-none"
+                    className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
                   />
                 </Field>
               </div>
@@ -94,14 +94,14 @@ export default function ContactPage() {
                 <input
                   type="text"
                   placeholder="What is this about?"
-                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus:border-ink focus:outline-none"
+                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
                 />
               </Field>
               <Field label="Message">
                 <textarea
                   rows={5}
                   placeholder="Tell us more…"
-                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus:border-ink focus:outline-none"
+                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
                 />
               </Field>
               <button

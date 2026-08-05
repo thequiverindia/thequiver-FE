@@ -78,18 +78,36 @@ lib/
   utils.ts            # cn, formatDate, timeAgo, formatNumber, slugify, initials
 ```
 
-## Design tokens
+## Theming
 
-CSS variables in `app/globals.css` — light/dark mode pairs.
+Three switchable theme families, each with light + dark variants — six looks total.
+Pick the palette from the palette icon in the header; sun/moon toggles the mode
+(light / dark / system, synced across tabs and with the OS).
 
 ```
-bg / bg-subtle / bg-muted   neutrals
+editorial   indigo & marigold (default)
+peacock     teal & gold — the signature look
+press       ivory paper & oxblood — classic broadsheet
+```
+
+Implementation: `data-theme` attribute + `.dark` class on `<html>`, applied
+pre-paint by `components/layout/ThemeScript.tsx` and managed by `lib/theme.ts`
+(storage keys `tqi-theme` / `tqi-mode`, `color-scheme`, runtime
+`<meta name="theme-color">`).
+
+## Design tokens
+
+CSS variables in `app/globals.css` — every theme defines the full set.
+
+```
+bg / bg-subtle / bg-muted    surfaces
 ink / ink-muted / ink-subtle text scale
-line / line-strong          borders
-brand                       deep indigo (light) / soft indigo (dark)
-saffron                     accent — kickers, highlights
-breaking                    red — breaking news, false fact-checks
-verified                    green — verified content, kept promises
+line / line-strong           borders
+brand / brand-soft           identity
+accent                       kickers, highlights (theme signature; `saffron` is a legacy alias)
+breaking / verified          news semantics — stable across themes
+success / warn / danger / info  status ramp (fact-checks, promises, live tags)
+on-media                     text over photos/scrims — never theme-flips
 ```
 
 Reach for `text-balance` / `text-pretty` on headlines and `prose-article` on

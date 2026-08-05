@@ -145,27 +145,35 @@ export default function ElectionsPage() {
         <SectionHeader
           kicker="Constituencies"
           title="Featured seat-by-seat results"
-          href="/elections/constituencies"
         />
-        <div className="overflow-x-auto rounded-xl border border-line">
+        <div
+          tabIndex={0}
+          role="region"
+          aria-label="Constituency results table, scrolls horizontally"
+          className="overflow-x-auto rounded-xl border border-line focus-ring"
+        >
           <table className="w-full min-w-[640px] text-sm">
+            <caption className="sr-only">
+              Featured constituency results: winner, margin and total votes
+            </caption>
             <thead className="bg-bg-subtle">
               <tr className="text-left text-xs uppercase tracking-wider text-ink-muted">
-                <th className="px-4 py-3 font-medium">Constituency</th>
-                <th className="px-4 py-3 font-medium">State</th>
-                <th className="px-4 py-3 font-medium">Winner</th>
-                <th className="px-4 py-3 font-medium">Margin</th>
-                <th className="px-4 py-3 text-right font-medium">Total votes</th>
+                <th scope="col" className="px-4 py-3 font-medium">Constituency</th>
+                <th scope="col" className="px-4 py-3 font-medium">State</th>
+                <th scope="col" className="px-4 py-3 font-medium">Winner</th>
+                <th scope="col" className="px-4 py-3 font-medium">Margin</th>
+                <th scope="col" className="px-4 py-3 text-right font-medium">Total votes</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
               {CONSTITUENCY_RESULTS.map((c) => (
-                <tr key={c.name} className="bg-bg transition hover:bg-bg-subtle">
+                <tr key={c.name} className="bg-bg">
                   <td className="px-4 py-4 font-serif font-medium text-ink">{c.name}</td>
                   <td className="px-4 py-4 text-ink-muted">{c.state}</td>
                   <td className="px-4 py-4">
                     <span className="inline-flex items-center gap-2">
                       <span
+                        aria-hidden
                         className="h-2 w-2 rounded-full"
                         style={{ background: c.partyColor }}
                       />
@@ -197,12 +205,14 @@ export default function ElectionsPage() {
                 key={p.id}
                 className="overflow-hidden rounded-xl border border-line bg-bg"
               >
-                <div className="h-1.5 w-full" style={{ background: p.color }} />
+                <div className="h-1.5 w-full" style={{ background: p.color }} aria-hidden />
                 <div className="p-5">
-                  <p
-                    className="text-[10px] font-semibold uppercase tracking-[0.16em]"
-                    style={{ color: p.color }}
-                  >
+                  <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-muted">
+                    <span
+                      aria-hidden
+                      className="inline-block h-2 w-2 shrink-0 rounded-full"
+                      style={{ background: p.color }}
+                    />
                     {p.short}
                   </p>
                   <h3 className="mt-1 font-serif text-lg font-semibold leading-snug text-ink">

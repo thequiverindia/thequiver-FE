@@ -7,11 +7,21 @@ import { SeatChart, VoteShareBars } from '@/components/election/SeatChart';
 import { ArticleCard } from '@/components/cards/ArticleCard';
 import {
   ELECTION_RESULTS_2024,
-  findStateResult,
   CONSTITUENCY_RESULTS,
   ARTICLES,
 } from '@/lib/mock-data';
 import { slugify, formatNumber } from '@/lib/utils';
+
+export async function generateMetadata({ params }: { params: { state: string } }) {
+  const result = ELECTION_RESULTS_2024.find(
+    (r) => slugify(r.state) === params.state.toLowerCase(),
+  );
+  if (!result) return { title: 'State not found' };
+  return {
+    title: `${result.state} — Election results 2024`,
+    description: `Lok Sabha 2024 in ${result.state}: ${result.totalSeats} seats, seat tally, vote share and constituency results.`,
+  };
+}
 
 export async function generateStaticParams() {
   return ELECTION_RESULTS_2024.map((r) => ({ state: slugify(r.state) }));
@@ -39,10 +49,10 @@ export default function StatePage({ params }: { params: { state: string } }) {
             ]}
           />
           <p className="kicker mt-6">State Dashboard</p>
-          <h1 className="mt-3 font-serif text-4xl font-semibold text-ink md:text-5xl">
+          <h1 className="mt-3 font-serif text-3xl font-semibold text-ink sm:text-4xl md:text-5xl">
             {result.state}
           </h1>
-          <p className="mt-4 text-lg text-ink-muted">
+          <p className="mt-4 text-base text-ink-muted sm:text-lg">
             Lok Sabha 2024 — {result.totalSeats} seats. Leading:{' '}
             <strong className="text-ink">{result.leading}</strong>
           </p>
@@ -89,7 +99,7 @@ export default function StatePage({ params }: { params: { state: string } }) {
                 </li>
               </ul>
             </div>
-            <div className="rounded-2xl border border-saffron/30 bg-saffron/5 p-6">
+            <div className="rounded-2xl border border-accent/30 bg-accent/5 p-6">
               <p className="kicker mb-3">Our reading</p>
               <p className="text-sm leading-relaxed text-ink-muted">
                 The 2024 result in {result.state} confirmed {result.leading} as the
@@ -124,10 +134,12 @@ export default function StatePage({ params }: { params: { state: string } }) {
                         · {formatNumber(c.votes)} votes
                       </p>
                     </div>
-                    <span
-                      className="rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                      style={{ background: c.partyColor + '20', color: c.partyColor }}
-                    >
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-bg-muted px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-ink-muted">
+                      <span
+                        aria-hidden
+                        className="h-1.5 w-1.5 rounded-full"
+                        style={{ background: c.partyColor }}
+                      />
                       {c.party}
                     </span>
                   </div>

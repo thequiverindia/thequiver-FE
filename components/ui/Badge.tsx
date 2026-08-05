@@ -13,14 +13,14 @@ type Tone =
 
 const tones: Record<Tone, string> = {
   neutral: 'bg-bg-muted text-ink-muted border border-line',
-  breaking: 'bg-breaking text-white border border-breaking',
+  breaking: 'bg-breaking text-on-media border border-breaking',
   verified: 'bg-verified/10 text-verified border border-verified/20',
-  saffron: 'bg-saffron/10 text-saffron border border-saffron/20',
+  saffron: 'bg-accent/10 text-accent border border-accent/20',
   brand: 'bg-brand/10 text-brand border border-brand/20',
-  success: 'bg-verified/10 text-verified border border-verified/20',
-  warn: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20',
-  danger: 'bg-breaking/10 text-breaking border border-breaking/20',
-  live: 'bg-breaking text-white border border-breaking',
+  success: 'bg-success/10 text-success border border-success/20',
+  warn: 'bg-warn/10 text-warn border border-warn/25',
+  danger: 'bg-danger/10 text-danger border border-danger/20',
+  live: 'bg-breaking text-on-media border border-breaking',
 };
 
 export function Badge({

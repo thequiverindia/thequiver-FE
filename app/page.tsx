@@ -11,6 +11,7 @@ import { FactCheckCard } from '@/components/cards/FactCheckCard';
 import { PodcastCard } from '@/components/cards/PodcastCard';
 import { NewsletterCTA } from '@/components/sections/NewsletterCTA';
 import { TrendingTags } from '@/components/sections/TrendingTags';
+import { AccountabilityLedger } from '@/components/sections/AccountabilityLedger';
 import {
   ARTICLES,
   POLITICIANS,
@@ -35,11 +36,12 @@ export default function HomePage() {
 
   return (
     <>
+      <h1 className="sr-only">TheQuiverIndia — Politics. Power. People.</h1>
       {/* HERO + RIGHT RAIL */}
       <Container as="section" className="py-6 lg:py-12">
         <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="min-w-0 lg:col-span-8">
-            <ArticleCard article={hero} variant="hero" />
+            <ArticleCard article={hero} variant="hero" priority />
             <div className="mt-8 grid gap-8 sm:grid-cols-2 md:grid-cols-3">
               {sub.map((a) => (
                 <ArticleCard key={a.id} article={a} variant="feature" />
@@ -58,6 +60,9 @@ export default function HomePage() {
       <Container>
         <TrendingTags />
       </Container>
+
+      {/* THE LEDGER — signature accountability scoreboard */}
+      <AccountabilityLedger />
 
       {/* POLITICS GRID */}
       <Container as="section" className="py-12 md:py-16">
@@ -120,7 +125,7 @@ export default function HomePage() {
         <Container className="py-12 md:py-16">
           <div className="mb-8 flex items-end justify-between gap-6">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-saffron">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-bg/70">
                 Watch
               </p>
               <h2 className="mt-2 font-serif text-2xl font-semibold text-bg md:text-3xl">
@@ -135,10 +140,10 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid gap-8 lg:grid-cols-2">
-            <VideoCard video={featuredVideo} variant="feature" />
+            <VideoCard video={featuredVideo} variant="feature" tone="inverse" />
             <div className="space-y-5">
               {sideVideos.map((v) => (
-                <VideoCard key={v.id} video={v} variant="compact" />
+                <VideoCard key={v.id} video={v} variant="compact" tone="inverse" />
               ))}
               <Link
                 href="/videos"

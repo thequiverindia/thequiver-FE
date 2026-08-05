@@ -90,23 +90,3 @@ export const STATES = [
   'Uttarakhand',
 ];
 
-export const PARTY_COLORS: Record<string, string> = {
-  BJP: '#FF9933',
-  INC: '#00BFFF',
-  AAP: '#0072CE',
-  TMC: '#15803D',
-  DMK: '#DC2626',
-  ADMK: '#16A34A',
-  BRS: '#EC4899',
-  SP: '#DC2626',
-  BSP: '#3B82F6',
-  JDU: '#16A34A',
-  RJD: '#16A34A',
-  SS: '#F97316',
-  NCP: '#0E7490',
-  CPI: '#DC2626',
-  CPIM: '#B91C1C',
-  YSRCP: '#0EA5E9',
-  TDP: '#FBBF24',
-  IND: '#737373',
-};

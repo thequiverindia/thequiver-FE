@@ -2,41 +2,164 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Theme system
+  ------------
+  Two independent axes on <html>:
+    data-theme="editorial | peacock | press"   (palette family)
+    class="dark"                               (mode)
+
+  Every block defines the FULL token set so themes can never
+  partially inherit each other. Tokens are space-separated RGB
+  triplets so Tailwind can compose alpha: rgb(var(--x) / 0.5).
+
+  Semantic tokens:
+    bg / bg-subtle / bg-muted    surfaces
+    ink / ink-muted / ink-subtle text scale
+    line / line-strong           borders
+    brand / brand-soft           identity
+    accent                       kickers, highlights (theme signature)
+    breaking / verified          news semantics (stable across themes)
+    success / warn / danger / info  status ramp (fact-checks, promises, live tags)
+    on-media                     text over photos/scrims (never theme-flips)
+*/
+
 @layer base {
-  :root {
+  /* ============ EDITORIAL (default) — indigo & marigold ============ */
+  :root,
+  [data-theme='editorial'] {
+    color-scheme: light;
     --bg: 255 255 255;
     --bg-subtle: 250 250 249;
     --bg-muted: 245 245 244;
     --ink: 12 10 9;
     --ink-muted: 87 83 78;
-    --ink-subtle: 168 162 158;
+    --ink-subtle: 120 113 108;
     --line: 231 229 228;
     --line-strong: 214 211 209;
     --brand: 30 27 75;
     --brand-soft: 67 56 202;
-    --saffron: 234 88 12;
+    --accent: 161 98 7;
     --breaking: 220 38 38;
     --verified: 21 128 61;
+    --success: 21 128 61;
+    --warn: 180 83 9;
+    --danger: 220 38 38;
+    --info: 29 78 216;
+    --on-media: 255 255 255;
   }
 
-  .dark {
+  .dark,
+  [data-theme='editorial'].dark {
+    color-scheme: dark;
     --bg: 12 10 9;
     --bg-subtle: 28 25 23;
     --bg-muted: 41 37 36;
     --ink: 250 250 249;
     --ink-muted: 168 162 158;
-    --ink-subtle: 120 113 108;
+    --ink-subtle: 138 130 124;
     --line: 41 37 36;
     --line-strong: 68 64 60;
     --brand: 165 180 252;
     --brand-soft: 129 140 248;
-    --saffron: 251 146 60;
+    --accent: 250 190 50;
     --breaking: 248 113 113;
     --verified: 74 222 128;
+    --success: 74 222 128;
+    --warn: 251 191 36;
+    --danger: 248 113 113;
+    --info: 96 165 250;
+    --on-media: 255 255 255;
   }
 
-  * {
-    border-color: rgb(var(--line));
+  /* ============ PEACOCK — teal & gold, the signature ============ */
+  [data-theme='peacock'] {
+    color-scheme: light;
+    --bg: 250 251 250;
+    --bg-subtle: 243 246 245;
+    --bg-muted: 233 239 238;
+    --ink: 16 26 26;
+    --ink-muted: 71 85 85;
+    --ink-subtle: 100 116 116;
+    --line: 224 232 231;
+    --line-strong: 197 209 208;
+    --brand: 14 94 99;
+    --brand-soft: 17 122 128;
+    --accent: 143 107 11;
+    --breaking: 198 54 44;
+    --verified: 31 122 77;
+    --success: 31 122 77;
+    --warn: 154 92 9;
+    --danger: 198 54 44;
+    --info: 21 94 156;
+    --on-media: 255 255 255;
+  }
+
+  [data-theme='peacock'].dark {
+    color-scheme: dark;
+    --bg: 9 18 19;
+    --bg-subtle: 17 30 31;
+    --bg-muted: 26 43 44;
+    --ink: 237 244 243;
+    --ink-muted: 158 178 177;
+    --ink-subtle: 116 138 137;
+    --line: 28 46 47;
+    --line-strong: 52 74 75;
+    --brand: 103 200 205;
+    --brand-soft: 77 172 178;
+    --accent: 229 185 78;
+    --breaking: 240 128 118;
+    --verified: 84 214 149;
+    --success: 84 214 149;
+    --warn: 233 178 82;
+    --danger: 240 128 118;
+    --info: 118 180 232;
+    --on-media: 255 255 255;
+  }
+
+  /* ============ PRESS — ivory paper & oxblood, the broadsheet ============ */
+  [data-theme='press'] {
+    color-scheme: light;
+    --bg: 250 247 241;
+    --bg-subtle: 245 240 231;
+    --bg-muted: 237 230 217;
+    --ink: 28 23 18;
+    --ink-muted: 92 82 72;
+    --ink-subtle: 125 113 101;
+    --line: 232 225 213;
+    --line-strong: 209 199 183;
+    --brand: 122 46 46;
+    --brand-soft: 154 64 64;
+    --accent: 146 100 13;
+    --breaking: 185 28 28;
+    --verified: 21 108 60;
+    --success: 21 108 60;
+    --warn: 158 88 8;
+    --danger: 185 28 28;
+    --info: 30 84 175;
+    --on-media: 255 255 255;
+  }
+
+  [data-theme='press'].dark {
+    color-scheme: dark;
+    --bg: 21 18 16;
+    --bg-subtle: 33 29 25;
+    --bg-muted: 47 41 35;
+    --ink: 243 238 230;
+    --ink-muted: 178 166 152;
+    --ink-subtle: 136 125 112;
+    --line: 47 41 35;
+    --line-strong: 74 65 56;
+    --brand: 217 142 142;
+    --brand-soft: 191 113 113;
+    --accent: 212 169 60;
+    --breaking: 244 118 108;
+    --verified: 90 205 145;
+    --success: 90 205 145;
+    --warn: 226 176 88;
+    --danger: 244 118 108;
+    --info: 122 176 235;
+    --on-media: 255 255 255;
   }
 
   html {
@@ -63,6 +186,19 @@
     font-family: var(--font-serif), Georgia, serif;
     letter-spacing: -0.015em;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer components {
@@ -71,7 +207,7 @@
   }
 
   .kicker {
-    @apply inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-saffron;
+    @apply inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-accent;
   }
 
   .link-underline {
@@ -112,7 +248,7 @@
   }
 
   .prose-article blockquote {
-    @apply my-10 border-l-2 border-saffron pl-6 text-xl italic text-ink md:text-2xl;
+    @apply my-10 border-l-2 border-accent pl-6 text-xl italic text-ink md:text-2xl;
     font-family: var(--font-serif), Georgia, serif;
     line-height: 1.4;
   }
@@ -136,11 +272,20 @@
   .prose-article hr {
     @apply my-12 border-line;
   }
+
+  /* Rubber-stamp verdict treatment for fact-checks */
+  .stamp {
+    @apply inline-flex -rotate-3 items-center rounded border-[3px] border-current px-3 py-1 font-serif font-bold uppercase tracking-[0.18em];
+  }
 }
 
 @layer utilities {
   .mobile-menu-panel {
     animation: mobile-menu-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .mobile-menu-panel-out {
+    animation: mobile-menu-out 180ms ease-in forwards;
   }
 
   @keyframes mobile-menu-in {
@@ -151,6 +296,17 @@
     to {
       opacity: 1;
       transform: translateX(0);
+    }
+  }
+
+  @keyframes mobile-menu-out {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(16px);
     }
   }
 
@@ -167,5 +323,16 @@
   }
   .scrollbar-hide {
     scrollbar-width: none;
+  }
+
+  /* Pause marquee for hover, keyboard focus, and reduced-motion users */
+  .marquee-pausable:hover,
+  .marquee-pausable:focus-within {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-pausable {
+      animation: none;
+    }
   }
 }

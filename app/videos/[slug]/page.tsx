@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import { Play, ThumbsUp, MessageSquare, Bookmark, Share2 } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
@@ -10,6 +11,12 @@ import { formatNumber, timeAgo } from '@/lib/utils';
 
 export async function generateStaticParams() {
   return VIDEOS.map((v) => ({ slug: v.slug }));
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const v = findVideo(params.slug);
+  if (!v) return { title: 'Video not found' };
+  return { title: v.title, description: v.description };
 }
 
 export default function VideoPage({ params }: { params: { slug: string } }) {
@@ -29,29 +36,36 @@ export default function VideoPage({ params }: { params: { slug: string } }) {
       />
       <div className="mt-6 grid gap-8 lg:grid-cols-12">
         <div className="lg:col-span-8">
-          {/* Player */}
-          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-ink">
-            <img
+          {/* Player placeholder — real playback lands with the Phase 2 backend */}
+          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black">
+            <Image
               src={v.thumbnail}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover opacity-60"
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 66vw"
+              className="object-cover opacity-60"
             />
-            <span className="absolute inset-0 m-auto flex h-20 w-20 items-center justify-center rounded-full bg-white text-ink shadow-2xl transition hover:scale-105">
-              <Play className="h-9 w-9 fill-current" />
-            </span>
-            <span className="absolute bottom-4 right-4 rounded-md bg-ink/80 px-2 py-1 text-xs font-medium text-white backdrop-blur">
+            <button
+              type="button"
+              aria-label={`Play ${v.title}`}
+              className="absolute inset-0 m-auto flex h-20 w-20 items-center justify-center rounded-full bg-white/95 text-black shadow-2xl transition hover:scale-105 active:scale-100 focus-ring"
+            >
+              <Play className="h-9 w-9 fill-current" aria-hidden />
+            </button>
+            <span className="absolute bottom-4 right-4 rounded-md bg-black/70 px-2 py-1 text-xs font-medium text-on-media backdrop-blur">
               {v.duration}
             </span>
           </div>
 
-          <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.16em] text-saffron">
+          <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
             {v.series ?? 'TheQuiverIndia'}
           </p>
-          <h1 className="mt-2 text-balance font-serif text-3xl font-semibold leading-tight text-ink md:text-4xl">
+          <h1 className="mt-2 text-balance font-serif text-2xl font-semibold leading-tight text-ink sm:text-3xl md:text-4xl">
             {v.title}
           </h1>
           <p className="mt-3 text-sm text-ink-muted">
-            {formatNumber(v.views)} views · {timeAgo(v.publishedAt)}
+            {formatNumber(v.views)} views · <time dateTime={v.publishedAt}>{timeAgo(v.publishedAt)}</time>
           </p>
 
           <div className="mt-5 flex flex-wrap items-center gap-2 border-y border-line py-3">
@@ -61,10 +75,10 @@ export default function VideoPage({ params }: { params: { slug: string } }) {
               <p className="text-[11px] text-ink-muted">Host · {host.role}</p>
             </div>
             <div className="ml-auto flex items-center gap-1">
-              <IconBtn Icon={ThumbsUp} label="2.4K" />
-              <IconBtn Icon={MessageSquare} label="312" />
-              <IconBtn Icon={Bookmark} />
-              <IconBtn Icon={Share2} />
+              <IconBtn Icon={ThumbsUp} label="2.4K" srLabel="Like this video" />
+              <IconBtn Icon={MessageSquare} label="312" srLabel="Jump to comments" />
+              <IconBtn Icon={Bookmark} srLabel="Save to bookmarks" />
+              <IconBtn Icon={Share2} srLabel="Share this video" />
             </div>
           </div>
 
@@ -89,13 +103,19 @@ export default function VideoPage({ params }: { params: { slug: string } }) {
 function IconBtn({
   Icon,
   label,
+  srLabel,
 }: {
   Icon: React.ComponentType<{ className?: string }>;
   label?: string;
+  srLabel: string;
 }) {
   return (
-    <button className="inline-flex items-center gap-1.5 rounded-full border border-line bg-bg px-3 py-1.5 text-xs font-medium text-ink-muted hover:bg-bg-muted hover:text-ink">
-      <Icon className="h-3.5 w-3.5" />
+    <button
+      type="button"
+      aria-label={srLabel}
+      className="inline-flex min-h-[2.5rem] items-center gap-1.5 rounded-full border border-line bg-bg px-3 py-2 text-xs font-medium text-ink-muted transition hover:bg-bg-muted hover:text-ink active:bg-bg-muted focus-ring"
+    >
+      <Icon className="h-3.5 w-3.5" aria-hidden />
       {label}
     </button>
   );

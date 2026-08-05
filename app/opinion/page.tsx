@@ -24,13 +24,13 @@ export default function OpinionPage() {
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <div className="space-y-2 divide-y divide-line">
-              {[...articles, ...ARTICLES.slice(0, 4)].map((a) => (
+              {articles.slice(1).map((a) => (
                 <ArticleCard key={a.id} article={a} variant="list" />
               ))}
             </div>
           </div>
           <aside className="lg:col-span-4">
-            <div className="sticky top-32 rounded-2xl border border-line bg-bg p-6">
+            <div className="rounded-2xl border border-line bg-bg p-6 lg:sticky lg:top-24">
               <p className="kicker mb-4">Our columnists</p>
               <ul className="space-y-4">
                 {AUTHORS.filter((a) =>
