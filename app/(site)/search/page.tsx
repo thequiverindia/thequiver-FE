@@ -6,7 +6,7 @@ import { ArticleCard } from '@/components/cards/ArticleCard';
 import { PoliticianCard } from '@/components/cards/PoliticianCard';
 import { FactCheckCard } from '@/components/cards/FactCheckCard';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { ARTICLES, POLITICIANS, FACT_CHECKS } from '@/lib/mock-data';
+import { getArticles, getFactChecks, getLeaders, searchArticles } from '@/lib/data';
 
 export const metadata = { title: 'Search TheQuiverIndia' };
 
@@ -27,29 +27,13 @@ export default async function SearchPage(
   const enc = encodeURIComponent(rawQ);
   const type = searchParams.type;
 
-  const matchedArticles = q
-    ? ARTICLES.filter(
-        (a) =>
-          a.title.toLowerCase().includes(q) ||
-          a.excerpt.toLowerCase().includes(q) ||
-          a.tags.some((t) => t.toLowerCase().includes(q)),
-      )
-    : ARTICLES.slice(0, 6);
-  const matchedLeaders = q
-    ? POLITICIANS.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.party.toLowerCase().includes(q) ||
-          p.constituency.toLowerCase().includes(q),
-      )
-    : POLITICIANS.slice(0, 4);
-  const matchedFacts = q
-    ? FACT_CHECKS.filter(
-        (f) =>
-          f.claim.toLowerCase().includes(q) ||
-          f.verdict.toLowerCase().includes(q),
-      )
-    : FACT_CHECKS.slice(0, 3);
+  const [matchedArticles, allLeaders, factResults] = await Promise.all([
+    q ? searchArticles(q) : getArticles({ limit: 6 }).then((r) => r.docs),
+    getLeaders({ q: q || undefined }),
+    getFactChecks({ q: q || undefined, limit: 30 }),
+  ]);
+  const matchedLeaders = q ? allLeaders : allLeaders.slice(0, 4);
+  const matchedFacts = q ? factResults : factResults.slice(0, 3);
 
   const total =
     matchedArticles.length + matchedLeaders.length + matchedFacts.length;

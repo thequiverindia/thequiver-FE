@@ -10,7 +10,7 @@ import type {
   Poll,
   StateResult,
   Video,
-} from './types';
+} from './seed-types';
 
 const img = (seed: string, w = 1600, h = 900) =>
   `https://picsum.photos/seed/${seed}/${w}/${h}`;

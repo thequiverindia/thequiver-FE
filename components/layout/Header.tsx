@@ -22,9 +22,6 @@ export function Header() {
               href={item.href}
               className="relative inline-flex items-center rounded-md px-3 py-2 text-sm font-medium text-ink-muted transition hover:bg-bg-muted hover:text-ink focus-ring"
             >
-              {item.label === 'Live' && (
-                <span className="mr-1.5 inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-breaking" />
-              )}
               {item.label}
             </Link>
           ))}

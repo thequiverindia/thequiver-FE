@@ -8,8 +8,7 @@ type Tone =
   | 'brand'
   | 'success'
   | 'warn'
-  | 'danger'
-  | 'live';
+  | 'danger';
 
 const tones: Record<Tone, string> = {
   neutral: 'bg-bg-muted text-ink-muted border border-line',
@@ -20,7 +19,6 @@ const tones: Record<Tone, string> = {
   success: 'bg-success/10 text-success border border-success/20',
   warn: 'bg-warn/10 text-warn border border-warn/25',
   danger: 'bg-danger/10 text-danger border border-danger/20',
-  live: 'bg-breaking text-on-media border border-breaking',
 };
 
 export function Badge({

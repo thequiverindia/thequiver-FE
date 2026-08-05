@@ -5,11 +5,8 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Badge } from '@/components/ui/Badge';
 import { SeatChart, VoteShareBars } from '@/components/election/SeatChart';
 import { ArticleCard } from '@/components/cards/ArticleCard';
-import {
-  ELECTION_RESULTS_2024,
-  CONSTITUENCY_RESULTS,
-  ARTICLES,
-} from '@/lib/mock-data';
+import { ELECTION_RESULTS_2024, CONSTITUENCY_RESULTS } from '@/lib/election-data';
+import { getArticles } from '@/lib/data';
 import { slugify, formatNumber } from '@/lib/utils';
 
 export async function generateMetadata(props: { params: Promise<{ state: string }> }) {
@@ -35,9 +32,14 @@ export default async function StatePage(props: { params: Promise<{ state: string
   );
   if (!result) notFound();
   const constituencies = CONSTITUENCY_RESULTS.filter((c) => c.state === result.state);
-  const stateArticles = ARTICLES.filter((a) =>
-    a.tags.some((t) => t.toLowerCase().includes(result.state.toLowerCase())),
-  ).slice(0, 4);
+  const { docs: latest } = await getArticles({ limit: 24 });
+  const stateArticles = latest
+    .filter(
+      (a) =>
+        a.tags.some((t) => t.toLowerCase().includes(result.state.toLowerCase())) ||
+        a.title.toLowerCase().includes(result.state.toLowerCase()),
+    )
+    .slice(0, 4);
 
   return (
     <>

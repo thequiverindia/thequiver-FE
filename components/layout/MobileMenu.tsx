@@ -13,11 +13,9 @@ import {
   ShieldCheck,
   Users,
   Video,
-  Radio,
   MapPin,
   Globe,
   TrendingUp,
-  Mic,
   BarChart3,
   Search,
   UserCircle2,
@@ -41,8 +39,6 @@ const MOBILE_NAV: NavItem[] = [
   { label: 'International', href: '/international', icon: Globe },
   { label: 'Trending', href: '/trending', icon: TrendingUp },
   { label: 'Videos', href: '/videos', icon: Video },
-  { label: 'Podcasts', href: '/podcasts', icon: Mic },
-  { label: 'Live Updates', href: '/live', icon: Radio },
   { label: 'Polls', href: '/polls', icon: BarChart3 },
 ];
 

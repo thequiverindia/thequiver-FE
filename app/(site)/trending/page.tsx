@@ -3,15 +3,16 @@ import { Container } from '@/components/ui/Container';
 import { CategoryHero } from '@/components/sections/CategoryHero';
 import { TrendingTags } from '@/components/sections/TrendingTags';
 import { ArticleCard } from '@/components/cards/ArticleCard';
-import { ARTICLES, MOST_READ } from '@/lib/mock-data';
+import { getMostReadArticles } from '@/lib/data';
 import { formatNumber } from '@/lib/utils';
 
 export const metadata = {
   title: 'Trending — What India is reading right now',
 };
 
-export default function TrendingPage() {
-  const sortedByViews = [...ARTICLES].sort((a, b) => b.views - a.views);
+export default async function TrendingPage() {
+  const sortedByViews = await getMostReadArticles(9);
+  const mostRead = sortedByViews.slice(0, 5);
   return (
     <>
       <CategoryHero
@@ -47,7 +48,7 @@ export default function TrendingPage() {
             <div className="rounded-2xl border border-line bg-bg p-6 lg:sticky lg:top-24">
               <p className="kicker mb-4">Most read this week</p>
               <ol className="space-y-4">
-                {MOST_READ.map((a, i) => (
+                {mostRead.map((a, i) => (
                   <li key={a.id} className="flex gap-3 border-b border-line pb-3 last:border-0">
                     <span aria-hidden className="font-serif text-2xl font-semibold text-ink-subtle">
                       {i + 1}

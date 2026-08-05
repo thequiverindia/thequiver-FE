@@ -14,16 +14,23 @@ import { ReadingProgress } from '@/components/article/ReadingProgress';
 import { BackToTop } from '@/components/article/BackToTop';
 import { CommentSection } from '@/components/article/CommentSection';
 import { ArticleCard } from '@/components/cards/ArticleCard';
-import { ARTICLES, findArticle, relatedArticles, MOST_READ } from '@/lib/mock-data';
+import {
+  getArticleBySlug,
+  getArticles,
+  getMostReadArticles,
+  getRelatedArticles,
+  listSlugs,
+} from '@/lib/data';
 import { formatDateTime } from '@/lib/utils';
 
 export async function generateStaticParams() {
-  return ARTICLES.map((a) => ({ slug: a.slug }));
+  const slugs = await listSlugs('articles');
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const article = findArticle(params.slug);
+  const article = await getArticleBySlug(params.slug);
   if (!article) return { title: 'Article not found' };
   return {
     title: article.title,
@@ -38,13 +45,15 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function ArticlePage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const article = findArticle(params.slug);
+  const article = await getArticleBySlug(params.slug);
   if (!article) notFound();
-  const related = relatedArticles(article).slice(0, 3);
+  const related = (await getRelatedArticles(article, 3)) ?? [];
+  const mostRead = await getMostReadArticles(5);
   // "Read next" must not repeat the sidebar's related list.
-  const readNext = ARTICLES.filter(
-    (a) => a.id !== article.id && !related.some((r) => r.id === a.id),
-  ).slice(0, 3);
+  const { docs: latest } = await getArticles({ limit: 9, excludeSlug: article.slug });
+  const readNext = latest
+    .filter((a) => !related.some((r) => r.id === a.id))
+    .slice(0, 3);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -56,7 +65,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
     dateModified: article.updatedAt ?? article.publishedAt,
     author: { '@type': 'Person', name: article.author.name },
     publisher: { '@type': 'NewsMediaOrganization', name: 'TheQuiverIndia' },
-    wordCount: article.wordCount,
+    inLanguage: article.language === 'hi' ? 'hi-IN' : 'en-IN',
   };
 
   return (
@@ -82,7 +91,6 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
             ]}
           />
           <div className="mt-5 flex flex-wrap items-center gap-2">
-            {article.isBreaking && <Badge tone="breaking" withDot>Breaking</Badge>}
             {article.isExclusive && <Badge tone="saffron">Exclusive</Badge>}
             {article.kicker && (
               <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-saffron">
@@ -144,9 +152,9 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
             </div>
           </div>
           <div className="mx-auto w-full min-w-0 max-w-prose lg:col-span-8">
-            <ArticleBody blocks={article.body} />
+            <ArticleBody body={article.body} />
 
-            {article.factCheckId && (
+            {article.factCheckSlug && (
               <aside className="mt-12 rounded-2xl border border-verified/30 bg-verified/5 p-6">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-verified">
                   Linked Fact Check
@@ -155,7 +163,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
                   This story includes a claim that we have independently verified.
                 </p>
                 <Link
-                  href={`/fact-check/${article.factCheckId}`}
+                  href={`/fact-check/${article.factCheckSlug}`}
                   className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-verified hover:underline"
                 >
                   Read the full fact-check trail →
@@ -210,7 +218,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
             <div className="rounded-xl border border-line bg-bg p-5">
               <p className="kicker mb-3">Most read</p>
               <ul className="space-y-3">
-                {MOST_READ.slice(0, 5).map((a, i) => (
+                {mostRead.map((a, i) => (
                   <li key={a.id} className="flex gap-3">
                     <span className="font-serif text-2xl font-semibold leading-none text-ink-subtle">
                       {i + 1}

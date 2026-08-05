@@ -3,14 +3,12 @@ import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Tabs } from '@/components/ui/Tabs';
 import { VideoCard } from '@/components/cards/VideoCard';
-import { VIDEOS } from '@/lib/mock-data';
+import { getVideos } from '@/lib/data';
 
 export const metadata = {
   title: 'Videos — Watch the news',
   description: 'Documentaries, interviews, explainers and daily briefs from the TheQuiverIndia video desk.',
 };
-
-const SERIES = [...new Set(VIDEOS.map((v) => v.series).filter(Boolean))] as string[];
 
 export default async function VideosPage(
   props: {
@@ -19,9 +17,14 @@ export default async function VideosPage(
 ) {
   const searchParams = await props.searchParams;
   const series = searchParams?.series;
-  const filtered = series ? VIDEOS.filter((v) => v.series === series) : VIDEOS;
-  const featured = filtered[0] ?? VIDEOS[0];
-  const grid = filtered.filter((v) => v.id !== featured.id);
+  const [filtered, all] = await Promise.all([
+    getVideos({ series }),
+    getVideos({}),
+  ]);
+  const SERIES = [...new Set(all.map((v) => v.series).filter(Boolean))] as string[];
+  const featured = filtered[0] ?? all[0];
+  const grid = featured ? filtered.filter((v) => v.id !== featured.id) : [];
+  if (!featured) return null;
 
   return (
     <>

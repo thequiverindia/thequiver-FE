@@ -2,14 +2,15 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { PageHero } from '@/components/sections/PageHero';
 import { Avatar } from '@/components/ui/Avatar';
-import { AUTHORS } from '@/lib/mock-data';
+import { getAuthors } from '@/lib/data';
 
 export const metadata = {
   title: 'About TheQuiverIndia',
   description: 'How we work, who we are, and what we stand for.',
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const authors = await getAuthors();
   return (
     <>
       <PageHero
@@ -132,7 +133,7 @@ export default function AboutPage() {
             who answers to corrections, reads your replies, and meets a public standard.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {AUTHORS.map((a) => (
+            {authors.map((a) => (
               <div
                 key={a.id}
                 className="rounded-xl border border-line bg-bg p-6 text-center"

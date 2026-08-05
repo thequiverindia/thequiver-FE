@@ -4,7 +4,7 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { UserNav } from '@/components/user/UserNav';
 import { ArticleCard } from '@/components/cards/ArticleCard';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { ARTICLES } from '@/lib/mock-data';
+import { getArticles } from '@/lib/data';
 
 export const metadata = { title: 'Bookmarks' };
 
@@ -16,8 +16,8 @@ const COLLECTIONS = [
   { label: 'Long form', count: 2 },
 ];
 
-export default function BookmarksPage() {
-  const saved = ARTICLES.slice(0, 6);
+export default async function BookmarksPage() {
+  const saved = (await getArticles({ limit: 6 })).docs;
   return (
     <Container as="section" className="py-10">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Bookmarks' }]} />

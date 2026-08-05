@@ -3,7 +3,7 @@ import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { UserNav } from '@/components/user/UserNav';
 import { Tabs } from '@/components/ui/Tabs';
-import { LIVE_UPDATES } from '@/lib/mock-data';
+import { getArticles } from '@/lib/data';
 import { timeAgo } from '@/lib/utils';
 
 export const metadata = { title: 'Notifications' };
@@ -15,15 +15,21 @@ const TYPE_META = {
   reply: { Icon: MessageSquare, color: 'text-saffron', bg: 'bg-saffron/10' },
 } as const;
 
-const NOTIFICATIONS = LIVE_UPDATES.slice(0, 8).map((u, i) => ({
-  id: u.id,
-  type: (['alert', 'verify', 'election', 'reply'] as const)[i % 4],
-  title: u.text,
-  time: u.time,
-  unread: i < 3,
-}));
+async function buildNotifications() {
+  // Placeholder notifications derived from recent stories until real
+  // engagement notifications arrive with the accounts milestone.
+  const { docs } = await getArticles({ limit: 8 });
+  return docs.map((a, i) => ({
+    id: a.id,
+    type: (['alert', 'verify', 'election', 'reply'] as const)[i % 4],
+    title: a.title,
+    time: a.publishedAt,
+    unread: i < 3,
+  }));
+}
 
-export default function NotificationsPage() {
+export default async function NotificationsPage() {
+  const NOTIFICATIONS = await buildNotifications();
   return (
     <Container as="section" className="py-10">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Notifications' }]} />

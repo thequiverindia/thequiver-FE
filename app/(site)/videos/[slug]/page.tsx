@@ -6,26 +6,28 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Avatar } from '@/components/ui/Avatar';
 import { VideoCard } from '@/components/cards/VideoCard';
 import { CommentSection } from '@/components/article/CommentSection';
-import { VIDEOS, findVideo, AUTHORS } from '@/lib/mock-data';
+import { getAuthors, getVideoBySlug, getVideos, listSlugs } from '@/lib/data';
 import { formatNumber, timeAgo } from '@/lib/utils';
 
 export async function generateStaticParams() {
-  return VIDEOS.map((v) => ({ slug: v.slug }));
+  const slugs = await listSlugs('videos');
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const v = findVideo(params.slug);
+  const v = await getVideoBySlug(params.slug);
   if (!v) return { title: 'Video not found' };
   return { title: v.title, description: v.description };
 }
 
 export default async function VideoPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const v = findVideo(params.slug);
+  const v = await getVideoBySlug(params.slug);
   if (!v) notFound();
-  const others = VIDEOS.filter((x) => x.id !== v.id);
-  const host = AUTHORS.find((a) => a.name === v.host) ?? AUTHORS[0];
+  const [allVideos, authors] = await Promise.all([getVideos({}), getAuthors()]);
+  const others = allVideos.filter((x) => x.id !== v.id);
+  const host = authors.find((a) => a.name === v.host) ?? authors[0];
 
   return (
     <Container as="section" className="py-8 lg:py-12">
@@ -38,27 +40,41 @@ export default async function VideoPage(props: { params: Promise<{ slug: string 
       />
       <div className="mt-6 grid gap-8 lg:grid-cols-12">
         <div className="lg:col-span-8">
-          {/* Player placeholder — real playback lands with the Phase 2 backend */}
-          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black">
-            <Image
-              src={v.thumbnail}
-              alt=""
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 66vw"
-              className="object-cover opacity-60"
-            />
-            <button
-              type="button"
-              aria-label={`Play ${v.title}`}
-              className="absolute inset-0 m-auto flex h-20 w-20 items-center justify-center rounded-full bg-white/95 text-black shadow-2xl transition hover:scale-105 active:scale-100 focus-ring"
-            >
-              <Play className="h-9 w-9 fill-current" aria-hidden />
-            </button>
-            <span className="absolute bottom-4 right-4 rounded-md bg-black/70 px-2 py-1 text-xs font-medium text-on-media backdrop-blur">
-              {v.duration}
-            </span>
-          </div>
+          {/* Player — real YouTube embed once the video has a channel ID */}
+          {v.youtubeId ? (
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${v.youtubeId}`}
+                title={v.title}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="absolute inset-0 h-full w-full border-0"
+              />
+            </div>
+          ) : (
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black">
+              {v.thumbnail && (
+                <Image
+                  src={v.thumbnail}
+                  alt=""
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  className="object-cover opacity-60"
+                />
+              )}
+              <span className="absolute inset-0 m-auto flex h-fit w-fit items-center rounded-full bg-black/70 px-4 py-2 text-sm font-medium text-on-media">
+                <Play className="mr-2 h-4 w-4 fill-current" aria-hidden />
+                Video arriving soon on our YouTube channel
+              </span>
+              {v.duration && (
+                <span className="absolute bottom-4 right-4 rounded-md bg-black/70 px-2 py-1 text-xs font-medium text-on-media backdrop-blur">
+                  {v.duration}
+                </span>
+              )}
+            </div>
+          )}
 
           <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
             {v.series ?? 'TheQuiverIndia'}
@@ -71,11 +87,15 @@ export default async function VideoPage(props: { params: Promise<{ slug: string 
           </p>
 
           <div className="mt-5 flex flex-wrap items-center gap-2 border-y border-line py-3">
-            <Avatar src={host.avatar} name={host.name} size="sm" />
-            <div>
-              <p className="text-sm font-medium text-ink">{host.name}</p>
-              <p className="text-[11px] text-ink-muted">Host · {host.role}</p>
-            </div>
+            {host && (
+              <>
+                <Avatar src={host.avatar} name={host.name} size="sm" />
+                <div>
+                  <p className="text-sm font-medium text-ink">{host.name}</p>
+                  <p className="text-[11px] text-ink-muted">Host · {host.role}</p>
+                </div>
+              </>
+            )}
             <div className="ml-auto flex items-center gap-1">
               <IconBtn Icon={ThumbsUp} label="2.4K" srLabel="Like this video" />
               <IconBtn Icon={MessageSquare} label="312" srLabel="Jump to comments" />

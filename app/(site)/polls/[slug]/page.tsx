@@ -5,25 +5,26 @@ import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Badge } from '@/components/ui/Badge';
 import { PollCard } from '@/components/cards/PollCard';
-import { POLLS, findPoll } from '@/lib/mock-data';
+import { getPollBySlug, getPolls, listSlugs } from '@/lib/data';
 import { formatDateTime, formatNumber } from '@/lib/utils';
 
 export async function generateStaticParams() {
-  return POLLS.map((p) => ({ slug: p.slug }));
+  const slugs = await listSlugs('polls');
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const p = findPoll(params.slug);
+  const p = await getPollBySlug(params.slug);
   if (!p) return { title: 'Poll not found' };
   return { title: `Poll: ${p.question}`, description: p.description };
 }
 
 export default async function PollDetailPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const p = findPoll(params.slug);
+  const p = await getPollBySlug(params.slug);
   if (!p) notFound();
-  const others = POLLS.filter((x) => x.id !== p.id).slice(0, 3);
+  const others = (await getPolls()).filter((x) => x.id !== p.id).slice(0, 3);
   const top = [...p.options].sort((a, b) => b.votes - a.votes)[0];
 
   return (

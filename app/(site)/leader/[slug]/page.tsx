@@ -20,16 +20,17 @@ import { PromiseTracker } from '@/components/politician/PromiseTracker';
 import { Timeline } from '@/components/politician/Timeline';
 import { PoliticianCard } from '@/components/cards/PoliticianCard';
 import { ArticleCard } from '@/components/cards/ArticleCard';
-import { POLITICIANS, ARTICLES, findPolitician } from '@/lib/mock-data';
+import { getArticles, getLeaderBySlug, getLeaders, listSlugs } from '@/lib/data';
 import { formatNumber } from '@/lib/utils';
 
 export async function generateStaticParams() {
-  return POLITICIANS.map((p) => ({ slug: p.slug }));
+  const slugs = await listSlugs('leaders');
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const p = findPolitician(params.slug);
+  const p = await getLeaderBySlug(params.slug);
   if (!p) return { title: 'Leader not found' };
   return {
     title: `${p.name} — ${p.position}`,
@@ -39,15 +40,21 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function LeaderPage(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const p = findPolitician(params.slug);
+  const p = await getLeaderBySlug(params.slug);
   if (!p) notFound();
-  const others = POLITICIANS.filter((x) => x.id !== p.id).slice(0, 4);
+  const [allLeaders, { docs: latest }] = await Promise.all([
+    getLeaders({}),
+    getArticles({ limit: 24 }),
+  ]);
+  const others = allLeaders.filter((x) => x.id !== p.id).slice(0, 4);
   // Only stories that actually mention this leader (name, party, or constituency).
-  const nameParts = [p.name.toLowerCase(), p.partyShort.toLowerCase(), p.constituency.toLowerCase()];
-  const mentions = ARTICLES.filter((a) => {
-    const haystack = `${a.title} ${a.excerpt} ${a.tags.join(' ')}`.toLowerCase();
-    return nameParts.some((n) => haystack.includes(n));
-  }).slice(0, 4);
+  const nameParts = [p.name.toLowerCase(), p.partyShort.toLowerCase(), p.constituency.toLowerCase()].filter(Boolean);
+  const mentions = latest
+    .filter((a) => {
+      const haystack = `${a.title} ${a.excerpt} ${a.tags.join(' ')}`.toLowerCase();
+      return nameParts.some((n) => haystack.includes(n));
+    })
+    .slice(0, 4);
 
   return (
     <>

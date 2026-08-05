@@ -41,7 +41,6 @@ export function ArticleCard({
           </div>
           <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 md:p-10">
             <div className="mb-3 flex flex-wrap items-center gap-2">
-              {article.isBreaking && <Badge tone="breaking" withDot>Breaking</Badge>}
               {article.isExclusive && <Badge tone="saffron">Exclusive</Badge>}
               {article.kicker && (
                 <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-on-media/80 sm:text-[11px]">
@@ -80,11 +79,6 @@ export function ArticleCard({
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover transition duration-500 group-hover:scale-[1.03]"
             />
-            {article.isBreaking && (
-              <Badge tone="breaking" withDot className="absolute left-3 top-3">
-                Breaking
-              </Badge>
-            )}
           </div>
         </Link>
         <div className="space-y-2">
@@ -225,16 +219,6 @@ export function ArticleCard({
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition duration-500 group-hover:scale-[1.03]"
           />
-          {article.isBreaking && (
-            <Badge tone="breaking" withDot className="absolute left-3 top-3">
-              Breaking
-            </Badge>
-          )}
-          {article.format === 'video' && (
-            <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-on-media backdrop-blur">
-              Video
-            </span>
-          )}
         </div>
       </Link>
       <div className="space-y-2 p-5">

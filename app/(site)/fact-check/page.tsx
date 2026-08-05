@@ -6,19 +6,12 @@ import { Tabs } from '@/components/ui/Tabs';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { FactCheckCard } from '@/components/cards/FactCheckCard';
 import { MockForm } from '@/components/ui/MockForm';
-import { FACT_CHECKS } from '@/lib/mock-data';
+import { getFactChecks } from '@/lib/data';
 
 export const metadata = {
   title: 'Fact Check — Verified claims, rated and sourced',
   description:
     'Every viral claim, rated and explained with sources. Submit a claim for verification.',
-};
-
-const COUNTS = {
-  total: FACT_CHECKS.length,
-  false: FACT_CHECKS.filter((f) => f.rating === 'false').length,
-  misleading: FACT_CHECKS.filter((f) => f.rating === 'misleading').length,
-  mostlyTrue: FACT_CHECKS.filter((f) => f.rating === 'mostly-true').length,
 };
 
 const RATING_TAB_LABELS: Record<string, string> = {
@@ -35,16 +28,16 @@ export default async function FactCheckPage(
   const searchParams = await props.searchParams;
   const rating = searchParams?.rating;
   const q = searchParams?.q?.trim().toLowerCase();
-  const filtered = FACT_CHECKS.filter((fc) => {
-    if (rating && fc.rating !== rating) return false;
-    if (
-      q &&
-      !fc.claim.toLowerCase().includes(q) &&
-      !fc.claimant.toLowerCase().includes(q)
-    )
-      return false;
-    return true;
-  });
+  const [all, filtered] = await Promise.all([
+    getFactChecks({ limit: 100 }),
+    getFactChecks({ rating, q, limit: 100 }),
+  ]);
+  const COUNTS = {
+    total: all.length,
+    false: all.filter((f) => f.rating === 'false').length,
+    misleading: all.filter((f) => f.rating === 'misleading').length,
+    mostlyTrue: all.filter((f) => f.rating === 'mostly-true').length,
+  };
 
   return (
     <>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { CategoryHero } from '@/components/sections/CategoryHero';
 import { Container } from '@/components/ui/Container';
 import { ArticleCard } from '@/components/cards/ArticleCard';
-import { ARTICLES } from '@/lib/mock-data';
+import { getArticles } from '@/lib/data';
 import { STATES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
@@ -17,8 +17,11 @@ export default async function StateNewsPage(
 ) {
   const searchParams = await props.searchParams;
   const activeState = searchParams?.state;
-  const articles = ARTICLES.filter((a) => a.category === 'state-news');
-  const all = articles.length > 0 ? articles : ARTICLES.slice(0, 8);
+  const [stateNews, latest] = await Promise.all([
+    getArticles({ limit: 50, category: 'state-news' }),
+    getArticles({ limit: 8 }),
+  ]);
+  const all = stateNews.docs.length > 0 ? stateNews.docs : latest.docs;
   const stateQuery = activeState?.toLowerCase();
   const filtered = stateQuery
     ? all.filter(

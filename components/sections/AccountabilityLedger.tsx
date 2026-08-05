@@ -1,25 +1,22 @@
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
-import { POLITICIANS, FACT_CHECKS } from '@/lib/mock-data';
+import { getLedgerStats } from '@/lib/data';
 
 /**
  * The Ledger — the site's signature strip. A running national scoreboard of
- * promises and verdicts that says, in one glance, what this platform is for.
+ * promises and verdicts, computed live from the database.
  */
-export function AccountabilityLedger() {
-  const allPromises = POLITICIANS.flatMap((p) => p.promises);
-  const kept = allPromises.filter((p) => p.status === 'kept').length;
-  const broken = allPromises.filter((p) => p.status === 'broken').length;
-  const inProgress = allPromises.filter((p) => p.status === 'in-progress').length;
-  const falseClaims = FACT_CHECKS.filter((f) => f.rating === 'false').length;
+export async function AccountabilityLedger() {
+  const s = await getLedgerStats();
+  if (s.promisesTracked === 0) return null;
 
-  const stats: { value: number; label: string; tone?: string; href: string }[] = [
-    { value: allPromises.length, label: 'Promises tracked', href: '/leader' },
-    { value: kept, label: 'Kept', tone: 'text-success', href: '/leader' },
-    { value: inProgress, label: 'In progress', tone: 'text-warn', href: '/leader' },
-    { value: broken, label: 'Broken', tone: 'text-danger', href: '/leader' },
-    { value: falseClaims, label: 'False claims flagged', tone: 'text-danger', href: '/fact-check' },
+  const stats: { value: number; label: string; tone?: string }[] = [
+    { value: s.promisesTracked, label: 'Promises tracked' },
+    { value: s.kept, label: 'Kept', tone: 'text-success' },
+    { value: s.inProgress, label: 'In progress', tone: 'text-warn' },
+    { value: s.broken, label: 'Broken', tone: 'text-danger' },
+    { value: s.falseClaims, label: 'False claims flagged', tone: 'text-danger' },
   ];
 
   return (
@@ -43,15 +40,15 @@ export function AccountabilityLedger() {
             </Link>
           </div>
           <dl className="grid flex-1 grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3 lg:grid-cols-5">
-            {stats.map((s) => (
-              <div key={s.label} className="flex min-w-0 flex-col gap-1.5">
+            {stats.map((stat) => (
+              <div key={stat.label} className="flex min-w-0 flex-col gap-1.5">
                 <dt className="order-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
-                  {s.label}
+                  {stat.label}
                 </dt>
                 <dd
-                  className={`order-1 font-serif text-3xl font-semibold leading-none md:text-4xl ${s.tone ?? 'text-ink'}`}
+                  className={`order-1 font-serif text-3xl font-semibold leading-none md:text-4xl ${stat.tone ?? 'text-ink'}`}
                 >
-                  {s.value}
+                  {stat.value}
                 </dd>
               </div>
             ))}

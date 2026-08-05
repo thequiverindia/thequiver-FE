@@ -3,7 +3,7 @@ import { Search, ArrowUpDown } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { PoliticianCard } from '@/components/cards/PoliticianCard';
-import { POLITICIANS, PARTIES } from '@/lib/mock-data';
+import { getLeaders, getParties } from '@/lib/data';
 import { STATES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
@@ -33,20 +33,11 @@ export default async function LeadersPage(
   const state = searchParams?.state;
   const sortByRating = searchParams?.sort === 'rating';
 
-  let leaders = POLITICIANS.filter((p) => {
-    if (party && p.partyShort !== party) return false;
-    if (state && p.state !== state) return false;
-    if (
-      q &&
-      !p.name.toLowerCase().includes(q) &&
-      !p.constituency.toLowerCase().includes(q) &&
-      !p.party.toLowerCase().includes(q) &&
-      !p.partyShort.toLowerCase().includes(q)
-    )
-      return false;
-    return true;
-  });
-  if (sortByRating) leaders = [...leaders].sort((a, b) => b.rating - a.rating);
+  const [leaders, allLeaders, parties] = await Promise.all([
+    getLeaders({ q, party, state, sortByRating }),
+    getLeaders({}),
+    getParties(),
+  ]);
 
   return (
     <>
@@ -98,7 +89,7 @@ export default async function LeadersPage(
               active={!party}
               href={buildHref({ q: searchParams?.q, sort: searchParams?.sort, state })}
             />
-            {PARTIES.map((p) => (
+            {parties.map((p) => (
               <FilterChip
                 key={p.id}
                 label={p.short}
@@ -133,7 +124,7 @@ export default async function LeadersPage(
 
       <Container as="section" className="py-12">
         <p className="mb-6 text-sm text-ink-muted">
-          Showing {leaders.length} of {POLITICIANS.length} tracked leaders
+          Showing {leaders.length} of {allLeaders.length} tracked leaders
           {state && <> in {state}</>}
           {party && <> from {party}</>}
         </p>

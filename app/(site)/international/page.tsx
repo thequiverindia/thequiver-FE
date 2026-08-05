@@ -1,20 +1,17 @@
 import { CategoryHero } from '@/components/sections/CategoryHero';
 import { CategoryGrid } from '@/components/sections/CategoryGrid';
-import { ARTICLES } from '@/lib/mock-data';
+import { getArticles } from '@/lib/data';
 
 export const metadata = {
   title: 'International — India in the world',
 };
 
-export default async function InternationalPage(
-  props: {
-    searchParams: Promise<{ page?: string }>;
-  }
-) {
+export default async function InternationalPage(props: {
+  searchParams: Promise<{ page?: string }>;
+}) {
   const searchParams = await props.searchParams;
   const page = Number(searchParams.page ?? 1);
-  const articles = ARTICLES.filter((a) => a.category === 'international');
-  const hero = articles[0] ?? ARTICLES[0];
+  const { docs } = await getArticles({ limit: 100, category: 'international' });
   return (
     <>
       <CategoryHero
@@ -22,13 +19,9 @@ export default async function InternationalPage(
         title="India in the world. The world in India."
         description="Diplomacy, foreign policy, and the global stories with consequences at home."
         breadcrumb={[{ label: 'Home', href: '/' }, { label: 'International' }]}
-        hero={hero}
+        hero={docs[0]}
       />
-      <CategoryGrid
-        articles={articles.filter((a) => a.id !== hero.id)}
-        page={page}
-        basePath="/international"
-      />
+      <CategoryGrid articles={docs.slice(1)} page={page} basePath="/international" />
     </>
   );
 }

@@ -21,7 +21,7 @@ export const PRIMARY_NAV = [
   { label: 'Fact Check', href: '/fact-check' },
   { label: 'Leaders', href: '/leader' },
   { label: 'Videos', href: '/videos' },
-  { label: 'Live', href: '/live' },
+  { label: 'State News', href: '/state-news' },
 ];
 
 export const FOOTER_LINKS = [
@@ -39,12 +39,12 @@ export const FOOTER_LINKS = [
     ],
   },
   {
-    title: 'Watch & Listen',
+    title: 'Watch & Engage',
     links: [
       { label: 'Videos', href: '/videos' },
-      { label: 'Podcasts', href: '/podcasts' },
-      { label: 'Live Updates', href: '/live' },
       { label: 'Polls', href: '/polls' },
+      { label: 'Leader Index', href: '/leader' },
+      { label: 'Newsletter', href: '/newsletter' },
     ],
   },
   {

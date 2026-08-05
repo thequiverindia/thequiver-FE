@@ -5,13 +5,13 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { UserNav } from '@/components/user/UserNav';
 import { ArticleCard } from '@/components/cards/ArticleCard';
 import { PoliticianCard } from '@/components/cards/PoliticianCard';
-import { ARTICLES, POLITICIANS } from '@/lib/mock-data';
+import { getArticles, getLeaders } from '@/lib/data';
 
 export const metadata = { title: 'Your profile' };
 
-export default function ProfilePage() {
-  const reading = ARTICLES.slice(0, 3);
-  const followingLeaders = POLITICIANS.slice(0, 3);
+export default async function ProfilePage() {
+  const reading = (await getArticles({ limit: 3 })).docs;
+  const followingLeaders = (await getLeaders({})).slice(0, 3);
   return (
     <Container as="section" className="py-10">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Your profile' }]} />

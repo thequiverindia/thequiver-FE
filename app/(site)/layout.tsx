@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Lora } from 'next/font/google';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { LiveTicker } from '@/components/layout/LiveTicker';
 import { ThemeScript } from '@/components/layout/ThemeScript';
 import './globals.css';
 
@@ -32,7 +31,6 @@ export const metadata: Metadata = {
     'election news',
     'fact check',
     'politician profiles',
-    'live updates',
     'opinion',
     'explainers',
   ],
@@ -68,7 +66,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        <LiveTicker />
         <Header />
         <main id="main" tabIndex={-1} className="min-h-[60vh] outline-none">
           {children}

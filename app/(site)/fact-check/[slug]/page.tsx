@@ -7,25 +7,26 @@ import { AuthorByline } from '@/components/article/AuthorByline';
 import { FactCheckCard, ratingMeta } from '@/components/cards/FactCheckCard';
 import { ShareBar } from '@/components/article/ShareBar';
 import { ShareVerdict } from '@/components/fact-check/ShareVerdict';
-import { FACT_CHECKS, findFactCheck } from '@/lib/mock-data';
+import { getFactCheckBySlug, getFactChecks, listSlugs } from '@/lib/data';
 import { cn, formatDateTime } from '@/lib/utils';
 
 export async function generateStaticParams() {
-  return FACT_CHECKS.map((f) => ({ slug: f.slug }));
+  const slugs = await listSlugs('fact-checks');
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const fc = findFactCheck(params.slug);
+  const fc = await getFactCheckBySlug(params.slug);
   if (!fc) return { title: 'Fact check not found' };
   return { title: `Fact Check: ${fc.claim.slice(0, 60)}…`, description: fc.verdict };
 }
 
 export default async function FactCheckDetail(props: { params: Promise<{ slug: string }> }) {
   const params = await props.params;
-  const fc = findFactCheck(params.slug);
+  const fc = await getFactCheckBySlug(params.slug);
   if (!fc) notFound();
-  const others = FACT_CHECKS.filter((f) => f.id !== fc.id).slice(0, 3);
+  const others = (await getFactChecks({ limit: 4 })).filter((f) => f.id !== fc.id).slice(0, 3);
   const meta = ratingMeta[fc.rating];
 
   return (

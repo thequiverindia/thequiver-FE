@@ -1,5 +1,5 @@
 /**
- * One-time database seed from lib/mock-data.ts.
+ * One-time database seed from scripts/seed-data.ts (frozen demo content).
  *
  * Run with:  npm run seed   (payload run scripts/seed.ts)
  *
@@ -21,7 +21,7 @@ import {
   POLITICIANS,
   POLLS,
   VIDEOS,
-} from '../lib/mock-data';
+} from './seed-data';
 import { CATEGORIES, STATES } from '../lib/constants';
 import { slugify } from '../collections/fields/slugField';
 

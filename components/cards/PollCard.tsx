@@ -47,7 +47,7 @@ export function PollCard({
     >
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-accent">
-          Live Poll · {poll.category}
+          Reader Poll · {poll.category}
         </span>
         <span className="text-xs text-ink-muted">
           {formatNumber(poll.totalVotes)} votes

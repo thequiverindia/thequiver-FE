@@ -2,9 +2,10 @@ import Link from 'next/link';
 import { Search, Home, Compass } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { ArticleCard } from '@/components/cards/ArticleCard';
-import { MOST_READ } from '@/lib/mock-data';
+import { getMostReadArticles } from '@/lib/data';
 
-export default function NotFound() {
+export default async function NotFound() {
+  const mostRead = await getMostReadArticles(3);
   return (
     <Container as="section" className="py-20 lg:py-28">
       <div className="mx-auto max-w-2xl text-center">
@@ -63,7 +64,7 @@ export default function NotFound() {
           The most-read stories on TheQuiverIndia right now
         </h2>
         <div className="grid gap-6 md:grid-cols-3">
-          {MOST_READ.slice(0, 3).map((a) => (
+          {mostRead.map((a) => (
             <ArticleCard key={a.id} article={a} variant="standard" />
           ))}
         </div>

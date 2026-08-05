@@ -1,25 +1,21 @@
 import Link from 'next/link';
-import { ArrowRight, Radio, TrendingUp, Vote, Map } from 'lucide-react';
+import { ArrowRight, Landmark, TrendingUp, Vote, Map } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Badge } from '@/components/ui/Badge';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { ArticleCard } from '@/components/cards/ArticleCard';
 import { SeatChart } from '@/components/election/SeatChart';
-import {
-  ELECTION_RESULTS_2024,
-  CONSTITUENCY_RESULTS,
-  ARTICLES,
-  PARTIES,
-} from '@/lib/mock-data';
+import { ELECTION_RESULTS_2024, CONSTITUENCY_RESULTS } from '@/lib/election-data';
+import { getArticles, getParties } from '@/lib/data';
 import { formatNumber, slugify } from '@/lib/utils';
 
 export const metadata = {
-  title: 'Elections — Live results, constituency data, seat-by-seat analysis',
+  title: 'Elections — Results, constituency data, seat-by-seat analysis',
   description: 'India\'s most detailed election dashboard. Track every seat, every party, every state.',
 };
 
-export default function ElectionsPage() {
+export default async function ElectionsPage() {
   const totalSeats = ELECTION_RESULTS_2024.reduce((a, b) => a + b.totalSeats, 0);
   const partyTotals: Record<string, { seats: number; color: string }> = {};
   for (const state of ELECTION_RESULTS_2024) {
@@ -32,9 +28,13 @@ export default function ElectionsPage() {
     .map(([party, v]) => ({ party, ...v }))
     .sort((a, b) => b.seats - a.seats);
 
-  const electionArticles = ARTICLES.filter(
-    (a) => a.category === 'elections' || a.tags.some((t) => /elect|poll/i.test(t)),
-  ).slice(0, 4);
+  const [{ docs: latest }, PARTIES] = await Promise.all([
+    getArticles({ limit: 24 }),
+    getParties(),
+  ]);
+  const electionArticles = latest
+    .filter((a) => a.category === 'elections' || a.tags.some((t) => /elect|poll/i.test(t)))
+    .slice(0, 4);
 
   return (
     <>
@@ -42,21 +42,21 @@ export default function ElectionsPage() {
         <Container className="py-8 md:py-12">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Elections' }]} />
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Badge tone="breaking" withDot>Live</Badge>
+            <Badge tone="brand">2024 Results</Badge>
             <p className="kicker">Elections 2024 · Lok Sabha</p>
           </div>
           <h1 className="mt-3 max-w-3xl text-balance font-serif text-3xl font-semibold leading-tight text-ink sm:text-4xl md:text-5xl">
             The most detailed election dashboard in India
           </h1>
           <p className="mt-4 max-w-2xl text-pretty text-base text-ink-muted md:text-lg">
-            Live seat tally, vote share by state, constituency-level results, and exit-poll
+            Seat tally, vote share by state, constituency-level results, and exit-poll
             comparison — all in one place.
           </p>
           <div className="mt-6 grid grid-cols-2 gap-3 md:mt-8 md:grid-cols-4 md:gap-4">
             <KPI label="Total seats" value={formatNumber(totalSeats)} Icon={Vote} />
             <KPI label="States covered" value={ELECTION_RESULTS_2024.length.toString()} Icon={Map} />
             <KPI label="Turnout" value="65.8%" Icon={TrendingUp} />
-            <KPI label="Updates" value="Live" Icon={Radio} tone="breaking" />
+            <KPI label="Election" value="2024" Icon={Landmark} />
           </div>
         </Container>
       </header>

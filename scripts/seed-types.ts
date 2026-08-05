@@ -1,11 +1,3 @@
-/**
- * Frontend view models.
- *
- * Pages and components consume these shapes; lib/data maps Payload
- * documents into them. Keeping the view layer on its own types means
- * component code never depends on CMS internals.
- */
-
 export type Category =
   | 'politics'
   | 'elections'
@@ -20,12 +12,11 @@ export type Category =
 
 export type Verification = 'verified' | 'sourced' | 'developing';
 
-export type Language = 'en' | 'hi';
+export type ArticleFormat = 'article' | 'video' | 'podcast' | 'photo-essay' | 'live';
 
 export interface Author {
   id: string;
   name: string;
-  slug?: string;
   handle: string;
   role: string;
   bio: string;
@@ -38,8 +29,7 @@ export interface Article {
   title: string;
   kicker?: string;
   excerpt: string;
-  category: string;
-  categoryLabel?: string;
+  category: Category;
   tags: string[];
   image: string;
   imageCaption?: string;
@@ -47,17 +37,28 @@ export interface Article {
   publishedAt: string;
   updatedAt?: string;
   readMinutes: number;
+  wordCount: number;
   verification: Verification;
   sourceCount: number;
-  factCheckSlug?: string;
+  factCheckId?: string;
+  format: ArticleFormat;
+  isBreaking?: boolean;
   isExclusive?: boolean;
+  isSponsored?: boolean;
   views: number;
-  language: Language;
-  /** Lexical editor state — rendered by components/article/ArticleBody. */
-  body?: unknown;
-  /** Editor-picked related stories (populated on detail fetches). */
-  related?: Article[];
+  body: ArticleBlock[];
+  relatedIds?: string[];
 }
+
+export type ArticleBlock =
+  | { type: 'p'; text: string }
+  | { type: 'h2'; text: string }
+  | { type: 'h3'; text: string }
+  | { type: 'quote'; text: string; cite?: string }
+  | { type: 'list'; ordered?: boolean; items: string[] }
+  | { type: 'image'; src: string; caption?: string; credit?: string }
+  | { type: 'callout'; tone: 'info' | 'warn' | 'note'; text: string }
+  | { type: 'stat'; label: string; value: string; sub?: string };
 
 export type PromiseStatus = 'kept' | 'broken' | 'in-progress' | 'unverifiable';
 
@@ -67,7 +68,6 @@ export interface PoliticianPromise {
   status: PromiseStatus;
   madeOn: string;
   context?: string;
-  sourceUrl?: string;
 }
 
 export interface PoliticianEvent {
@@ -144,7 +144,6 @@ export interface FactCheck {
   publishedAt: string;
   image: string;
   views: number;
-  language: Language;
 }
 
 export interface Video {
@@ -152,13 +151,27 @@ export interface Video {
   slug: string;
   title: string;
   description: string;
-  youtubeId: string;
   thumbnail: string;
   duration: string;
+  category: Category;
   views: number;
   publishedAt: string;
   series?: string;
   host: string;
+}
+
+export interface Podcast {
+  id: string;
+  slug: string;
+  title: string;
+  series: string;
+  description: string;
+  artwork: string;
+  duration: string;
+  host: string;
+  episode: number;
+  publishedAt: string;
+  plays: number;
 }
 
 export interface Poll {
@@ -169,6 +182,14 @@ export interface Poll {
   options: { id: string; label: string; votes: number; color?: string }[];
   totalVotes: number;
   endsAt: string;
-  category: string;
+  category: Category;
   state?: string;
+}
+
+export interface LiveUpdate {
+  id: string;
+  time: string;
+  text: string;
+  tag: 'breaking' | 'parliament' | 'election' | 'statement' | 'developing';
+  location?: string;
 }

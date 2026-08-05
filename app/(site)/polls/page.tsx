@@ -2,7 +2,7 @@ import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Tabs } from '@/components/ui/Tabs';
 import { PollCard } from '@/components/cards/PollCard';
-import { POLLS } from '@/lib/mock-data';
+import { getPolls } from '@/lib/data';
 import { formatNumber } from '@/lib/utils';
 
 export const metadata = {
@@ -23,10 +23,11 @@ export default async function PollsPage(
 ) {
   const searchParams = await props.searchParams;
   const cat = searchParams?.cat;
-  const polls = cat
-    ? POLLS.filter((p) => p.category.toLowerCase() === cat)
-    : POLLS;
-  const totalVotes = POLLS.reduce((a, p) => a + p.totalVotes, 0);
+  const [polls, allPolls] = await Promise.all([
+    getPolls({ category: cat }),
+    getPolls(),
+  ]);
+  const totalVotes = allPolls.reduce((a, p) => a + p.totalVotes, 0);
   return (
     <>
       <header className="border-b border-line bg-bg-subtle">
@@ -49,7 +50,7 @@ export default async function PollsPage(
                   Active polls
                 </p>
                 <p className="mt-2 font-serif text-3xl font-semibold text-ink">
-                  {POLLS.length}
+                  {allPolls.length}
                 </p>
               </div>
               <div className="rounded-xl border border-line bg-bg p-5">
@@ -69,7 +70,7 @@ export default async function PollsPage(
         <Tabs
           active={cat ? CAT_TAB_LABELS[cat] ?? 'All' : 'All'}
           items={[
-            { label: 'All', href: '/polls', count: POLLS.length },
+            { label: 'All', href: '/polls', count: allPolls.length },
             { label: 'Politics', href: '/polls?cat=politics' },
             { label: 'Elections', href: '/polls?cat=elections' },
             { label: 'Opinion', href: '/polls?cat=opinion' },
