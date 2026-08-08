@@ -64,10 +64,19 @@ async function resolveReaderId(
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [Google],
+  providers: [
+    Google({
+      // Always show the Google account chooser. Without this, Google silently
+      // reuses the browser's current session, so a reader who wants to switch
+      // accounts (or whose first attempt failed) gets an error page instead of
+      // a picker.
+      authorization: { params: { prompt: 'select_account' } },
+    }),
+  ],
   session: { strategy: 'jwt' },
   pages: {
     signIn: '/login',
+    error: '/login',
   },
   callbacks: {
     async jwt({ token, trigger }) {

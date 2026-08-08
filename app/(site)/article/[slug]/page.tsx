@@ -23,7 +23,7 @@ import {
   getRelatedArticles,
   listSlugs,
 } from '@/lib/data';
-import { formatDateTime } from '@/lib/utils';
+import { formatDateTime, isUnoptimizableImage } from '@/lib/utils';
 import { absoluteUrl } from '@/lib/site';
 
 export async function generateStaticParams() {
@@ -168,6 +168,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 1024px"
+                unoptimized={isUnoptimizableImage(article.image)}
                 className="object-cover"
               />
             </div>

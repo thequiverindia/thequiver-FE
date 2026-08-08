@@ -15,14 +15,14 @@ export default function Image() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)',
+          background: 'linear-gradient(135deg, #180E29 0%, #55317C 100%)',
           padding: 80,
           fontFamily: 'Georgia, serif',
         }}
       >
         <div
           style={{
-            color: '#FBBF24',
+            color: '#E3C237',
             fontSize: 28,
             letterSpacing: 6,
             textTransform: 'uppercase',

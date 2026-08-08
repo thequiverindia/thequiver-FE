@@ -25,8 +25,55 @@
 */
 
 @layer base {
-  /* ============ EDITORIAL (default) — indigo & marigold ============ */
+  /* ============ ROYAL (default) — deep violet & signal gold ============
+     A dark-by-nature brand theme: both modes stay violet so the identity
+     never changes, the .dark variant just deepens the surfaces. */
   :root,
+  [data-theme='royal'] {
+    color-scheme: dark;
+    --bg: 24 14 41;            /* #180E29 deepest ink */
+    --bg-subtle: 55 29 81;     /* #371D51 brand violet — header/cards */
+    --bg-muted: 85 49 124;     /* #55317C mid violet — hover/secondary */
+    --ink: 255 255 255;        /* headings */
+    --ink-muted: 232 224 242;  /* #E8E0F2 body copy */
+    --ink-subtle: 183 169 204; /* #B7A9CC captions, timestamps */
+    --line: 85 49 124;
+    --line-strong: 122 92 163;
+    --brand: 227 194 55;       /* #E3C237 signal gold */
+    --brand-soft: 254 229 105; /* #FEE569 light gold */
+    --accent: 227 194 55;
+    --breaking: 228 87 61;     /* #E4573D warm red */
+    --verified: 76 175 125;    /* #4CAF7D */
+    --success: 76 175 125;
+    --warn: 254 229 105;
+    --danger: 228 87 61;
+    --info: 183 169 204;
+    --on-media: 255 255 255;
+  }
+
+  [data-theme='royal'].dark {
+    color-scheme: dark;
+    --bg: 17 9 30;             /* a touch deeper for true dark mode */
+    --bg-subtle: 39 20 58;
+    --bg-muted: 68 39 100;
+    --ink: 255 255 255;
+    --ink-muted: 232 224 242;
+    --ink-subtle: 183 169 204;
+    --line: 68 39 100;
+    --line-strong: 108 79 148;
+    --brand: 227 194 55;
+    --brand-soft: 254 229 105;
+    --accent: 227 194 55;
+    --breaking: 228 87 61;
+    --verified: 76 175 125;
+    --success: 76 175 125;
+    --warn: 254 229 105;
+    --danger: 228 87 61;
+    --info: 183 169 204;
+    --on-media: 255 255 255;
+  }
+
+  /* ============ EDITORIAL — indigo & marigold ============ */
   [data-theme='editorial'] {
     color-scheme: light;
     --bg: 255 255 255;

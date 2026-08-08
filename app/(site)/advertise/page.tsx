@@ -82,10 +82,10 @@ export default function AdvertisePage() {
               Send a brief or request a media kit. We respond within one working day.
             </p>
             <a
-              href="mailto:partners@thequiverindia.com"
+              href="mailto:contact@thequiverindia.com"
               className="mt-5 inline-flex rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-bg hover:bg-ink/90"
             >
-              partners@thequiverindia.com
+              contact@thequiverindia.com
             </a>
           </div>
           <SubmissionForm

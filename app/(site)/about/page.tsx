@@ -108,11 +108,6 @@ export default async function AboutPage() {
                 <p className="kicker mb-3">Quick links</p>
                 <ul className="space-y-2 text-sm">
                   <li>
-                    <Link href="/careers" className="text-ink hover:underline">
-                      → Careers at TheQuiverIndia
-                    </Link>
-                  </li>
-                  <li>
                     <Link href="/contact" className="text-ink hover:underline">
                       → Contact a journalist
                     </Link>

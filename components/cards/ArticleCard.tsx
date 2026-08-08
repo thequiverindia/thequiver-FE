@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Article } from '@/lib/types';
-import { cn, timeAgo, formatNumber } from '@/lib/utils';
+import { cn, timeAgo, formatNumber, isUnoptimizableImage } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
 
@@ -35,7 +35,15 @@ function CardImage({
     );
   }
   return (
-    <Image src={src} alt="" fill priority={priority} sizes={sizes} className={className} />
+    <Image
+      src={src}
+      alt=""
+      fill
+      priority={priority}
+      sizes={sizes}
+      unoptimized={isUnoptimizableImage(src)}
+      className={className}
+    />
   );
 }
 

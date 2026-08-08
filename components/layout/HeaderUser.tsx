@@ -1,33 +1,34 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-
-type SessionUser = { name?: string | null; image?: string | null } | null;
+import { useReaderSession } from './useReaderSession';
 
 /**
- * Session-aware header slot. Hydrates client-side (via the Auth.js session
- * endpoint) so the header — and every page it sits on — stays statically
- * cacheable for signed-out readers.
+ * Session-aware header slot. Hydrates client-side so every page stays
+ * statically cacheable for signed-out readers.
+ *
+ * Renders a fixed-size slot in all three states (loading / signed in / signed
+ * out) so the header never shifts as the session resolves.
  */
 export function HeaderUser() {
-  const [user, setUser] = useState<SessionUser>(null);
-  const [loaded, setLoaded] = useState(false);
+  const { user, loaded } = useReaderSession();
 
-  useEffect(() => {
-    fetch('/api/auth/session')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((s) => setUser(s?.user ?? null))
-      .catch(() => setUser(null))
-      .finally(() => setLoaded(true));
-  }, []);
+  if (!loaded) {
+    return (
+      <span
+        aria-hidden
+        className="ml-1 hidden h-10 w-10 shrink-0 animate-pulse rounded-full bg-bg-muted lg:inline-block"
+      />
+    );
+  }
 
-  if (loaded && user) {
+  if (user) {
     return (
       <Link
         href="/profile"
         aria-label={`Your profile${user.name ? ` — ${user.name}` : ''}`}
-        className="ml-1 hidden h-10 w-10 items-center justify-center overflow-hidden rounded-full ring-1 ring-line transition hover:ring-line-strong focus-ring lg:inline-flex"
+        title={user.name ?? 'Your profile'}
+        className="ml-1 hidden h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full ring-1 ring-line transition hover:ring-brand focus-ring lg:inline-flex"
       >
         {user.image ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -44,7 +45,7 @@ export function HeaderUser() {
   return (
     <Link
       href="/login"
-      className="ml-1 hidden items-center rounded-full border border-line-strong px-4 py-2 text-sm font-medium text-ink transition hover:bg-bg-muted active:bg-bg-muted focus-ring lg:inline-flex"
+      className="ml-1 hidden shrink-0 items-center rounded-full bg-brand px-4 py-2 text-sm font-semibold text-bg transition hover:bg-brand-soft active:bg-brand-soft focus-ring lg:inline-flex"
     >
       Sign in
     </Link>

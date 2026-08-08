@@ -9,7 +9,7 @@ export function ThemeScript() {
       try {
         var root = document.documentElement;
         var theme = localStorage.getItem('tqi-theme');
-        if (theme !== 'editorial' && theme !== 'peacock' && theme !== 'press') theme = 'editorial';
+        if (theme !== 'royal' && theme !== 'editorial' && theme !== 'peacock' && theme !== 'press') theme = 'royal';
         var mode = localStorage.getItem('tqi-mode') || localStorage.getItem('jv-theme');
         if (mode !== 'light' && mode !== 'dark' && mode !== 'system') mode = 'system';
         var dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);

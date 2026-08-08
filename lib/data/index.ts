@@ -42,6 +42,8 @@ const PUBLISHED = { _status: { equals: 'published' } } as const;
 
 function mediaUrl(m: PMedia | number | null | undefined, fallback = ''): string {
   if (!m || typeof m === 'number') return fallback;
+  // Sharp only generates a size variant when the source is wider than the
+  // target, so small uploads legitimately have no hero/card — fall through.
   return m.sizes?.hero?.url ?? m.sizes?.card?.url ?? m.url ?? fallback;
 }
 

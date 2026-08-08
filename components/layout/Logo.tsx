@@ -1,6 +1,15 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
+/**
+ * Brand mark.
+ *
+ * Uses a pre-resized WebP (13KB) rather than the 699KB source PNG — the header
+ * mark is at most 40px, so shipping a 1025px original would dominate the page
+ * weight on mobile. The wordmark hides below `sm` so the header stays on one
+ * line on small phones; the mark alone still identifies the site.
+ */
 export function Logo({
   className,
   showWord = true,
@@ -10,34 +19,40 @@ export function Logo({
   showWord?: boolean;
   size?: 'sm' | 'md' | 'lg';
 }) {
-  const wordSize = {
-    sm: 'text-lg',
-    md: 'text-xl',
-    lg: 'text-2xl',
+  const mark = {
+    sm: 'h-7 w-7',
+    md: 'h-9 w-9',
+    lg: 'h-11 w-11',
   }[size];
+  const wordSize = {
+    sm: 'text-base',
+    md: 'text-lg sm:text-xl',
+    lg: 'text-xl sm:text-2xl',
+  }[size];
+
   return (
     <Link
       href="/"
-      className={cn('group inline-flex items-center gap-2', className)}
+      className={cn('group inline-flex shrink-0 items-center gap-2 focus-ring rounded-md', className)}
       aria-label="TheQuiverIndia — Home"
     >
-      <span className="relative inline-flex h-8 w-8 items-center justify-center rounded-md bg-ink text-bg transition group-hover:bg-brand">
-        <svg
-          viewBox="0 0 24 24"
-          className="h-4 w-4"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        >
-          <path d="M4 14c0-4 3-7 8-7s8 3 8 7" />
-          <path d="M8 14v3" />
-          <path d="M12 14v5" />
-          <path d="M16 14v3" />
-        </svg>
+      <span className={cn('relative shrink-0 overflow-hidden rounded-lg', mark)}>
+        <Image
+          src="/logo-256.webp"
+          alt=""
+          fill
+          sizes="44px"
+          priority
+          className="object-contain transition group-hover:scale-105"
+        />
       </span>
       {showWord && (
-        <span className={cn('font-serif font-semibold tracking-tight text-ink', wordSize)}>
+        <span
+          className={cn(
+            'hidden font-serif font-semibold tracking-tight text-ink sm:inline',
+            wordSize,
+          )}
+        >
           TheQuiverIndia
         </span>
       )}

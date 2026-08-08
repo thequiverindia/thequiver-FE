@@ -52,7 +52,6 @@ export const FOOTER_LINKS = [
     links: [
       { label: 'About Us', href: '/about' },
       { label: 'Contact', href: '/contact' },
-      { label: 'Careers', href: '/careers' },
       { label: 'Advertise', href: '/advertise' },
     ],
   },

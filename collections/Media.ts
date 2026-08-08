@@ -27,7 +27,9 @@ export const Media: CollectionConfig = {
   },
   upload: {
     staticDir: 'media',
-    mimeTypes: ['image/*'],
+    // SVG is deliberately excluded: it can carry scripts, and next/image
+    // rejects it anyway (that combination is what broke every avatar).
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'],
     imageSizes: [
       { name: 'thumbnail', width: 320 },
       { name: 'card', width: 768 },

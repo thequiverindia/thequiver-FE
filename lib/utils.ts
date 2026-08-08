@@ -65,3 +65,14 @@ export function slugify(s: string) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
+/**
+ * next/image refuses SVG unless `dangerouslyAllowSVG` is on (it returns a 400,
+ * which is why every author avatar and leader photo was rendering broken).
+ * Enabling that flag site-wide would let an editor upload a script-bearing SVG,
+ * so instead we detect them and bypass the optimizer for those files only.
+ */
+export function isUnoptimizableImage(src?: string): boolean {
+  if (!src) return false;
+  return /\.svg($|\?)/i.test(src);
+}

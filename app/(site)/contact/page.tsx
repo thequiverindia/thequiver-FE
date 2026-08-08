@@ -10,25 +10,25 @@ const ROUTES = [
     Icon: Newspaper,
     title: 'News tip',
     body: 'Got a tip? We protect sources. Reach our newsroom directly.',
-    email: 'tips@thequiverindia.com',
+    email: 'contact@thequiverindia.com',
   },
   {
     Icon: AlertCircle,
     title: 'Corrections',
     body: 'Found an error? Tell us. We correct in public and quickly.',
-    email: 'corrections@thequiverindia.com',
+    email: 'contact@thequiverindia.com',
   },
   {
     Icon: Briefcase,
     title: 'Press & partnerships',
     body: 'Interviews, syndication, partnerships and press queries.',
-    email: 'partners@thequiverindia.com',
+    email: 'contact@thequiverindia.com',
   },
   {
     Icon: Mail,
     title: 'General enquiries',
     body: 'Subscriptions, account help, accessibility issues.',
-    email: 'hello@thequiverindia.com',
+    email: 'contact@thequiverindia.com',
   },
 ];
 
@@ -107,12 +107,12 @@ export default function ContactPage() {
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone className="h-4 w-4 text-ink-muted" />
-                  <span className="text-ink">+91 80 4123 4567</span>
+                  <span className="text-ink">+91 90263 33332</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="h-4 w-4 text-ink-muted" />
-                  <a href="mailto:hello@thequiverindia.com" className="text-ink underline">
-                    hello@thequiverindia.com
+                  <a href="mailto:contact@thequiverindia.com" className="text-ink underline">
+                    contact@thequiverindia.com
                   </a>
                 </li>
               </ul>

@@ -34,7 +34,7 @@ const SECTIONS = [
   },
   {
     h: 'Contact',
-    p: 'For any privacy question: privacy@thequiverindia.com. Our Data Protection Officer can be reached at dpo@thequiverindia.com.',
+    p: 'For any privacy question: contact@thequiverindia.com. Our Data Protection Officer can be reached at dpo@thequiverindia.com.',
   },
 ];
 

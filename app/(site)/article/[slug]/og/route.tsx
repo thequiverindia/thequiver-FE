@@ -25,7 +25,7 @@ export async function GET(
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)',
+          background: 'linear-gradient(135deg, #180E29 0%, #55317C 100%)',
           padding: 72,
         }}
       >
@@ -34,7 +34,7 @@ export async function GET(
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            color: '#FBBF24',
+            color: '#E3C237',
             fontSize: 26,
             letterSpacing: 5,
             textTransform: 'uppercase',
@@ -67,7 +67,7 @@ export async function GET(
             fontFamily: 'Arial, sans-serif',
           }}
         >
-          <div style={{ width: 56, height: 6, background: '#FBBF24', display: 'flex' }} />
+          <div style={{ width: 56, height: 6, background: '#E3C237', display: 'flex' }} />
           <span>Politics. Power. People.</span>
         </div>
       </div>

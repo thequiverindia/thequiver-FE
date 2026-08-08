@@ -29,7 +29,18 @@ import { Settings } from './globals/Settings';
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+const SERVER_URL =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'http://localhost:3000');
+
 export default buildConfig({
+  serverURL: SERVER_URL,
+  // Accept admin logins from the canonical domain and its www alias; without
+  // this, Payload rejects the login POST as a CSRF failure on any other host.
+  csrf: [SERVER_URL, SERVER_URL.replace('https://', 'https://www.')],
+  cors: [SERVER_URL, SERVER_URL.replace('https://', 'https://www.')],
   admin: {
     user: Users.slug,
     importMap: {
@@ -80,6 +91,11 @@ export default buildConfig({
         s3Storage({
           collections: { media: true },
           bucket: process.env.S3_BUCKET,
+          // Upload straight from the browser to R2 with a presigned URL.
+          // Without this every file is POSTed through the Vercel function,
+          // which hard-caps request bodies at 4.5 MB — so a photo taken on a
+          // phone (typically 3–12 MB) fails while a resized desktop image works.
+          clientUploads: true,
           config: {
             endpoint: process.env.S3_ENDPOINT,
             region: process.env.S3_REGION || 'auto',

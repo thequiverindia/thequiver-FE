@@ -16,16 +16,22 @@ export const MODE_KEY = 'tqi-mode';
 /** Pre-rebrand storage key, migrated on first read. */
 export const LEGACY_KEY = 'jv-theme';
 
-export type ThemeId = 'editorial' | 'peacock' | 'press';
+export type ThemeId = 'royal' | 'editorial' | 'peacock' | 'press';
 export type Mode = 'light' | 'dark' | 'system';
 
 export const THEMES: {
   id: ThemeId;
   label: string;
   description: string;
-  /** [brand, accent] preview swatches (light-mode values). */
+  /** [brand, accent] preview swatches. */
   swatch: [string, string];
 }[] = [
+  {
+    id: 'royal',
+    label: 'Royal',
+    description: 'Violet & gold',
+    swatch: ['#371D51', '#E3C237'],
+  },
   {
     id: 'editorial',
     label: 'Editorial',
@@ -60,7 +66,7 @@ export function resolveDark(mode: Mode): boolean {
 }
 
 export function readStored(): { theme: ThemeId; mode: Mode } {
-  let theme: ThemeId = 'editorial';
+  let theme: ThemeId = 'royal';
   let mode: Mode = 'system';
   try {
     const t = localStorage.getItem(THEME_KEY);

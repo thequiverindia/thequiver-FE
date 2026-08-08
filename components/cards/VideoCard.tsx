@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Play } from 'lucide-react';
 import type { Video } from '@/lib/types';
-import { cn, formatNumber, timeAgo } from '@/lib/utils';
+import { cn, formatNumber, timeAgo, isUnoptimizableImage } from '@/lib/utils';
 
 export function VideoCard({
   video,
@@ -31,6 +31,7 @@ export function VideoCard({
               alt=""
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
+              unoptimized={isUnoptimizableImage(video.thumbnail)}
               className="object-cover transition duration-500 group-hover:scale-[1.03]"
             />
           ) : (
@@ -68,7 +69,14 @@ export function VideoCard({
       <Link href={href} className={cn('group flex gap-3 focus-ring rounded-md', className)}>
         <div className="relative aspect-video w-36 shrink-0 overflow-hidden rounded-md bg-bg-muted">
           {video.thumbnail ? (
-            <Image src={video.thumbnail} alt="" fill sizes="144px" className="object-cover" />
+            <Image
+              src={video.thumbnail}
+              alt=""
+              fill
+              sizes="144px"
+              unoptimized={isUnoptimizableImage(video.thumbnail)}
+              className="object-cover"
+            />
           ) : (
             <div aria-hidden className="h-full w-full bg-bg-muted" />
           )}
@@ -106,6 +114,7 @@ export function VideoCard({
             alt=""
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            unoptimized={isUnoptimizableImage(video.thumbnail)}
             className="object-cover transition duration-500 group-hover:scale-[1.03]"
           />
         ) : (

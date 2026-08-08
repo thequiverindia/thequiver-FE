@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { FactCheck } from '@/lib/types';
-import { cn, formatNumber, timeAgo } from '@/lib/utils';
+import { cn, formatNumber, timeAgo, isUnoptimizableImage } from '@/lib/utils';
 
 /**
  * Rating → token classes. Everything flows through the theme's status ramp
@@ -101,6 +101,7 @@ export function FactCheckCard({
               alt=""
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              unoptimized={isUnoptimizableImage(fc.image)}
               className="object-cover transition duration-500 group-hover:scale-[1.03]"
             />
           ) : (

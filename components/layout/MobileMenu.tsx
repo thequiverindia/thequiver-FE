@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
+import { useReaderSession } from './useReaderSession';
 import {
   Menu,
   X,
@@ -42,9 +43,16 @@ const MOBILE_NAV: NavItem[] = [
   { label: 'Polls', href: '/polls', icon: BarChart3 },
 ];
 
-const ACCOUNT_NAV: NavItem[] = [
+// Signed-out readers must not be offered Bookmarks/Notifications (they only
+// redirect to /login), and signed-in readers must not be told to "Sign in".
+const GUEST_NAV: NavItem[] = [
   { label: 'Search', href: '/search', icon: Search },
   { label: 'Sign in', href: '/login', icon: UserCircle2 },
+];
+
+const READER_NAV: NavItem[] = [
+  { label: 'Search', href: '/search', icon: Search },
+  { label: 'Your profile', href: '/profile', icon: UserCircle2 },
   { label: 'Bookmarks', href: '/bookmarks', icon: Bookmark },
   { label: 'Notifications', href: '/notifications', icon: Bell },
 ];
@@ -68,6 +76,7 @@ function NavRow({ item, onNavigate }: { item: NavItem; onNavigate: () => void })
 }
 
 export function MobileMenu() {
+  const { user, signedIn } = useReaderSession();
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -150,10 +159,10 @@ export function MobileMenu() {
           ))}
         </ul>
         <p className="px-3 pb-2 pt-6 text-[10px] font-bold uppercase tracking-[0.18em] text-ink-subtle">
-          You
+          {signedIn ? `Signed in${user?.name ? ` as ${user.name}` : ''}` : 'You'}
         </p>
         <ul className="flex flex-col gap-1">
-          {ACCOUNT_NAV.map((item) => (
+          {(signedIn ? READER_NAV : GUEST_NAV).map((item) => (
             <NavRow key={item.href} item={item} onNavigate={close} />
           ))}
         </ul>
