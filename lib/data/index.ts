@@ -41,11 +41,24 @@ const PUBLISHED = { _status: { equals: 'published' } } as const;
 /* mappers                                                             */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Payload stamps its configured serverURL onto every media URL. Our own media
+ * route is always same-origin, so strip any host it prefixed — a misconfigured
+ * serverURL then can't take down every image on the site (it once pointed them
+ * all at "https://replace-with-your-domain"). External hosts, such as YouTube
+ * thumbnails, are left untouched.
+ */
+function normalizeMediaUrl(url: string): string {
+  const localPath = url.match(/^https?:\/\/[^/]+(\/api\/media\/.*)$/i);
+  return localPath ? localPath[1] : url;
+}
+
 function mediaUrl(m: PMedia | number | null | undefined, fallback = ''): string {
   if (!m || typeof m === 'number') return fallback;
   // Sharp only generates a size variant when the source is wider than the
   // target, so small uploads legitimately have no hero/card — fall through.
-  return m.sizes?.hero?.url ?? m.sizes?.card?.url ?? m.url ?? fallback;
+  const url = m.sizes?.hero?.url ?? m.sizes?.card?.url ?? m.url;
+  return url ? normalizeMediaUrl(url) : fallback;
 }
 
 function mapAuthor(a: PAuthor | number | null | undefined): Author {

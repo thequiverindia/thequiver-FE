@@ -25,15 +25,19 @@ import { PollVotes } from './collections/PollVotes';
 import { Waitlist } from './collections/Waitlist';
 import { Submissions } from './collections/Submissions';
 import { Settings } from './globals/Settings';
+import { SITE_URL } from './lib/site';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+// Deliberately routed through SITE_URL rather than reading the env var
+// directly: serverURL is stamped onto every media URL Payload returns, so a
+// placeholder value here doesn't just break canonical links — it breaks every
+// image on the site. SITE_URL rejects obviously-unconfigured values.
 const SERVER_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ||
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'http://localhost:3000');
+  process.env.NODE_ENV === 'production'
+    ? SITE_URL
+    : process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3000';
 
 export default buildConfig({
   serverURL: SERVER_URL,
