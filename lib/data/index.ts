@@ -11,6 +11,7 @@
 import { unstable_cache } from 'next/cache';
 import { getPayload, type Where } from 'payload';
 import config from '@payload-config';
+import { isPrerenderableSlug, SLUG_MAX_BYTES } from '@/collections/fields/slugField';
 
 import type {
   Article as PArticle,
@@ -590,7 +591,23 @@ export async function listSlugs(
       depth: 0,
       select: { slug: true },
     });
-    return res.docs.map((d) => (d as { slug?: string }).slug).filter((s): s is string => Boolean(s));
+    const slugs = res.docs
+      .map((d) => (d as { slug?: string }).slug)
+      .filter((s): s is string => Boolean(s));
+
+    // Prerendering writes one file per slug, and Linux caps a filename at 255
+    // bytes — a long Devanagari slug exceeds that and kills the whole build
+    // with ENAMETOOLONG. New slugs are capped at source, but legacy rows must
+    // never be able to break a deploy: skip them here and let them render on
+    // demand instead. They stay fully reachable, just not prebuilt.
+    const safe = slugs.filter(isPrerenderableSlug);
+    if (safe.length !== slugs.length) {
+      console.warn(
+        `[listSlugs] ${slugs.length - safe.length} ${collection} slug(s) exceed ` +
+          `${SLUG_MAX_BYTES} bytes and will render on demand instead of being prerendered.`,
+      );
+    }
+    return safe;
   } catch {
     return [];
   }
