@@ -33,6 +33,19 @@ import type {
   Video,
 } from '@/lib/types';
 
+/**
+ * Bump this to orphan every cached entry on the next deploy.
+ *
+ * Vercel's Data Cache survives deployments, so a bug that writes bad values
+ * into the cache is NOT fixed by shipping a corrected build — the poisoned
+ * entries keep being served until their tags are revalidated or their (1 year)
+ * TTL expires. Changing the key prefix makes every old entry unreachable.
+ *
+ * v2: entries written with a placeholder serverURL had "replace-with-your-
+ *     domain" baked into every image URL.
+ */
+const CACHE_VERSION = 'v2';
+
 const db = () => getPayload({ config });
 
 const PUBLISHED = { _status: { equals: 'published' } } as const;
@@ -274,7 +287,7 @@ export const getArticles = unstable_cache(
       totalDocs: res.totalDocs,
     };
   },
-  ['articles-list'],
+  [CACHE_VERSION, 'articles-list'],
   { tags: ['articles'] },
 );
 
@@ -309,7 +322,7 @@ export const getArticleBySlug = unstable_cache(
     }
     return article;
   },
-  ['article-by-slug'],
+  [CACHE_VERSION, 'article-by-slug'],
   { tags: ['articles'] },
 );
 
@@ -325,7 +338,7 @@ export const getMostReadArticles = unstable_cache(
     });
     return res.docs.map((d) => mapArticle(d));
   },
-  ['articles-most-read'],
+  [CACHE_VERSION, 'articles-most-read'],
   { tags: ['articles'] },
 );
 
@@ -378,7 +391,7 @@ export const searchArticles = unstable_cache(
     });
     return res.docs.map((d) => mapArticle(d));
   },
-  ['articles-search'],
+  [CACHE_VERSION, 'articles-search'],
   { tags: ['articles'] },
 );
 
@@ -392,7 +405,7 @@ export const getTrendingTags = unstable_cache(
       .slice(0, limit)
       .map(([tag]) => tag);
   },
-  ['trending-tags'],
+  [CACHE_VERSION, 'trending-tags'],
   { tags: ['articles'] },
 );
 
@@ -416,7 +429,7 @@ export const getFactChecks = unstable_cache(
     });
     return res.docs.map(mapFactCheck);
   },
-  ['fact-checks-list'],
+  [CACHE_VERSION, 'fact-checks-list'],
   { tags: ['fact-checks'] },
 );
 
@@ -431,7 +444,7 @@ export const getFactCheckBySlug = unstable_cache(
     });
     return res.docs[0] ? mapFactCheck(res.docs[0]) : null;
   },
-  ['fact-check-by-slug'],
+  [CACHE_VERSION, 'fact-check-by-slug'],
   { tags: ['fact-checks'] },
 );
 
@@ -458,7 +471,7 @@ export const getLeaders = unstable_cache(
     });
     return res.docs.map(mapLeader);
   },
-  ['leaders-list'],
+  [CACHE_VERSION, 'leaders-list'],
   { tags: ['leaders'] },
 );
 
@@ -473,7 +486,7 @@ export const getLeaderBySlug = unstable_cache(
     });
     return res.docs[0] ? mapLeader(res.docs[0]) : null;
   },
-  ['leader-by-slug'],
+  [CACHE_VERSION, 'leader-by-slug'],
   { tags: ['leaders'] },
 );
 
@@ -483,7 +496,7 @@ export const getParties = unstable_cache(
     const res = await payload.find({ collection: 'parties', sort: '-seats', limit: 50 });
     return res.docs.map(mapParty);
   },
-  ['parties-list'],
+  [CACHE_VERSION, 'parties-list'],
   { tags: ['parties'] },
 );
 
@@ -493,7 +506,7 @@ export const getAuthors = unstable_cache(
     const res = await payload.find({ collection: 'authors', sort: 'name', limit: 50, depth: 1 });
     return res.docs.map((a) => mapAuthor(a));
   },
-  ['authors-list'],
+  [CACHE_VERSION, 'authors-list'],
   { tags: ['authors'] },
 );
 
@@ -512,7 +525,7 @@ export const getPolls = unstable_cache(
     });
     return res.docs.map(mapPoll);
   },
-  ['polls-list'],
+  [CACHE_VERSION, 'polls-list'],
   { tags: ['polls'] },
 );
 
@@ -526,7 +539,7 @@ export const getPollBySlug = unstable_cache(
     });
     return res.docs[0] ? mapPoll(res.docs[0]) : null;
   },
-  ['poll-by-slug'],
+  [CACHE_VERSION, 'poll-by-slug'],
   { tags: ['polls'] },
 );
 
@@ -541,7 +554,7 @@ export const getVideos = unstable_cache(
     });
     return res.docs.map(mapVideo);
   },
-  ['videos-list'],
+  [CACHE_VERSION, 'videos-list'],
   { tags: ['videos'] },
 );
 
@@ -555,7 +568,7 @@ export const getVideoBySlug = unstable_cache(
     });
     return res.docs[0] ? mapVideo(res.docs[0]) : null;
   },
-  ['video-by-slug'],
+  [CACHE_VERSION, 'video-by-slug'],
   { tags: ['videos'] },
 );
 
@@ -576,7 +589,7 @@ export const getLedgerStats = unstable_cache(
       falseClaims: factChecks.filter((f) => f.rating === 'false').length,
     };
   },
-  ['ledger-stats'],
+  [CACHE_VERSION, 'ledger-stats'],
   { tags: ['leaders', 'fact-checks'] },
 );
 
@@ -585,7 +598,7 @@ export const getSettings = unstable_cache(
     const payload = await db();
     return payload.findGlobal({ slug: 'settings' });
   },
-  ['site-settings'],
+  [CACHE_VERSION, 'site-settings'],
   { tags: ['settings'] },
 );
 

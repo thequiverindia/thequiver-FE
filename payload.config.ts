@@ -30,21 +30,20 @@ import { SITE_URL } from './lib/site';
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
-// Deliberately routed through SITE_URL rather than reading the env var
-// directly: serverURL is stamped onto every media URL Payload returns, so a
-// placeholder value here doesn't just break canonical links — it breaks every
-// image on the site. SITE_URL rejects obviously-unconfigured values.
-const SERVER_URL =
-  process.env.NODE_ENV === 'production'
-    ? SITE_URL
-    : process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'http://localhost:3000';
+// NOTE: serverURL is deliberately NOT set.
+//
+// Payload stamps serverURL onto every media URL it returns. Setting it made
+// every image on the site load from that host instead of same-origin, so one
+// bad value took down all images. Leaving it unset makes Payload emit relative
+// URLs, which are always correct regardless of which domain serves the app.
+//
+// csrf/cors do not require serverURL — they take explicit origins below.
+const ALLOWED_ORIGINS = [SITE_URL, SITE_URL.replace('https://', 'https://www.')];
 
 export default buildConfig({
-  serverURL: SERVER_URL,
-  // Accept admin logins from the canonical domain and its www alias; without
-  // this, Payload rejects the login POST as a CSRF failure on any other host.
-  csrf: [SERVER_URL, SERVER_URL.replace('https://', 'https://www.')],
-  cors: [SERVER_URL, SERVER_URL.replace('https://', 'https://www.')],
+  // Accept admin logins from the canonical domain and its www alias.
+  csrf: ALLOWED_ORIGINS,
+  cors: ALLOWED_ORIGINS,
   admin: {
     user: Users.slug,
     importMap: {
