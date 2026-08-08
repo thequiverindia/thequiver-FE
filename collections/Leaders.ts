@@ -18,7 +18,7 @@ export const Leaders: CollectionConfig = {
     delete: adminOrEditor,
   },
   hooks: {
-    afterChange: [revalidateAfterChange('leaders')],
+    afterChange: [revalidateAfterChange('leaders', { draftsMatter: true })],
     afterDelete: [revalidateAfterDelete('leaders')],
   },
   fields: [

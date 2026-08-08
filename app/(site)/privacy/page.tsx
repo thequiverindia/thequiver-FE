@@ -6,7 +6,7 @@ export const metadata = { title: 'Privacy policy' };
 const SECTIONS = [
   {
     h: 'What we collect',
-    p: 'We collect the minimum necessary: your email (for account and newsletter), your reading history (to power "continue reading"), and your saved articles. We do not sell your data. Ever.',
+    p: 'We collect the minimum necessary: your name, email and photo from Google when you sign in, the stories you save, the comments you post, and the polls you vote in. We do not build a reading profile and we do not sell your data. Ever.',
   },
   {
     h: 'Cookies',
@@ -14,7 +14,7 @@ const SECTIONS = [
   },
   {
     h: 'Third-party services',
-    p: 'Our newsletter is delivered through a third-party service. Our payments use a regulated processor. Both are listed in our data subprocessor registry, updated quarterly.',
+    p: 'We do not send any email yet, and we take no payments. Sign-in is handled by Google; the site is hosted on Vercel with the database on Neon and images on Cloudflare R2. If that changes, we will update this page before it does.',
   },
   {
     h: 'Your rights',
@@ -34,7 +34,7 @@ const SECTIONS = [
   },
   {
     h: 'Contact',
-    p: 'For any privacy question: privacy@thequiverindia.in. Our Data Protection Officer can be reached at dpo@thequiverindia.in.',
+    p: 'For any privacy question: privacy@thequiverindia.com. Our Data Protection Officer can be reached at dpo@thequiverindia.com.',
   },
 ];
 

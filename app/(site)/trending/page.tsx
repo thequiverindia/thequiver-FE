@@ -11,14 +11,16 @@ export const metadata = {
 };
 
 export default async function TrendingPage() {
-  const sortedByViews = await getMostReadArticles(9);
-  const mostRead = sortedByViews.slice(0, 5);
+  const sortedByViews = await getMostReadArticles(14);
+  // The hero is #1 and the river starts at #2, so the sidebar must skip both
+  // — otherwise every story on the page appears twice.
+  const mostRead = sortedByViews.slice(9, 14);
   return (
     <>
       <CategoryHero
         kicker="Trending"
         title="What India is reading right now"
-        description="Stories ranked by how many people read, shared and saved them in the last 24 hours."
+        description="The stories our readers are opening most right now."
         breadcrumb={[{ label: 'Home', href: '/' }, { label: 'Trending' }]}
         hero={sortedByViews[0]}
       />
@@ -46,7 +48,7 @@ export default async function TrendingPage() {
           </ol>
           <aside className="lg:col-span-5">
             <div className="rounded-2xl border border-line bg-bg p-6 lg:sticky lg:top-24">
-              <p className="kicker mb-4">Most read this week</p>
+              <p className="kicker mb-4">Also being read</p>
               <ol className="space-y-4">
                 {mostRead.map((a, i) => (
                   <li key={a.id} className="flex gap-3 border-b border-line pb-3 last:border-0">

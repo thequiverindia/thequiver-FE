@@ -9,7 +9,8 @@ import { getLedgerStats } from '@/lib/data';
  */
 export async function AccountabilityLedger() {
   const s = await getLedgerStats();
-  if (s.promisesTracked === 0) return null;
+  // Deliberately still renders at zero: this strip is the site's promise to
+  // readers. Hiding it made the flagship feature invisible in production.
 
   const stats: { value: number; label: string; tone?: string }[] = [
     { value: s.promisesTracked, label: 'Promises tracked' },

@@ -64,9 +64,9 @@ export function mapArticle(doc: PArticle, withBody = false): Article {
   const category = typeof doc.category === 'object' && doc.category ? doc.category : null;
   const related =
     withBody && Array.isArray(doc.related)
-      ? (doc.related.filter((r) => typeof r === 'object') as PArticle[]).map((r) =>
-          mapArticle(r),
-        )
+      ? (doc.related.filter(
+          (r) => typeof r === 'object' && r !== null && r._status === 'published',
+        ) as PArticle[]).map((r) => mapArticle(r))
       : undefined;
   return {
     id: String(doc.id),
@@ -88,14 +88,20 @@ export function mapArticle(doc: PArticle, withBody = false): Article {
     verification: (doc.verification ?? 'sourced') as Article['verification'],
     sourceCount: doc.sourceCount ?? 1,
     factCheckSlug:
-      typeof doc.factCheck === 'object' && doc.factCheck ? doc.factCheck.slug ?? undefined : undefined,
+      typeof doc.factCheck === 'object' &&
+      doc.factCheck &&
+      doc.factCheck._status === 'published'
+        ? doc.factCheck.slug ?? undefined
+        : undefined,
     isExclusive: doc.isExclusive ?? false,
     views: doc.views ?? 0,
     language: (doc.language ?? 'en') as Article['language'],
     body: withBody ? doc.body : undefined,
     related,
     translationOf:
-      typeof doc.translationOf === 'object' && doc.translationOf?.slug
+      typeof doc.translationOf === 'object' &&
+      doc.translationOf?.slug &&
+      doc.translationOf._status === 'published'
         ? {
             slug: doc.translationOf.slug,
             language: (doc.translationOf.language ?? 'en') as Article['language'],
@@ -573,9 +579,12 @@ export async function listSlugs(
 ): Promise<string[]> {
   try {
     const payload = await db();
+    // Drafts must never be prerendered — they build into baked 404s.
+    const hasDrafts = collection === 'articles' || collection === 'fact-checks';
     const res = await payload.find({
       collection,
-      limit: 200,
+      where: hasDrafts ? { _status: { equals: 'published' } } : undefined,
+      limit: 1000,
       depth: 0,
       select: { slug: true },
     });

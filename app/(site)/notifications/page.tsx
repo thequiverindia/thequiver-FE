@@ -1,35 +1,27 @@
-import { Bell, ShieldCheck, Vote, MessageSquare } from 'lucide-react';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { Bell, MessageSquare, Bookmark } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { UserNav } from '@/components/user/UserNav';
-import { Tabs } from '@/components/ui/Tabs';
-import { getArticles } from '@/lib/data';
-import { timeAgo } from '@/lib/utils';
+import { auth } from '@/auth';
 
 export const metadata = { title: 'Notifications' };
 
-const TYPE_META = {
-  alert: { Icon: Bell, color: 'text-breaking', bg: 'bg-breaking/10' },
-  verify: { Icon: ShieldCheck, color: 'text-verified', bg: 'bg-verified/10' },
-  election: { Icon: Vote, color: 'text-brand', bg: 'bg-brand/10' },
-  reply: { Icon: MessageSquare, color: 'text-saffron', bg: 'bg-saffron/10' },
-} as const;
-
-async function buildNotifications() {
-  // Placeholder notifications derived from recent stories until real
-  // engagement notifications arrive with the accounts milestone.
-  const { docs } = await getArticles({ limit: 8 });
-  return docs.map((a, i) => ({
-    id: a.id,
-    type: (['alert', 'verify', 'election', 'reply'] as const)[i % 4],
-    title: a.title,
-    time: a.publishedAt,
-    unread: i < 3,
-  }));
-}
-
+/**
+ * Notifications are not built yet.
+ *
+ * This page previously FABRICATED them: it took the latest articles, assigned
+ * each a random type ("breaking alert", "reply to your comment"), marked three
+ * as unread, and showed the identical list to every visitor — including
+ * signed-out ones — with filter tabs that did nothing. On a site whose brand
+ * is verification, inventing "someone replied to you" is the worst kind of
+ * fake. It now tells the truth and points to what does work.
+ */
 export default async function NotificationsPage() {
-  const NOTIFICATIONS = await buildNotifications();
+  const session = await auth();
+  if (!session?.user) redirect('/login');
+
   return (
     <Container as="section" className="py-10">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Notifications' }]} />
@@ -40,49 +32,44 @@ export default async function NotificationsPage() {
         </aside>
 
         <div className="lg:col-span-9">
-          <div className="flex items-end justify-between">
-            <h1 className="font-serif text-3xl font-semibold text-ink">
-              Notifications
-            </h1>
-            <button className="text-sm font-medium text-ink-muted hover:text-ink">
-              Mark all as read
-            </button>
+          <h1 className="font-serif text-3xl font-semibold text-ink">Notifications</h1>
+
+          <div className="mt-6 rounded-2xl border border-dashed border-line bg-bg-subtle p-10 text-center">
+            <span className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-bg text-ink-muted ring-1 ring-line">
+              <Bell className="h-5 w-5" aria-hidden />
+            </span>
+            <h2 className="mt-5 font-serif text-xl font-semibold text-ink">
+              Nothing to notify you about yet
+            </h2>
+            <p className="mx-auto mt-2 max-w-md text-sm text-ink-muted">
+              We&rsquo;ll use this space when there&rsquo;s something genuinely for you —
+              a reply to your comment, or a fact-check on a story you saved. We
+              don&rsquo;t send anything by email.
+            </p>
           </div>
-          <Tabs
-            className="mt-6"
-            active="All"
-            items={[
-              { label: 'All', href: '/notifications' },
-              { label: 'Breaking', href: '/notifications?type=alert' },
-              { label: 'Fact-checks', href: '/notifications?type=verify' },
-              { label: 'Elections', href: '/notifications?type=election' },
-              { label: 'Replies', href: '/notifications?type=reply' },
-            ]}
-          />
-          <ul className="mt-6 divide-y divide-line rounded-2xl border border-line bg-bg">
-            {NOTIFICATIONS.map((n) => {
-              const meta = TYPE_META[n.type];
-              return (
-                <li
-                  key={n.id}
-                  className={`flex gap-4 p-5 ${n.unread ? 'bg-bg-subtle' : ''}`}
-                >
-                  <span
-                    className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${meta.bg} ${meta.color}`}
-                  >
-                    <meta.Icon className="h-4 w-4" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm text-ink">{n.title}</p>
-                    <p className="mt-1 text-xs text-ink-muted">{timeAgo(n.time)}</p>
-                  </div>
-                  {n.unread && (
-                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-breaking" />
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <Link
+              href="/bookmarks"
+              className="flex items-start gap-3 rounded-xl border border-line bg-bg p-5 transition hover:border-line-strong focus-ring"
+            >
+              <Bookmark className="mt-0.5 h-4 w-4 text-ink-muted" aria-hidden />
+              <span>
+                <span className="block text-sm font-medium text-ink">Your bookmarks</span>
+                <span className="block text-xs text-ink-muted">Stories you saved to read later</span>
+              </span>
+            </Link>
+            <Link
+              href="/news"
+              className="flex items-start gap-3 rounded-xl border border-line bg-bg p-5 transition hover:border-line-strong focus-ring"
+            >
+              <MessageSquare className="mt-0.5 h-4 w-4 text-ink-muted" aria-hidden />
+              <span>
+                <span className="block text-sm font-medium text-ink">Join the discussion</span>
+                <span className="block text-xs text-ink-muted">Comment on today&rsquo;s stories</span>
+              </span>
+            </Link>
+          </div>
         </div>
       </div>
     </Container>

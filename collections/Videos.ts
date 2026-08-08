@@ -22,7 +22,7 @@ export const Videos: CollectionConfig = {
     delete: adminOrEditor,
   },
   hooks: {
-    afterChange: [revalidateAfterChange('videos')],
+    afterChange: [revalidateAfterChange('videos', { draftsMatter: true })],
     afterDelete: [revalidateAfterDelete('videos')],
   },
   fields: [

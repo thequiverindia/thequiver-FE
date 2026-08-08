@@ -17,8 +17,8 @@ export const Categories: CollectionConfig = {
     delete: adminOrEditor,
   },
   hooks: {
-    afterChange: [revalidateAfterChange('categories')],
-    afterDelete: [revalidateAfterDelete('categories')],
+    afterChange: [revalidateAfterChange('categories', { alsoBust: ['articles'] })],
+    afterDelete: [revalidateAfterDelete('categories', { alsoBust: ['articles'] })],
   },
   fields: [
     { name: 'label', type: 'text', required: true },

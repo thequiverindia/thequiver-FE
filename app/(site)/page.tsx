@@ -19,30 +19,53 @@ import {
   getPolls,
   getVideos,
 } from '@/lib/data';
+import { getReaderPollVotes } from '@/lib/data/reader';
+import { getReaderId } from '@/auth';
 import { ELECTION_RESULTS_2024 } from '@/lib/election-data';
 import { timeAgo, formatNumber } from '@/lib/utils';
 import type { Article } from '@/lib/types';
 
 export default async function HomePage() {
+  const readerId = await getReaderId();
+  const pollVotes = readerId ? await getReaderPollVotes(readerId) : {};
   const [latest, politics, opinion, videos, polls, factChecks, leaders, mostRead] =
     await Promise.all([
-      getArticles({ limit: 10 }),
+      getArticles({ limit: 24 }),
       getArticles({ limit: 3, category: 'politics' }),
       getArticles({ limit: 2, category: 'opinion' }),
       getVideos({ limit: 4 }),
       getPolls(),
       getFactChecks({ limit: 2 }),
       getLeaders({}),
-      getMostReadArticles(5),
+      getMostReadArticles(12),
     ]);
 
   const hero = latest.docs[0];
   const sub = latest.docs.slice(1, 4);
   const politicsRow = politics.docs;
   const opinionRow = opinion.docs;
-  const exclusives = latest.docs.filter((a) => a.isExclusive).slice(0, 4);
-  const picks = exclusives.length > 0 ? exclusives : mostRead.slice(0, 4);
-  const keepReading = latest.docs.slice(4, 10);
+
+  // Everything above the fold is already on screen — never repeat it further
+  // down the page. Without this the homepage links the same handful of
+  // stories a dozen times over.
+  const shown = new Set<string>([hero?.id, ...sub.map((a) => a.id)].filter(Boolean) as string[]);
+  const take = (list: Article[], n: number) => {
+    const out: Article[] = [];
+    for (const a of list) {
+      if (out.length >= n) break;
+      if (shown.has(a.id)) continue;
+      shown.add(a.id);
+      out.push(a);
+    }
+    return out;
+  };
+
+  const latestRail = take(latest.docs, 5);
+  const mostReadRail = take(mostRead, 5);
+  const exclusives = latest.docs.filter((a) => a.isExclusive);
+  // "Editor's Picks" must be genuinely picked — never a silent copy of Most Read.
+  const picks = take(exclusives, 4);
+  const keepReading = take(latest.docs, 6);
   const featuredVideo = videos[0];
   const sideVideos = videos.slice(1, 4);
 
@@ -64,8 +87,8 @@ export default async function HomePage() {
 
           {/* Right rail */}
           <aside className="space-y-6 lg:col-span-4 lg:space-y-8">
-            <LatestList articles={latest.docs.slice(0, 5)} />
-            <MostReadList articles={mostRead} />
+            {latestRail.length > 0 && <LatestList articles={latestRail} />}
+            {mostReadRail.length > 0 && <MostReadList articles={mostReadRail} />}
           </aside>
         </div>
       </Container>
@@ -176,8 +199,10 @@ export default async function HomePage() {
       )}
 
       {/* FACT CHECK + POLL ROW */}
+      {(factChecks.length > 0 || polls.length > 0) && (
       <Container as="section" className="py-12 md:py-16">
         <div className="grid gap-12 lg:grid-cols-12">
+          {factChecks.length > 0 && (
           <div className="lg:col-span-7">
             <SectionHeader
               kicker="Fact Check"
@@ -197,22 +222,32 @@ export default async function HomePage() {
               All fact checks <ArrowRight className="h-3.5 w-3.5" aria-hidden />
             </Link>
           </div>
+          )}
+          {polls[0] && (
           <div className="lg:col-span-5">
             <SectionHeader
               kicker="What India Thinks"
-              title="Today's poll"
+              title="Reader poll"
               href="/polls"
               hrefLabel="All polls"
             />
-            {polls[0] && <PollCard poll={polls[0]} />}
+            <PollCard
+              poll={polls[0]}
+              signedIn={Boolean(readerId)}
+              votedOptionId={pollVotes[polls[0].id] ?? null}
+            />
           </div>
+          )}
         </div>
       </Container>
+      )}
 
       {/* OPINION + EDITOR'S PICKS */}
+      {(opinionRow.length > 0 || picks.length > 0) && (
       <section className="border-y border-line bg-bg-subtle">
         <Container className="py-12 md:py-16">
           <div className="grid gap-12 lg:grid-cols-12">
+            {opinionRow.length > 0 && (
             <div className="lg:col-span-7">
               <SectionHeader kicker="Opinion" title="The long view" href="/opinion" />
               <div className="space-y-2 divide-y divide-line">
@@ -221,10 +256,12 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
+            )}
+            {picks.length > 0 && (
             <div className="lg:col-span-5">
               <SectionHeader
                 kicker="Editor's Picks"
-                title="Hand-picked, this week"
+                title="Exclusives this week"
                 href="/trending"
               />
               <div className="space-y-1 divide-y divide-line">
@@ -233,9 +270,11 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
+            )}
           </div>
         </Container>
       </section>
+      )}
 
       <NewsletterCTA />
 

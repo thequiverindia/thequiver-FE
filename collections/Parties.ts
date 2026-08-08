@@ -17,8 +17,8 @@ export const Parties: CollectionConfig = {
     delete: adminOrEditor,
   },
   hooks: {
-    afterChange: [revalidateAfterChange('parties')],
-    afterDelete: [revalidateAfterDelete('parties')],
+    afterChange: [revalidateAfterChange('parties', { alsoBust: ['leaders'] })],
+    afterDelete: [revalidateAfterDelete('parties', { alsoBust: ['leaders'] })],
   },
   fields: [
     { name: 'name', type: 'text', required: true },

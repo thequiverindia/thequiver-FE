@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { Play, ThumbsUp, MessageSquare, Bookmark, Share2 } from 'lucide-react';
+import { Play, Bookmark, Share2 } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Avatar } from '@/components/ui/Avatar';
@@ -96,8 +96,6 @@ export default async function VideoPage(props: { params: Promise<{ slug: string 
               </>
             )}
             <div className="ml-auto flex items-center gap-1">
-              <IconBtn Icon={ThumbsUp} label="2.4K" srLabel="Like this video" />
-              <IconBtn Icon={MessageSquare} label="312" srLabel="Jump to comments" />
               <IconBtn Icon={Bookmark} srLabel="Save to bookmarks" />
               <IconBtn Icon={Share2} srLabel="Share this video" />
             </div>

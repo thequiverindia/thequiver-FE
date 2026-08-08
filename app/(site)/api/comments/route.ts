@@ -5,13 +5,16 @@ import { rateLimit, clientIp } from '@/lib/rate-limit';
 
 /** List approved comments for an article: /api/comments?article=<id> */
 export async function GET(req: Request) {
-  const articleId = new URL(req.url).searchParams.get('article');
-  if (!articleId) return Response.json({ error: 'article required' }, { status: 400 });
+  const articleId = Number(new URL(req.url).searchParams.get('article'));
+  // Must be validated as a number: NaN reaches Postgres and 500s on an int column.
+  if (!Number.isInteger(articleId) || articleId <= 0) {
+    return Response.json({ error: 'A valid article id is required' }, { status: 400 });
+  }
   const payload = await getPayload({ config });
   const res = await payload.find({
     collection: 'comments',
     where: {
-      and: [{ article: { equals: Number(articleId) } }, { status: { equals: 'approved' } }],
+      and: [{ article: { equals: articleId } }, { status: { equals: 'approved' } }],
     },
     sort: '-createdAt',
     limit: 50,

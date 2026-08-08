@@ -1,6 +1,6 @@
 import { Container } from '@/components/ui/Container';
 import { PageHero } from '@/components/sections/PageHero';
-import { MockForm } from '@/components/ui/MockForm';
+import { SubmissionForm } from '@/components/engagement/SubmissionForm';
 
 export const metadata = { title: 'Advertise on TheQuiverIndia' };
 
@@ -12,13 +12,8 @@ const FORMATS = [
   },
   {
     title: 'Newsletter sponsorship',
-    copy: 'One sponsor per edition. 4,12,000 daily subscribers, 38% open rate.',
-    starts: '₹1.8L / send',
-  },
-  {
-    title: 'Podcast pre-roll',
-    copy: 'Read by host. Limited to two slots per episode. 2.4L weekly downloads.',
-    starts: '₹95K / episode',
+    copy: 'One sponsor per edition, clearly disclosed. Launching soon.',
+    starts: 'On request',
   },
   {
     title: 'Custom content',
@@ -38,11 +33,14 @@ export default function AdvertisePage() {
       />
 
       <Container as="section" className="py-16">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat label="Monthly readers" value="14.2M" />
-          <Stat label="Newsletter subscribers" value="4.12L" />
-          <Stat label="Podcast downloads/wk" value="2.4L" />
-          <Stat label="Average session" value="6m 12s" />
+        {/* We publish audience figures only once they are independently
+            measurable. Inventing them would undercut the entire proposition. */}
+        <div className="rounded-2xl border border-line bg-bg-subtle p-6">
+          <p className="text-sm text-ink-muted">
+            We&rsquo;re a young newsroom and we don&rsquo;t publish audience numbers we
+            can&rsquo;t verify. Ask us for current, analytics-backed figures and
+            we&rsquo;ll send them with the media kit — no rounded-up claims.
+          </p>
         </div>
 
         <h2 className="mt-16 font-serif text-2xl font-semibold text-ink md:text-3xl">
@@ -84,31 +82,29 @@ export default function AdvertisePage() {
               Send a brief or request a media kit. We respond within one working day.
             </p>
             <a
-              href="mailto:partners@thequiverindia.in"
+              href="mailto:partners@thequiverindia.com"
               className="mt-5 inline-flex rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-bg hover:bg-ink/90"
             >
-              partners@thequiverindia.in
+              partners@thequiverindia.com
             </a>
           </div>
-          <MockForm className="space-y-3">
-            <input
-              placeholder="Company"
-              className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
-            />
-            <input
-              placeholder="Email"
-              type="email"
-              className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
-            />
-            <textarea
-              rows={3}
-              placeholder="Tell us about your brief"
-              className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
-            />
-            <button className="rounded-full border border-line bg-bg-muted px-4 py-2.5 text-sm font-medium text-ink hover:bg-line">
-              Request media kit
-            </button>
-          </MockForm>
+          <SubmissionForm
+            kind="advertising"
+            submitLabel="Request media kit"
+            successMessage="Thanks — our partnerships desk will be in touch."
+            fields={[
+              { name: 'name', label: 'Your name', placeholder: 'Full name' },
+              { name: 'email', label: 'Work email', type: 'email', placeholder: 'you@company.com' },
+              {
+                name: 'message',
+                label: 'What are you looking for?',
+                type: 'textarea',
+                rows: 4,
+                required: true,
+                placeholder: 'Campaign goals, timing, budget range…',
+              },
+            ]}
+          />
         </section>
       </Container>
     </>

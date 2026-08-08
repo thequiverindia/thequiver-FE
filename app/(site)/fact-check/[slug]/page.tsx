@@ -73,6 +73,7 @@ export default async function FactCheckDetail(props: { params: Promise<{ slug: s
             </div>
 
             {/* The image being fact-checked — it is the evidence, so describe it */}
+            {fc.image && (
             <figure className="mt-8 overflow-hidden rounded-2xl bg-bg-muted">
               <div className="aspect-[16/9] w-full">
                 <img
@@ -86,6 +87,7 @@ export default async function FactCheckDetail(props: { params: Promise<{ slug: s
                 The claim as it circulated. Verdict: {meta.label}.
               </figcaption>
             </figure>
+            )}
 
             {/* Evidence */}
             <h2 className="mt-12 font-serif text-2xl font-semibold text-ink md:text-3xl">

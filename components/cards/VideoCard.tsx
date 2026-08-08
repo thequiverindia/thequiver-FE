@@ -25,13 +25,17 @@ export function VideoCard({
     return (
       <Link href={href} className={cn('group block focus-ring rounded-xl', className)}>
         <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-bg-muted">
-          <Image
-            src={video.thumbnail}
-            alt=""
-            fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover transition duration-500 group-hover:scale-[1.03]"
-          />
+          {video.thumbnail ? (
+            <Image
+              src={video.thumbnail}
+              alt=""
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover transition duration-500 group-hover:scale-[1.03]"
+            />
+          ) : (
+            <div aria-hidden className="h-full w-full bg-bg-muted" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           <span className="absolute right-3 top-3 rounded-md bg-black/70 px-2 py-1 text-xs font-medium text-on-media backdrop-blur">
             {video.duration}
@@ -63,7 +67,11 @@ export function VideoCard({
     return (
       <Link href={href} className={cn('group flex gap-3 focus-ring rounded-md', className)}>
         <div className="relative aspect-video w-36 shrink-0 overflow-hidden rounded-md bg-bg-muted">
-          <Image src={video.thumbnail} alt="" fill sizes="144px" className="object-cover" />
+          {video.thumbnail ? (
+            <Image src={video.thumbnail} alt="" fill sizes="144px" className="object-cover" />
+          ) : (
+            <div aria-hidden className="h-full w-full bg-bg-muted" />
+          )}
           <span className="absolute bottom-1.5 right-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-medium text-on-media">
             {video.duration}
           </span>
@@ -92,13 +100,17 @@ export function VideoCard({
       className={cn('group block overflow-hidden rounded-xl focus-ring', className)}
     >
       <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-bg-muted">
-        <Image
-          src={video.thumbnail}
-          alt=""
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition duration-500 group-hover:scale-[1.03]"
-        />
+        {video.thumbnail ? (
+          <Image
+            src={video.thumbnail}
+            alt=""
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition duration-500 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <div aria-hidden className="h-full w-full bg-bg-muted" />
+        )}
         <span className="absolute bottom-3 right-3 rounded-md bg-black/70 px-2 py-1 text-xs font-medium text-on-media backdrop-blur">
           {video.duration}
         </span>

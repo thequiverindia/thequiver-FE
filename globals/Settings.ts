@@ -1,11 +1,17 @@
 import type { GlobalConfig } from 'payload';
 import { anyone, adminOnly } from '../collections/access';
+import { revalidateGlobal } from '../collections/hooks/revalidate';
 
 export const Settings: GlobalConfig = {
   slug: 'settings',
   access: {
     read: anyone,
     update: adminOnly,
+  },
+  hooks: {
+    // Without this, edits to the site name/handles never reach the footer
+    // (unstable_cache defaults to a one-year TTL).
+    afterChange: [revalidateGlobal('settings')],
   },
   fields: [
     { name: 'siteName', type: 'text', defaultValue: 'TheQuiverIndia' },

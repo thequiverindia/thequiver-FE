@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload';
+import { revalidateAfterChange, revalidateAfterDelete } from './hooks/revalidate';
 
 /**
  * All uploaded images (article heroes, leader photos, fact-check evidence).
@@ -9,6 +10,20 @@ export const Media: CollectionConfig = {
   slug: 'media',
   access: {
     read: () => true,
+  },
+  hooks: {
+    // Image URLs are embedded in the article/fact-check/leader caches, so
+    // replacing a file must bust them or the old image sticks for a year.
+    afterChange: [
+      revalidateAfterChange('media', {
+        alsoBust: ['articles', 'fact-checks', 'leaders', 'authors'],
+      }),
+    ],
+    afterDelete: [
+      revalidateAfterDelete('media', {
+        alsoBust: ['articles', 'fact-checks', 'leaders', 'authors'],
+      }),
+    ],
   },
   upload: {
     staticDir: 'media',

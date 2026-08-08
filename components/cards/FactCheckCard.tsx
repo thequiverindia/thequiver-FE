@@ -95,13 +95,17 @@ export function FactCheckCard({
     >
       <Link href={`/fact-check/${fc.slug}`} className="block focus-ring">
         <div className="relative aspect-[16/9] w-full overflow-hidden bg-bg-muted">
-          <Image
-            src={fc.image}
-            alt=""
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition duration-500 group-hover:scale-[1.03]"
-          />
+          {fc.image ? (
+            <Image
+              src={fc.image}
+              alt=""
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover transition duration-500 group-hover:scale-[1.03]"
+            />
+          ) : (
+            <div aria-hidden className="h-full w-full bg-bg-muted" />
+          )}
           <span
             className={cn(
               'stamp absolute left-3 top-3 border-2 bg-bg/90 px-2 py-0.5 text-xs backdrop-blur',

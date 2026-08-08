@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload';
 import { anyone, staffOnly, adminOrEditor } from './access';
 import { slugField } from './fields/slugField';
+import { revalidateAfterChange, revalidateAfterDelete } from './hooks/revalidate';
 
 /**
  * Tags are shared across languages: one slug (e.g. "gst"), bilingual labels.
@@ -19,6 +20,11 @@ export const Tags: CollectionConfig = {
     create: staffOnly,
     update: adminOrEditor,
     delete: adminOrEditor,
+  },
+  hooks: {
+    // Tag labels are copied into the articles cache — renaming one must bust it.
+    afterChange: [revalidateAfterChange('tags', { alsoBust: ['articles'] })],
+    afterDelete: [revalidateAfterDelete('tags', { alsoBust: ['articles'] })],
   },
   fields: [
     { name: 'label', type: 'text', required: true },

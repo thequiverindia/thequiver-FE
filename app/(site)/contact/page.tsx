@@ -1,7 +1,7 @@
 import { Mail, Phone, MapPin, AlertCircle, Briefcase, Newspaper } from 'lucide-react';
 import { Container } from '@/components/ui/Container';
 import { PageHero } from '@/components/sections/PageHero';
-import { MockForm } from '@/components/ui/MockForm';
+import { SubmissionForm } from '@/components/engagement/SubmissionForm';
 
 export const metadata = { title: 'Contact TheQuiverIndia' };
 
@@ -10,25 +10,25 @@ const ROUTES = [
     Icon: Newspaper,
     title: 'News tip',
     body: 'Got a tip? We protect sources. Reach our newsroom directly.',
-    email: 'tips@thequiverindia.in',
+    email: 'tips@thequiverindia.com',
   },
   {
     Icon: AlertCircle,
     title: 'Corrections',
     body: 'Found an error? Tell us. We correct in public and quickly.',
-    email: 'corrections@thequiverindia.in',
+    email: 'corrections@thequiverindia.com',
   },
   {
     Icon: Briefcase,
     title: 'Press & partnerships',
     body: 'Interviews, syndication, partnerships and press queries.',
-    email: 'partners@thequiverindia.in',
+    email: 'partners@thequiverindia.com',
   },
   {
     Icon: Mail,
     title: 'General enquiries',
     body: 'Subscriptions, account help, accessibility issues.',
-    email: 'hello@thequiverindia.in',
+    email: 'hello@thequiverindia.com',
   },
 ];
 
@@ -68,49 +68,30 @@ export default function ContactPage() {
               ))}
             </div>
 
-            <MockForm
-              className="mt-10 space-y-4 rounded-2xl border border-line bg-bg-subtle p-6"
-            >
+            <div className="mt-10 rounded-2xl border border-line bg-bg-subtle p-6">
               <h3 className="font-serif text-xl font-semibold text-ink">
                 Or send us a message here
               </h3>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Your name">
-                  <input
-                    type="text"
-                    placeholder="Full name"
-                    className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
-                  />
-                </Field>
-                <Field label="Email">
-                  <input
-                    type="email"
-                    placeholder="you@example.com"
-                    className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
-                  />
-                </Field>
-              </div>
-              <Field label="Subject">
-                <input
-                  type="text"
-                  placeholder="What is this about?"
-                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
-                />
-              </Field>
-              <Field label="Message">
-                <textarea
-                  rows={5}
-                  placeholder="Tell us more…"
-                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
-                />
-              </Field>
-              <button
-                type="submit"
-                className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-bg hover:bg-ink/90"
-              >
-                Send message
-              </button>
-            </MockForm>
+              <SubmissionForm
+                kind="contact"
+                className="mt-4"
+                submitLabel="Send message"
+                successMessage="Thanks — your message is with our newsroom. We read everything."
+                fields={[
+                  { name: 'name', label: 'Your name', placeholder: 'Full name' },
+                  { name: 'email', label: 'Email', type: 'email', placeholder: 'you@example.com' },
+                  { name: 'subject', label: 'Subject', placeholder: 'What is this about?' },
+                  {
+                    name: 'message',
+                    label: 'Message',
+                    type: 'textarea',
+                    rows: 5,
+                    required: true,
+                    placeholder: 'Tell us more…',
+                  },
+                ]}
+              />
+            </div>
           </div>
 
           <aside className="space-y-6 lg:col-span-5">
@@ -130,8 +111,8 @@ export default function ContactPage() {
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="h-4 w-4 text-ink-muted" />
-                  <a href="mailto:hello@thequiverindia.in" className="text-ink underline">
-                    hello@thequiverindia.in
+                  <a href="mailto:hello@thequiverindia.com" className="text-ink underline">
+                    hello@thequiverindia.com
                   </a>
                 </li>
               </ul>

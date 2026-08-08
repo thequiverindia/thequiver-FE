@@ -10,7 +10,7 @@ const SECTIONS = [
   },
   {
     h: 'Accounts',
-    p: 'You\'re responsible for what happens on your account. Don\'t share your password. If you suspect account compromise, write to us at security@thequiverindia.in immediately.',
+    p: 'You\'re responsible for what happens on your account. Don\'t share your password. If you suspect account compromise, write to us at security@thequiverindia.com immediately.',
   },
   {
     h: 'Comments',

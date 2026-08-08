@@ -14,6 +14,7 @@ import { AuthorByline, AuthorCard } from '@/components/article/AuthorByline';
 import { ReadingProgress } from '@/components/article/ReadingProgress';
 import { BackToTop } from '@/components/article/BackToTop';
 import { CommentSection } from '@/components/article/CommentSection';
+import { ViewCounter } from '@/components/article/ViewCounter';
 import { ArticleCard } from '@/components/cards/ArticleCard';
 import {
   getArticleBySlug,
@@ -23,6 +24,7 @@ import {
   listSlugs,
 } from '@/lib/data';
 import { formatDateTime } from '@/lib/utils';
+import { absoluteUrl } from '@/lib/site';
 
 export async function generateStaticParams() {
   const slugs = await listSlugs('articles');
@@ -42,15 +44,18 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
       // Branded headline card generated at /article/<slug>/og.
       images: [{ url: `/article/${article.slug}/og`, width: 1200, height: 630 }],
     },
-    alternates: article.translationOf
-      ? {
-          languages: {
-            [article.translationOf.language === 'hi' ? 'hi-IN' : 'en-IN']:
-              `/article/${article.translationOf.slug}`,
-            [article.language === 'hi' ? 'hi-IN' : 'en-IN']: `/article/${article.slug}`,
-          },
-        }
-      : undefined,
+    alternates: {
+      canonical: `/article/${article.slug}`,
+      ...(article.translationOf
+        ? {
+            languages: {
+              [article.translationOf.language === 'hi' ? 'hi-IN' : 'en-IN']:
+                `/article/${article.translationOf.slug}`,
+              [article.language === 'hi' ? 'hi-IN' : 'en-IN']: `/article/${article.slug}`,
+            },
+          }
+        : {}),
+    },
   };
 }
 
@@ -71,7 +76,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
     '@type': 'NewsArticle',
     headline: article.title,
     description: article.excerpt,
-    image: [article.image],
+    image: [absoluteUrl(`/article/${article.slug}/og`)],
     datePublished: article.publishedAt,
     dateModified: article.updatedAt ?? article.publishedAt,
     author: { '@type': 'Person', name: article.author.name },
@@ -87,6 +92,7 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
       />
       <ReadingProgress />
       <BackToTop />
+      <ViewCounter articleId={article.id} />
 
       {/* Hero */}
       <header className="border-b border-line bg-bg-subtle">
@@ -154,16 +160,18 @@ export default async function ArticlePage(props: { params: Promise<{ slug: strin
       {/* Image */}
       <figure className="border-b border-line bg-bg-subtle">
         <div className="mx-auto max-w-5xl">
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-bg-muted">
-            <Image
-              src={article.image}
-              alt={article.imageCaption ?? article.title}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 1024px"
-              className="object-cover"
-            />
-          </div>
+          {article.image && (
+            <div className="relative aspect-[16/9] w-full overflow-hidden bg-bg-muted">
+              <Image
+                src={article.image}
+                alt={article.imageCaption ?? article.title}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 1024px"
+                className="object-cover"
+              />
+            </div>
+          )}
           {article.imageCaption && (
             <figcaption className="mx-auto max-w-prose px-4 py-3 text-xs text-ink-muted">
               {article.imageCaption}

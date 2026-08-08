@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Tabs } from '@/components/ui/Tabs';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { FactCheckCard } from '@/components/cards/FactCheckCard';
-import { MockForm } from '@/components/ui/MockForm';
+import { SubmissionForm } from '@/components/engagement/SubmissionForm';
 import { getFactChecks } from '@/lib/data';
 
 export const metadata = {
@@ -138,38 +138,34 @@ export default async function FactCheckPage(
               description="Forwarded WhatsApp messages, suspicious infographics, edited videos — drop the link below."
               className="!mb-6"
             />
-            <MockForm
-              className="space-y-4 rounded-2xl border border-line bg-bg p-6"
-            >
-              <Field label="What's the claim?">
-                <textarea
-                  rows={3}
-                  placeholder="Paste the text, or describe the claim in your own words"
-                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
-                />
-              </Field>
-              <Field label="Where did you see it?">
-                <input
-                  type="url"
-                  placeholder="https://…"
-                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
-                />
-              </Field>
-              <Field label="Your email (so we can update you)">
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="w-full rounded-lg border border-line bg-bg p-3 text-sm focus-ring"
-                />
-              </Field>
-              <button
-                type="submit"
-                className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-bg hover:bg-ink/90"
-              >
-                <Send className="h-3.5 w-3.5" />
-                Submit for verification
-              </button>
-            </MockForm>
+            <SubmissionForm
+              kind="claim"
+              className="rounded-2xl border border-line bg-bg p-6"
+              submitLabel="Submit for verification"
+              successMessage="Thanks — our fact-check desk has your claim. We verify what we can publish evidence for."
+              fields={[
+                {
+                  name: 'message',
+                  label: "What's the claim?",
+                  type: 'textarea',
+                  rows: 3,
+                  required: true,
+                  placeholder: 'Paste the text, or describe the claim in your own words',
+                },
+                {
+                  name: 'sourceUrl',
+                  label: 'Where did you see it?',
+                  type: 'url',
+                  placeholder: 'https://…',
+                },
+                {
+                  name: 'email',
+                  label: 'Your email (so we can update you)',
+                  type: 'email',
+                  placeholder: 'you@example.com',
+                },
+              ]}
+            />
           </div>
         </Container>
       </section>

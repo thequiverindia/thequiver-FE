@@ -42,20 +42,27 @@ export default async function ElectionsPage() {
         <Container className="py-8 md:py-12">
           <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Elections' }]} />
           <div className="mt-5 flex flex-wrap items-center gap-3">
-            <Badge tone="brand">2024 Results</Badge>
+            <Badge tone="warn">Demo data</Badge>
             <p className="kicker">Elections 2024 · Lok Sabha</p>
           </div>
           <h1 className="mt-3 max-w-3xl text-balance font-serif text-3xl font-semibold leading-tight text-ink sm:text-4xl md:text-5xl">
             The most detailed election dashboard in India
           </h1>
           <p className="mt-4 max-w-2xl text-pretty text-base text-ink-muted md:text-lg">
-            Seat tally, vote share by state, constituency-level results, and exit-poll
-            comparison — all in one place.
+            Seat tally, vote share by state and constituency-level results.
+          </p>
+          {/* Honesty first: this dashboard ships with placeholder figures so the
+              layout can be reviewed. It must be replaced with sourced ECI data
+              before it is presented as reporting. */}
+          <p className="mt-4 max-w-2xl rounded-xl border border-warn/30 bg-warn/5 p-4 text-sm text-ink">
+            <strong className="font-semibold">Sample data.</strong> These figures are
+            placeholders used to build the dashboard — not results. We will publish
+            real numbers, sourced to the Election Commission, before the next count.
           </p>
           <div className="mt-6 grid grid-cols-2 gap-3 md:mt-8 md:grid-cols-4 md:gap-4">
             <KPI label="Total seats" value={formatNumber(totalSeats)} Icon={Vote} />
             <KPI label="States covered" value={ELECTION_RESULTS_2024.length.toString()} Icon={Map} />
-            <KPI label="Turnout" value="65.8%" Icon={TrendingUp} />
+            <KPI label="Turnout" value="—" Icon={TrendingUp} />
             <KPI label="Election" value="2024" Icon={Landmark} />
           </div>
         </Container>

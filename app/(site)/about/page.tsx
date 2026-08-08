@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { PageHero } from '@/components/sections/PageHero';
 import { Avatar } from '@/components/ui/Avatar';
-import { getAuthors } from '@/lib/data';
+import { getArticles, getAuthors, getFactChecks, getLeaders } from '@/lib/data';
 
 export const metadata = {
   title: 'About TheQuiverIndia',
@@ -10,7 +10,17 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-  const authors = await getAuthors();
+  const [authors, articles, factChecks, leaders] = await Promise.all([
+    getAuthors(),
+    getArticles({ limit: 500 }),
+    getFactChecks({ limit: 500 }),
+    getLeaders({}),
+  ]);
+  const counts = {
+    articles: articles.totalDocs,
+    factChecks: factChecks.length,
+    leaders: leaders.length,
+  };
   return (
     <>
       <PageHero
@@ -83,13 +93,15 @@ export default async function AboutPage() {
             <div className="sticky top-32 space-y-6">
               <div className="rounded-2xl border border-line bg-bg-subtle p-6">
                 <p className="kicker mb-3">By the numbers</p>
+                {/* Counted from the database — never hardcoded. A newsroom
+                    that invents its own numbers cannot ask readers to trust
+                    the ones it reports. */}
                 <ul className="space-y-3 text-sm">
-                  <Row label="Founded" value="2024" />
-                  <Row label="Staff journalists" value="42" />
-                  <Row label="State bureaus" value="11" />
-                  <Row label="Stories published" value="4,800+" />
-                  <Row label="Fact-checks" value="612" />
-                  <Row label="Languages" value="6" />
+                  <Row label="Bylines" value={String(authors.length)} />
+                  <Row label="Stories published" value={String(counts.articles)} />
+                  <Row label="Fact-checks" value={String(counts.factChecks)} />
+                  <Row label="Leaders tracked" value={String(counts.leaders)} />
+                  <Row label="Languages" value="English, हिन्दी" />
                 </ul>
               </div>
               <div className="rounded-2xl border border-line bg-bg p-6">

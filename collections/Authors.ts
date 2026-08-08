@@ -22,8 +22,8 @@ export const Authors: CollectionConfig = {
     delete: adminOrEditor,
   },
   hooks: {
-    afterChange: [revalidateAfterChange('authors')],
-    afterDelete: [revalidateAfterDelete('authors')],
+    afterChange: [revalidateAfterChange('authors', { alsoBust: ['articles', 'fact-checks'] })],
+    afterDelete: [revalidateAfterDelete('authors', { alsoBust: ['articles', 'fact-checks'] })],
   },
   fields: [
     { name: 'name', type: 'text', required: true },

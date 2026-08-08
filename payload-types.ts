@@ -81,6 +81,7 @@ export interface Config {
     bookmarks: Bookmark;
     'poll-votes': PollVote;
     waitlist: Waitlist;
+    submissions: Submission;
     users: User;
     media: Media;
     'payload-kv': PayloadKv;
@@ -104,6 +105,7 @@ export interface Config {
     bookmarks: BookmarksSelect<false> | BookmarksSelect<true>;
     'poll-votes': PollVotesSelect<false> | PollVotesSelect<true>;
     waitlist: WaitlistSelect<false> | WaitlistSelect<true>;
+    submissions: SubmissionsSelect<false> | SubmissionsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -692,6 +694,35 @@ export interface Waitlist {
   createdAt: string;
 }
 /**
+ * Reader messages: contact, claims to fact-check, ad enquiries.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "submissions".
+ */
+export interface Submission {
+  id: number;
+  kind: 'contact' | 'claim' | 'advertising';
+  status: 'new' | 'in-progress' | 'closed';
+  /**
+   * Auto-generated preview for the list view
+   */
+  summary?: string | null;
+  name?: string | null;
+  email?: string | null;
+  subject?: string | null;
+  message: string;
+  /**
+   * Where the reader saw the claim (fact-check submissions)
+   */
+  sourceUrl?: string | null;
+  /**
+   * Internal notes — never shown to the reader
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -770,6 +801,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'waitlist';
         value: number | Waitlist;
+      } | null)
+    | ({
+        relationTo: 'submissions';
+        value: number | Submission;
       } | null)
     | ({
         relationTo: 'users';
@@ -1085,6 +1120,23 @@ export interface PollVotesSelect<T extends boolean = true> {
 export interface WaitlistSelect<T extends boolean = true> {
   email?: T;
   source?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "submissions_select".
+ */
+export interface SubmissionsSelect<T extends boolean = true> {
+  kind?: T;
+  status?: T;
+  summary?: T;
+  name?: T;
+  email?: T;
+  subject?: T;
+  message?: T;
+  sourceUrl?: T;
+  notes?: T;
   updatedAt?: T;
   createdAt?: T;
 }

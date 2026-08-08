@@ -84,31 +84,34 @@ export default async function StatePage(props: { params: Promise<{ state: string
               <p className="kicker mb-3">Highlights</p>
               <ul className="space-y-3 text-sm">
                 <li className="flex justify-between gap-3 border-b border-line pb-3">
-                  <span className="text-ink-muted">Highest margin</span>
+                  <span className="text-ink-muted">Widest margin</span>
                   <span className="font-medium text-ink">
-                    {constituencies[0]?.name ?? '—'}
+                    {[...constituencies].sort((a, b) => b.margin - a.margin)[0]?.name ?? '—'}
                   </span>
                 </li>
+                {/* Removed: these were hardcoded and IDENTICAL for every
+                    state, which is worse than showing nothing. */}
                 <li className="flex justify-between gap-3 border-b border-line pb-3">
                   <span className="text-ink-muted">Turnout</span>
-                  <span className="font-medium text-ink">68.4%</span>
-                </li>
-                <li className="flex justify-between gap-3 border-b border-line pb-3">
-                  <span className="text-ink-muted">Women turnout</span>
-                  <span className="font-medium text-ink">71.2%</span>
+                  <span className="font-medium text-ink-subtle">Not yet published</span>
                 </li>
                 <li className="flex justify-between gap-3">
-                  <span className="text-ink-muted">First-time voters</span>
-                  <span className="font-medium text-ink">12.4 lakh</span>
+                  <span className="text-ink-muted">Seats counted</span>
+                  <span className="font-medium text-ink">{result.totalSeats}</span>
                 </li>
               </ul>
             </div>
             <div className="rounded-2xl border border-accent/30 bg-accent/5 p-6">
-              <p className="kicker mb-3">Our reading</p>
+              <p className="kicker mb-3">At a glance</p>
+              {/* An auto-generated "analysis" templated per state is not
+                  analysis. Show the fact, let the reporting do the rest. */}
               <p className="text-sm leading-relaxed text-ink-muted">
-                The 2024 result in {result.state} confirmed {result.leading} as the
-                dominant force, but the constituency-level swing pattern suggests this
-                margin is more fragile than the topline implies.
+                {result.leading} leads in {result.state} with {result.results[0]?.seats ?? 0} of{' '}
+                {result.totalSeats} seats. Read our{' '}
+                <Link href="/elections" className="font-medium text-ink underline">
+                  election coverage
+                </Link>{' '}
+                for the reporting behind these numbers.
               </p>
             </div>
           </aside>

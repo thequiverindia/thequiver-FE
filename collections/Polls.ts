@@ -22,7 +22,7 @@ export const Polls: CollectionConfig = {
     delete: adminOrEditor,
   },
   hooks: {
-    afterChange: [revalidateAfterChange('polls')],
+    afterChange: [revalidateAfterChange('polls', { draftsMatter: true })],
     afterDelete: [revalidateAfterDelete('polls')],
   },
   fields: [

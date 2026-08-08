@@ -7,6 +7,38 @@ import { Avatar } from '@/components/ui/Avatar';
 
 type Variant = 'hero' | 'feature' | 'standard' | 'compact' | 'list' | 'inline';
 
+/**
+ * Hero images are optional in the CMS. An empty string passed to next/image
+ * renders <img src="">, which browsers resolve to the CURRENT PAGE URL —
+ * firing a duplicate full-page request per card. Always render a neutral
+ * placeholder instead.
+ */
+function CardImage({
+  src,
+  sizes,
+  priority,
+  className,
+}: {
+  src?: string;
+  sizes: string;
+  priority?: boolean;
+  className?: string;
+}) {
+  if (!src) {
+    return (
+      <div
+        aria-hidden
+        className="flex h-full w-full items-center justify-center bg-bg-muted"
+      >
+        <span className="font-serif text-2xl font-semibold text-ink-subtle/50">TQ</span>
+      </div>
+    );
+  }
+  return (
+    <Image src={src} alt="" fill priority={priority} sizes={sizes} className={className} />
+  );
+}
+
 export function ArticleCard({
   article,
   variant = 'standard',
@@ -22,16 +54,17 @@ export function ArticleCard({
   className?: string;
 }) {
   const href = `/article/${article.slug}`;
+  // Devanagari inside an English document needs marking, or screen readers
+  // read Hindi with an English voice.
+  const lang = article.language === 'hi' ? 'hi' : undefined;
 
   if (variant === 'hero') {
     return (
       <article className={cn('group relative overflow-hidden rounded-2xl', className)}>
         <Link href={href} className="block focus-ring">
           <div className="relative aspect-[4/3] w-full overflow-hidden bg-bg-muted sm:aspect-[16/10] lg:aspect-[16/9]">
-            <Image
+            <CardImage
               src={article.image}
-              alt=""
-              fill
               priority={priority}
               sizes="(max-width: 1024px) 100vw, 66vw"
               className="object-cover transition duration-700 group-hover:scale-105"
@@ -48,7 +81,7 @@ export function ArticleCard({
                 </span>
               )}
             </div>
-            <h2 className="text-balance font-serif text-[22px] font-semibold leading-[1.15] text-on-media transition group-hover:underline group-hover:decoration-on-media/40 group-hover:underline-offset-4 sm:text-3xl md:text-4xl lg:text-5xl">
+            <h2 lang={lang} className="text-balance font-serif text-[22px] font-semibold leading-[1.15] text-on-media transition group-hover:underline group-hover:decoration-on-media/40 group-hover:underline-offset-4 sm:text-3xl md:text-4xl lg:text-5xl">
               {article.title}
             </h2>
             <p className="mt-3 line-clamp-3 max-w-2xl text-pretty text-sm leading-relaxed text-on-media/85 sm:mt-4 sm:line-clamp-none md:text-base">
@@ -72,10 +105,8 @@ export function ArticleCard({
       <article className={cn('group flex flex-col gap-4', className)}>
         <Link href={href} tabIndex={-1} aria-hidden className="block overflow-hidden rounded-xl">
           <div className="relative aspect-[16/10] w-full overflow-hidden bg-bg-muted">
-            <Image
+            <CardImage
               src={article.image}
-              alt=""
-              fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover transition duration-500 group-hover:scale-[1.03]"
             />
@@ -88,7 +119,7 @@ export function ArticleCard({
             </p>
           )}
           <Link href={href} className="focus-ring block rounded-sm">
-            <h3 className="text-balance font-serif text-xl font-semibold leading-snug text-ink transition group-hover:text-brand md:text-2xl">
+            <h3 lang={lang} className="text-balance font-serif text-xl font-semibold leading-snug text-ink transition group-hover:text-brand md:text-2xl">
               {article.title}
             </h3>
           </Link>
@@ -112,10 +143,8 @@ export function ArticleCard({
       <article className={cn('group', className)}>
         <Link href={href} className="focus-ring block rounded-lg">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-bg-muted">
-            <Image
+            <CardImage
               src={article.image}
-              alt=""
-              fill
               sizes="(max-width: 640px) 100vw, 25vw"
               className="object-cover transition duration-500 group-hover:scale-105"
             />
@@ -125,7 +154,7 @@ export function ArticleCard({
               {article.kicker}
             </p>
           )}
-          <h4 className="mt-1.5 text-balance font-serif text-base font-semibold leading-snug text-ink transition group-hover:text-brand">
+          <h4 lang={lang} className="mt-1.5 text-balance font-serif text-base font-semibold leading-snug text-ink transition group-hover:text-brand">
             {article.title}
           </h4>
           <p className="mt-2 text-xs text-ink-muted">
@@ -141,10 +170,8 @@ export function ArticleCard({
       <article className={cn('group flex gap-4 py-5', className)}>
         <Link href={href} tabIndex={-1} aria-hidden className="shrink-0">
           <div className="relative aspect-[4/3] w-28 overflow-hidden rounded-lg bg-bg-muted sm:w-40">
-            <Image
+            <CardImage
               src={article.image}
-              alt=""
-              fill
               sizes="160px"
               className="object-cover transition duration-500 group-hover:scale-105"
             />
@@ -157,7 +184,7 @@ export function ArticleCard({
             </p>
           )}
           <Link href={href} className="focus-ring block rounded-sm">
-            <h3 className="text-balance font-serif text-base font-semibold leading-snug text-ink transition group-hover:text-brand md:text-lg">
+            <h3 lang={lang} className="text-balance font-serif text-base font-semibold leading-snug text-ink transition group-hover:text-brand md:text-lg">
               {article.title}
             </h3>
           </Link>
@@ -179,18 +206,12 @@ export function ArticleCard({
       <article className={cn('group flex gap-3 py-3', className)}>
         <Link href={href} tabIndex={-1} aria-hidden className="shrink-0">
           <div className="relative h-16 w-16 overflow-hidden rounded-md bg-bg-muted">
-            <Image
-              src={article.image}
-              alt=""
-              fill
-              sizes="64px"
-              className="object-cover"
-            />
+            <CardImage src={article.image} sizes="64px" className="object-cover" />
           </div>
         </Link>
         <div className="min-w-0 flex-1">
           <Link href={href} className="focus-ring block rounded-sm">
-            <h4 className="line-clamp-2 text-balance font-serif text-sm font-semibold leading-snug text-ink transition group-hover:text-brand">
+            <h4 lang={lang} className="line-clamp-2 text-balance font-serif text-sm font-semibold leading-snug text-ink transition group-hover:text-brand">
               {article.title}
             </h4>
           </Link>
@@ -212,10 +233,8 @@ export function ArticleCard({
     >
       <Link href={href} tabIndex={-1} aria-hidden className="block">
         <div className="relative aspect-[16/10] w-full overflow-hidden bg-bg-muted">
-          <Image
+          <CardImage
             src={article.image}
-            alt=""
-            fill
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition duration-500 group-hover:scale-[1.03]"
           />
@@ -228,7 +247,7 @@ export function ArticleCard({
           </p>
         )}
         <Link href={href} className="focus-ring block rounded-sm">
-          <h3 className="line-clamp-2 text-balance font-serif text-lg font-semibold leading-snug text-ink transition group-hover:text-brand">
+          <h3 lang={lang} className="line-clamp-2 text-balance font-serif text-lg font-semibold leading-snug text-ink transition group-hover:text-brand">
             {article.title}
           </h3>
         </Link>

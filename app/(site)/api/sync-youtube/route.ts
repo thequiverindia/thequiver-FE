@@ -9,8 +9,10 @@ import { syncYouTube } from '@/lib/sync-youtube';
  *   curl -H "Authorization: Bearer $CRON_SECRET" https://site/api/sync-youtube
  */
 export async function GET(req: Request) {
+  // Fail CLOSED: an unset secret must not make this public. It does real
+  // outbound + DB work, so an open endpoint is free amplification.
   const secret = process.env.CRON_SECRET;
-  if (secret && req.headers.get('authorization') !== `Bearer ${secret}`) {
+  if (!secret || req.headers.get('authorization') !== `Bearer ${secret}`) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
   try {
@@ -19,9 +21,8 @@ export async function GET(req: Request) {
     if (result.created > 0) revalidateTag('videos');
     return Response.json(result);
   } catch (e) {
-    return Response.json(
-      { error: e instanceof Error ? e.message : 'sync failed' },
-      { status: 500 },
-    );
+    // Don't echo driver/schema details to the caller.
+    console.error('[sync-youtube] failed', e);
+    return Response.json({ error: 'Sync failed' }, { status: 500 });
   }
 }

@@ -76,7 +76,7 @@ export default function CareersPage() {
               {ROLES.map((r) => (
                 <li key={r.title}>
                   <Link
-                    href="#"
+                    href="/contact"
                     className="group flex items-start gap-6 p-6 transition hover:bg-bg-subtle"
                   >
                     <div className="min-w-0 flex-1">
@@ -127,10 +127,10 @@ export default function CareersPage() {
                   We hire ahead. Send your portfolio and the role you'd want to build.
                 </p>
                 <a
-                  href="mailto:hiring@thequiverindia.in"
+                  href="mailto:hiring@thequiverindia.com"
                   className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-ink underline"
                 >
-                  hiring@thequiverindia.in →
+                  hiring@thequiverindia.com →
                 </a>
               </div>
             </div>

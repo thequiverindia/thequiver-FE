@@ -23,6 +23,7 @@ import { Comments } from './collections/Comments';
 import { Bookmarks } from './collections/Bookmarks';
 import { PollVotes } from './collections/PollVotes';
 import { Waitlist } from './collections/Waitlist';
+import { Submissions } from './collections/Submissions';
 import { Settings } from './globals/Settings';
 
 const filename = fileURLToPath(import.meta.url);
@@ -53,6 +54,7 @@ export default buildConfig({
     Bookmarks,
     PollVotes,
     Waitlist,
+    Submissions,
     Users,
     Media,
   ],
