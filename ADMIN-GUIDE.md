@@ -222,7 +222,11 @@ is meaningful.
 The admin panel works on a phone. A few things to know:
 
 - Tap ☰ (top-left) for the sidebar.
-- The rich-text toolbar scrolls sideways — swipe it to reach more options.
+- **Formatting is awkward.** The editor has no permanent toolbar — it only
+  appears when you select text, and that competes with your phone's own
+  selection handles and copy/paste popup. Bold, links and headings are fiddly
+  as a result. Type the words on the phone if you must; do the formatting on a
+  laptop.
 - **Save often.** Mobile browsers discard background tabs, and an unsaved form
   is lost when that happens.
 - If a page looks stuck, pull down to refresh — you stay signed in.
